@@ -1,32 +1,34 @@
 import React from 'react';
+import '../styles/elements.less';
 
 export default class extends React.Component {
 
 	render() {
 		return (
 			<div>
-				<h2>Main</h2>
-				<p>Preview</p>
-				<p>Save</p>
-				<p>Publish</p>
-				<p>About</p>
 
-				<h2>Writing</h2>
-				<p>form elements</p>
-				<p>Layout</p>
-				<p>Markdown cheatsheet</p>
+				<ol className="no-bullets">
+					<li>Domain.ee [switch]</li>
+				</ol>
 
-				<h2>Settings</h2>
-				<p>domain</p>
-				<p>link to my code</p>
-				<p>change owner</p>
-				<p>update website code</p>
+				<ol className="no-bullets">
+					<li>Preview (hold alt)</li>
+					<li>Publish</li>
+					<li>Settings</li>
+					{/*domain*/}
+					{/*website variables*/}
+					{/*update website code*/}
+					{/*Delete website*/}
+					<li>About</li>
+				</ol>
 
-				<h2>My sites</h2>
-				<p>site 1</p>
-				<p>site 2</p>
-				<p>site 3</p>
-				<p>New site</p>
+				<ol className="no-bullets">
+					<li>Markdown</li>
+					<li>Layout</li>
+					<li>Form elements</li>
+					<li>hotkeys</li>
+				</ol>
+
 			</div>
 		)
 	}
