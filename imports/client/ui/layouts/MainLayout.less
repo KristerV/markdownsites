@@ -1,3 +1,10 @@
+@menuWidth: 400px;
+
 .MainLayout {
-  
+	nav {
+		width: @menuWidth;
+	}
+	main {
+		width: calc(~"100% - @{menuWidth}");
+	}
 }
