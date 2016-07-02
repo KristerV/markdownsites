@@ -1,0 +1,11 @@
+@import './helpers.less';
+
+@iterations: 15;
+.mixin-loop (@i) when (@i > 0) {
+	.dev-bg:nth-child(@{i}) {
+		.randomColor(0.4);
+		background-color: @color;
+	}
+	.mixin-loop(@i - 1);
+}
+.mixin-loop(@iterations);

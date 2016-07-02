@@ -1,0 +1,12 @@
+.makeRandom(@min: 0, @max: @min+1, @int: 0) {
+	.checkInt() {
+		@getNum: `Math.random() * (@{max} - @{min} + @{int})`;
+		@base: unit(`@{int} == 1 ? Math.floor(@{getNum}) : @{getNum}`);
+	}
+	.checkInt();
+	@randNum: @base + @min;
+}
+
+.randomColor(@opacity) {
+	@color: rgba(`Math.random()*255`, `Math.random()*255`, `Math.random()*255`, @opacity);
+}
