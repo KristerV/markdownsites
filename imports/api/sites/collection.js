@@ -1,0 +1,1 @@
+SitesCollection = new Mongo.Collection('sites');
