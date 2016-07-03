@@ -1,6 +1,7 @@
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import '/imports/G.js';
+import Marked from './Marked.jsx';
 
 export default class extends React.Component {
 
@@ -10,8 +11,13 @@ export default class extends React.Component {
 		this.updateTimer = null;
 		this.value = "";
 
+		this.state = {
+			showPreview: false
+		}
+
 		// http://stackoverflow.com/questions/33457220/onchange-callback-not-firing-in-react-component
 		this.onChange = this.onChange.bind(this);
+		this.componentDidMount = this.componentDidMount.bind(this);
 		this.updateContent = this.updateContent.bind(this);
 	}
 
@@ -27,7 +33,26 @@ export default class extends React.Component {
 
 	render() {
 		let content = this.props.site.content
-		return (<textarea className="float-left wh100 padding bbb" onChange={this.onChange} defaultValue={content}/>)
+		return (<div className="wh100 writer relative">
+				{this.state.showPreview ? <div className="wh100 absolute bg-white"><Marked {...this.props}/></div> : null}
+				<textarea className="float-left wh100 padding bbb" onChange={this.onChange} defaultValue={content}/>)
+			</div>
+		)
+	}
+
+	componentDidMount() {
+		// Alt preview
+		$('.writer').keydown((e) => {
+			if (e.which === 18) {
+				this.setState({showPreview: true})
+			}
+		});
+		$('.writer').keyup((e) => {
+			if (e.which === 18) {
+				this.setState({showPreview: false})
+			}
+		});
+		$('.writer textarea').focus()
 	}
 
 }
