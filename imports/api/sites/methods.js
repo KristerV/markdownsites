@@ -16,6 +16,16 @@ Meteor.methods({
 			domain: Match.Maybe(String),
 			email: Match.Maybe(String)
 		});
-		return SitesCollection.update(siteId, {$set: data});
-	}
+
+		const site = SitesCollection.findOne(siteId);
+
+		if (data.domain && data.domain === site.domain)
+			throw new Meteor.Error(403, 'Domain already in use');
+
+		else if (!site.ownerId || (this.userId && site.ownerId === this.userId))
+			return SitesCollection.update(siteId, {$set: data});
+
+		else
+			throw new Meteor.Error(403, 'Permission error');
+	},
 });

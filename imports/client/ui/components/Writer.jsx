@@ -1,7 +1,6 @@
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import '/imports/G.js';
-import '/imports/api/sites/methods.js';
 
 export default class extends React.Component {
 
