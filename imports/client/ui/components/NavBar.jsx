@@ -9,12 +9,14 @@ export default class extends React.Component {
 		const linkPreview = `/${siteId}/preview`;
 		const linkSettings = `/${siteId}/settings`;
 		const linkAbout = `/${siteId}/about`;
+		const domain = siteId.indexOf('.') > -1 ? domain : null;
 		return (
 			<div>
-
-				<ol className="no-bullets">
-					<li>Domain.ee [switch]</li>
-				</ol>
+				{domain ? // If domain set
+					<ol className="no-bullets">
+						<li>{domain} [switch]</li>
+					</ol>
+				: null}
 
 				<ol className="no-bullets">
 					<li><a href={linkWriter}>Writer</a></li>
