@@ -9,7 +9,7 @@ export default class extends React.Component {
 
 		const content = React.cloneElement(this.props.content, {site: this.props.site});
 
-		return (<div>
+		return (<div className="wh100">
 			{content}
 		</div>)
 	}

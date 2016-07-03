@@ -27,11 +27,7 @@ export default class extends React.Component {
 
 	render() {
 		let content = this.props.site.content
-		return (
-			<div>
-				<textarea onChange={this.onChange} defaultValue={content}/>
-			</div>
-		)
+		return (<textarea className="float-left wh100 padding bbb" onChange={this.onChange} defaultValue={content}/>)
 	}
 
 }

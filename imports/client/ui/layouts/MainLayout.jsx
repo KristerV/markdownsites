@@ -14,10 +14,10 @@ export default class extends React.Component {
 
 	render() {
 		return (<div className="wh100 MainLayout">
-				<nav className="dev-bg h100 float-left">
+				<nav className="h100 float-left">
 					<NavBar/>
 				</nav>
-				<main className="dev-bg h100 float-left">
+				<main className="h100 float-left">
 					{this.props.content}
 				</main>
 				<Alert effect="bouncyflip" position="bottom-right" stack={{limit: 3, spacing: -1}}/>
