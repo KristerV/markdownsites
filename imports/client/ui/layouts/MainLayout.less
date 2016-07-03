@@ -1,10 +1,45 @@
-@menuWidth: 400px;
+@menuWidth: 250px;
+@mainMaxWidth: 900px;
 
 .MainLayout {
 	nav {
 		width: @menuWidth;
+		float: left;
+		div:nth-child(1) {
+			opacity: 0;
+			pointer-events: none;
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none;   /* Chrome/Safari/Opera */
+			-khtml-user-select: none;    /* Konqueror */
+			-moz-user-select: none;      /* Firefox */
+			-ms-user-select: none;       /* Internet Explorer/Edge */
+			user-select: none;
+		}
+		div:nth-child(2) {
+			position: fixed;
+			top: 0;
+		}
 	}
 	main {
 		width: calc(~"100% - @{menuWidth}");
+		max-width: @mainMaxWidth;
+		float: left;
+	}
+}
+
+@media (max-width: (@menuWidth * 3)) {
+	.MainLayout {
+		nav {
+			width: 100%;
+			div:nth-child(1) {
+				display: none;
+			}
+			div:nth-child(2) {
+				position: relative;
+			}
+		}
+		main {
+			width: 100%;
+		}
 	}
 }

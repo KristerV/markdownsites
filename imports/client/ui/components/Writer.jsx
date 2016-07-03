@@ -2,6 +2,7 @@ import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import '/imports/G.js';
 import Marked from './Marked.jsx';
+import Textarea from 'react-autosize-textarea';
 
 export default class extends React.Component {
 
@@ -33,9 +34,9 @@ export default class extends React.Component {
 
 	render() {
 		let content = this.props.site.content
-		return (<div className="wh100 writer relative">
-				{this.state.showPreview ? <div className="wh100 absolute bg-white"><Marked {...this.props}/></div> : null}
-				<textarea className="float-left wh100 padding bbb" onChange={this.onChange} defaultValue={content}/>)
+		return (<div className="writer relative">
+				{this.state.showPreview ? <div className="absolute bg-white"><Marked {...this.props}/></div> : null}
+				<Textarea className="w100 padding bbb" onChange={this.onChange} defaultValue={content}/>
 			</div>
 		)
 	}
@@ -52,7 +53,6 @@ export default class extends React.Component {
 				this.setState({showPreview: false})
 			}
 		});
-		$('.writer textarea').focus()
 	}
 
 }

@@ -8,10 +8,12 @@
     "meteor-node-stubs": "~0.2.0",
     "react": "^15.2.0",
     "react-addons-pure-render-mixin": "^15.2.0",
+    "react-autosize-textarea": "^0.3.1",
     "react-dom": "^15.1.0",
     "react-keydown": "^1.6.1",
     "react-mounter": "^1.2.0",
     "react-s-alert": "^1.1.4",
-    "remarkable": "^1.6.2"
+    "remarkable": "^1.6.2",
+    "textarea": "^0.3.0"
   }
 }
