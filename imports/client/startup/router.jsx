@@ -27,6 +27,6 @@ FlowRouter.route('/:siteId/:pageName', {
 			// case 'preview': content = <Preview params={params}/>; break;
 			default: FlowRouter.go('writer', {siteId: params.siteId})
 		}
-		mount(MainLayout, {content: content});
+		mount(MainLayout, {content: <SiteContainer params={params} content={content}/>});
 	}
 });

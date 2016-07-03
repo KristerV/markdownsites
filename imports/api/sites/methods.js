@@ -12,7 +12,9 @@ Meteor.methods({
 	'sites.update'(siteId, data) {
 		check(siteId, String);
 		check(data, {
-			content: String
+			content: Match.Maybe(String),
+			domain: Match.Maybe(String),
+			email: Match.Maybe(String)
 		});
 		return SitesCollection.update(siteId, {$set: data});
 	}

@@ -3,10 +3,6 @@ import '../styles/elements.less';
 
 export default class extends React.Component {
 
-	publish() {
-		console.log("PUBLISH");
-	}
-
 	render() {
 		const siteId = FlowRouter.getParam('siteId');
 		const linkWriter = `/${siteId}/writer`;
@@ -23,7 +19,6 @@ export default class extends React.Component {
 				<ol className="no-bullets">
 					<li><a href={linkWriter}>Writer</a></li>
 					<li><a href={linkPreview}>Preview</a></li>
-					<li><a href="#" onClick={this.publish.bind(this)}>Publish</a></li>
 					<li><a href={linkSettings}>Settings</a></li>
 					<li><a href={linkAbout}>About</a></li>
 				</ol>
