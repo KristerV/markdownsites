@@ -1,10 +1,10 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
-import Writer from './Writer.jsx';
+import SiteWrapper from './SiteWrapper.jsx';
 import '/imports/api/sites/collection.js';
 
-export default WriterContainer = createContainer(({ params }) => {
+export default SiteContainer = createContainer(({ params, content }) => {
 	params = params || {};
 	const siteId = params.siteId;
 
@@ -25,8 +25,9 @@ export default WriterContainer = createContainer(({ params }) => {
 		const site = SitesCollection.findOne();
 		return {
 			site,
-			subReady: sitesSub.ready()
+			subReady: sitesSub.ready(),
+			content: content
 		};
 	}
 
-}, Writer);
+}, SiteWrapper);

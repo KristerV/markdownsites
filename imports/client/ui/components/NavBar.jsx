@@ -3,7 +3,16 @@ import '../styles/elements.less';
 
 export default class extends React.Component {
 
+	publish() {
+		console.log("PUBLISH");
+	}
+
 	render() {
+		const siteId = FlowRouter.getParam('siteId');
+		const linkWriter = `/${siteId}/writer`;
+		const linkPreview = `/${siteId}/preview`;
+		const linkSettings = `/${siteId}/settings`;
+		const linkAbout = `/${siteId}/about`;
 		return (
 			<div>
 
@@ -12,14 +21,11 @@ export default class extends React.Component {
 				</ol>
 
 				<ol className="no-bullets">
-					<li>Preview (hold alt)</li>
-					<li>Publish</li>
-					<li>Settings</li>
-					{/*domain*/}
-					{/*website variables*/}
-					{/*update website code*/}
-					{/*Delete website*/}
-					<li>About</li>
+					<li><a href={linkWriter}>Writer</a></li>
+					<li><a href={linkPreview}>Preview</a></li>
+					<li><a href="#" onClick={this.publish.bind(this)}>Publish</a></li>
+					<li><a href={linkSettings}>Settings</a></li>
+					<li><a href={linkAbout}>About</a></li>
 				</ol>
 
 				<ol className="no-bullets">

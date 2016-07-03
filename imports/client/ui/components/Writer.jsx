@@ -1,7 +1,7 @@
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import '/imports/G.js';
-import Loader from './Loader.jsx';
+import '/imports/api/sites/methods.js';
 
 export default class extends React.Component {
 
@@ -27,8 +27,6 @@ export default class extends React.Component {
 	}
 
 	render() {
-		if (!G.isDefined(this, 'props.site.content'))
-			return <Loader/>
 		let content = this.props.site.content
 		return (
 			<div>
