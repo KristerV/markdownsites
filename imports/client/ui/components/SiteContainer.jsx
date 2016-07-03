@@ -4,9 +4,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 import SiteWrapper from './SiteWrapper.jsx';
 import '/imports/api/sites/collection.js';
 
-export default SiteContainer = createContainer(({ params, content }) => {
-	params = params || {};
-	const siteId = params.siteId;
+export default SiteContainer = createContainer(({ siteId, content }) => {
 
 	// Create new site
 	if (!siteId) {

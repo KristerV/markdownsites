@@ -4,7 +4,8 @@ import MainLayout from "../ui/layouts/MainLayout.jsx";
 import SiteContainer from "../ui/components/SiteContainer.jsx";
 import Writer from "../ui/components/Writer.jsx";
 import Settings from "../ui/components/Settings.jsx";
-// import Preview from "../ui/components/Preview.jsx";
+import About from "../ui/components/About.jsx";
+import Marked from "../ui/components/Marked.jsx";
 
 FlowRouter.route('/', {
 	action: function (params, queryParams) {
@@ -15,7 +16,7 @@ FlowRouter.route('/', {
 FlowRouter.route('/:siteId', {
 	name: 'writer',
 	action: function (params, queryParams) {
-		mount(MainLayout, {content: <SiteContainer params={params} content={<Writer/>}/>});
+		mount(MainLayout, {content: <SiteContainer siteId={params.siteId} content={<Writer/>}/>});
 	}
 });
 
@@ -23,10 +24,11 @@ FlowRouter.route('/:siteId/:pageName', {
 	action: function (params, queryParams) {
 		let content
 		switch (params.pageName) {
-			case 'settings': content = <Settings params={params}/>; break;
-			// case 'preview': content = <Preview params={params}/>; break;
-			default: FlowRouter.go('writer', {siteId: params.siteId})
+			case 'settings': content = <Settings/>; break;
+			case 'preview': content = <Marked/>; break;
+			case 'about': content = <About/>; break;
+			default: content = <Writer/>
 		}
-		mount(MainLayout, {content: <SiteContainer params={params} content={content}/>});
+		mount(MainLayout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
 	}
 });

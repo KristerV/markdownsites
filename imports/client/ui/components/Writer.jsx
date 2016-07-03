@@ -30,7 +30,6 @@ export default class extends React.Component {
 		let content = this.props.site.content
 		return (
 			<div>
-				<div>content: {content}</div>
 				<textarea onChange={this.onChange} defaultValue={content}/>
 			</div>
 		)

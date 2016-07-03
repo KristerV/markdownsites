@@ -24,10 +24,7 @@ export default class extends React.Component {
 				</ol>
 
 				<ol className="no-bullets">
-					<li>Markdown</li>
-					<li>Layout</li>
-					<li>Form elements</li>
-					<li>hotkeys</li>
+					<li>Markdown cheatsheet</li>
 				</ol>
 
 			</div>
