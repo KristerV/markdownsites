@@ -9,7 +9,7 @@ export default class extends React.Component {
 		const linkPreview = `/${siteId}/preview`;
 		const linkSettings = `/${siteId}/settings`;
 		const linkAbout = `/${siteId}/about`;
-		const domain = siteId.indexOf('.') > -1 ? domain : null;
+		const domain = siteId.indexOf('.') > -1 ? siteId : null;
 		return (
 			<div>
 				{domain ? // If domain set
