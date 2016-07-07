@@ -2,11 +2,11 @@ import {check} from 'meteor/check';
 
 Meteor.methods({
 	'sites.new'() {
+		check(this.userId, String);
 		data = {
-			createdAt: new Date()
+			createdAt: new Date(),
+			owners: [this.userId]
 		};
-		if (this.userId)
-			data.userId = this.userId;
 		return SitesCollection.insert(data);
 	},
 	'sites.update'(siteId, data) {

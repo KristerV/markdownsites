@@ -21,3 +21,4 @@ less
 react-meteor-data
 accounts-base
 check
+artwells:accounts-guest
