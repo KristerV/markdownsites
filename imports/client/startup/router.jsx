@@ -7,18 +7,13 @@ import Settings from "../ui/components/Settings.jsx";
 import About from "../ui/components/About.jsx";
 import Marked from "../ui/components/Marked.jsx";
 import Loader from "../ui/components/Loader.jsx";
+import Sites from "/imports/api/sites/Sites.js";
 import Alert from 'react-s-alert';
 
 FlowRouter.route('/', {
 	action: function (params, queryParams) {
-		Meteor.call('sites.new', Meteor.userId(), (err, result) => {
-			if (err) {
-				console.warn(err);
-				Alert.error(err.reason);
-			}
-			else
-				FlowRouter.go(`/${result}`)
-		});
+		console.log("Sites", Sites);
+		Sites.createNew();
 		mount(Loader)
 	}
 });

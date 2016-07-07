@@ -4,10 +4,10 @@ Meteor.methods({
 	'sites.new'(userId) {
 		userId = userId || this.userId;
 		if (!userId)
-			return new Meteor.Error(403, "App error: guest didn't get authorization.")
+			throw new Meteor.Error(403, "App error: guest didn't get authorization.");
 		data = {
 			createdAt: new Date(),
-			owners: [this.userId]
+			owners: [userId]
 		};
 		return SitesCollection.insert(data);
 	},
@@ -19,13 +19,16 @@ Meteor.methods({
 			email: Match.Maybe(String)
 		});
 
-		const site = SitesCollection.findOne(siteId);
+		let domainExists = SitesCollection.findOne({'published.domain': data.domain});
+		let isOwner = SitesCollection.findOne({_id: siteId, owners: this.userId});
 
-		if (data.domain && data.domain === site.domain)
+		// No duplicate domains allowed
+		if (data.domain && data.domain === domainExists)
 			throw new Meteor.Error(403, 'Domain already in use');
 
-		else if (!site.ownerId || (this.userId && site.ownerId === this.userId))
-			return SitesCollection.update(siteId, {$set: data});
+		// User is owner: update
+		else if (this.userId && isOwner)
+			return SitesCollection.update(siteId, {$set: data}) ? 'Saved' : 'Error: how did we end up here?';
 
 		else
 			throw new Meteor.Error(403, 'Permission error');

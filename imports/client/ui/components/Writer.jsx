@@ -23,7 +23,7 @@ export default class extends React.Component {
 	}
 
 	updateContent() {
-		Meteor.call('sites.update', this.props.site._id, {content: this.value});
+		Meteor.call('sites.update', this.props.site._id, {content: this.value}, G.alertResult);
 	}
 
 	onChange(e) {
