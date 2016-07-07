@@ -1,5 +1,4 @@
 import React from 'react';
-import '../styles/elements.less';
 
 export default class extends React.Component {
 

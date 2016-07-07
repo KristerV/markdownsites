@@ -33,10 +33,11 @@ export default class extends React.Component {
 	}
 
 	render() {
-		let content = this.props.site.content
+		let content = this.props.site.content;
+		let preview = this.state.showPreview;
 		return (<div className="writer relative">
-				{this.state.showPreview ? <div className="absolute bg-white"><Marked {...this.props}/></div> : null}
-				<Textarea className="w100 padding bbb" onChange={this.onChange} defaultValue={content}/>
+				{preview ? <div className="absolute bg-white"><Marked {...this.props}/></div> : null}
+				<Textarea className={"w100 padding bbb" + (preview ? ' transparent' : '')} onChange={this.onChange} defaultValue={content}/>
 			</div>
 		)
 	}
