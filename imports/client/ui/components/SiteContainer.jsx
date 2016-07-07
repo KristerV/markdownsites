@@ -6,26 +6,12 @@ import '/imports/api/sites/collection.js';
 
 export default SiteContainer = createContainer(({ siteId, content }) => {
 
-	// Create new site
-	if (!siteId) {
-		Meteor.call('sites.new', (err, result) => {
-			if (err)
-				console.warn(err);
-			else
-				FlowRouter.go(`/${result}`)
-		});
-		return {subReady: false}
-	}
-
-	// Return site data
-	else {
-		const sitesSub = Meteor.subscribe('sites.single', siteId);
-		const site = SitesCollection.findOne();
-		return {
-			site,
-			subReady: sitesSub.ready(),
-			content: content
-		};
-	}
+	const sitesSub = Meteor.subscribe('sites.single', siteId);
+	const site = SitesCollection.findOne();
+	return {
+		site,
+		subReady: sitesSub.ready(),
+		content: content
+	};
 
 }, SiteWrapper);

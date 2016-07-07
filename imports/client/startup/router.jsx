@@ -6,10 +6,20 @@ import Writer from "../ui/components/Writer.jsx";
 import Settings from "../ui/components/Settings.jsx";
 import About from "../ui/components/About.jsx";
 import Marked from "../ui/components/Marked.jsx";
+import Loader from "../ui/components/Loader.jsx";
+import Alert from 'react-s-alert';
 
 FlowRouter.route('/', {
 	action: function (params, queryParams) {
-		mount(MainLayout, {content: <SiteContainer/>});
+		Meteor.call('sites.new', Meteor.userId(), (err, result) => {
+			if (err) {
+				console.warn(err);
+				Alert.error(err.reason);
+			}
+			else
+				FlowRouter.go(`/${result}`)
+		});
+		mount(Loader)
 	}
 });
 
@@ -24,10 +34,17 @@ FlowRouter.route('/:siteId/:pageName', {
 	action: function (params, queryParams) {
 		let content
 		switch (params.pageName) {
-			case 'settings': content = <Settings/>; break;
-			case 'preview': content = <Marked/>; break;
-			case 'about': content = <About/>; break;
-			default: content = <Writer/>
+			case 'settings':
+				content = <Settings/>;
+				break;
+			case 'preview':
+				content = <Marked/>;
+				break;
+			case 'about':
+				content = <About/>;
+				break;
+			default:
+				content = <Writer/>
 		}
 		mount(MainLayout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
 	}

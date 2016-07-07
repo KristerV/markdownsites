@@ -1,8 +1,10 @@
 import {check} from 'meteor/check';
 
 Meteor.methods({
-	'sites.new'() {
-		check(this.userId, String);
+	'sites.new'(userId) {
+		userId = userId || this.userId;
+		if (!userId)
+			return new Meteor.Error(403, "App error: guest didn't get authorization.")
 		data = {
 			createdAt: new Date(),
 			owners: [this.userId]

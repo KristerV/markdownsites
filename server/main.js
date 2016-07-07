@@ -6,4 +6,5 @@ import '/imports/api/sites/methods.js';
 import '/imports/api/sites/server/publish';
 
 Meteor.startup(() => {
+	AccountsGuest.anonymous = true;
 });
