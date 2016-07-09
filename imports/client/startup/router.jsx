@@ -1,6 +1,7 @@
 import React from "react";
 import {mount} from "react-mounter";
-import MainLayout from "../ui/layouts/MainLayout.jsx";
+import EditorLayout from "../ui/layouts/EditorLayout.jsx";
+import PublishedLayout from "../ui/layouts/PublishedLayout.jsx";
 import SiteContainer from "../ui/components/SiteContainer.jsx";
 import Writer from "../ui/components/Writer.jsx";
 import About from "../ui/components/About.jsx";
@@ -11,14 +12,21 @@ import Alert from 'react-s-alert';
 
 FlowRouter.route('/', {
 	action: function (params, queryParams) {
-		mount(MainLayout, {content: <SiteContainer content={<Writer/>}/>});
+		mount(EditorLayout, {content: <SiteContainer content={<Writer/>}/>});
 	}
 });
 
 FlowRouter.route('/:siteId', {
+	name: 'published',
+	action: function (params, queryParams) {
+		mount(PublishedLayout, {content: <SiteContainer siteId={params.siteId} content={<Marked/>}/>});
+	}
+});
+
+FlowRouter.route('/:siteId/writer', {
 	name: 'writer',
 	action: function (params, queryParams) {
-		mount(MainLayout, {content: <SiteContainer siteId={params.siteId} content={<Writer/>}/>});
+		mount(EditorLayout, {content: <SiteContainer siteId={params.siteId} content={<Writer/>} source="editing"/>});
 	}
 });
 
@@ -35,6 +43,6 @@ FlowRouter.route('/:siteId/:pageName', {
 			default:
 				content = <Writer/>
 		}
-		mount(MainLayout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
+		mount(EditorLayout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
 	}
 });

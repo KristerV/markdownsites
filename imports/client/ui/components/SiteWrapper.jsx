@@ -8,8 +8,11 @@ export default class extends React.Component {
 			return <Loader/>;
 
 		let content = this.props.content;
-		const site = this.props.site;
-		content = React.cloneElement(content, {site: site});
+		let props = {
+			site: this.props.site,
+			source: this.props.source || 'published'
+		}
+		content = React.cloneElement(content, props);
 
 		return (<div className="wh100">
 			{content}

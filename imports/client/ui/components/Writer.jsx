@@ -10,7 +10,7 @@ export default class extends React.Component {
 		super(props);
 		this.updateTimerDelay = 3000;
 		this.updateTimer = null;
-		this.markdown = this.props.site.content;
+		this.markdown = G.ifDefined(this, 'props.site.editing.content', "");
 
 		this.state = {
 			showPreview: false
@@ -20,9 +20,10 @@ export default class extends React.Component {
 		this.onChange = this.onChange.bind(this);
 		this.componentDidMount = this.componentDidMount.bind(this);
 		this.update = this.update.bind(this);
+		this.publish = this.publish.bind(this);
 	}
 
-	update(e) {
+	update(e, callback) {
 		let id = G.isDefined(this, "props.site") ? this.props.site._id : null;
 
 		let data = {};
@@ -31,7 +32,8 @@ export default class extends React.Component {
 		else
 			data = {'content': this.markdown};
 
-		Meteor.call("sites.upsert", id, data, Sites.useResults);
+		callback = callback || Sites.useResults;
+		Meteor.call("sites.upsert", id, data, callback);
 	}
 
 	onChange(e) {
@@ -40,16 +42,21 @@ export default class extends React.Component {
 		this.updateTimer = Meteor.setTimeout(this.update.bind(this), this.updateTimerDelay);
 	}
 
+	publish() {
+		this.update(null, () => {
+			Meteor.call('sites.publish', this.props.site._id, Sites.useResults);
+		})
+	}
+
 	render() {
-		let content = this.props.site.content;
 		let preview = this.state.showPreview;
 		return (<div className="writer relative">
 				<div>
 					<span>domain</span>
-					<input defaultValue={this.props.site.domain} name="domain" onBlur={this.update.bind(this)}/>
+					<input defaultValue={G.ifDefined(this, 'props.site.editing.domain', "")} name="domain" onBlur={this.update}/>
 					<span>Owners email</span>
-					<input type="email" defaultValue={this.props.site.email} name="email" onBlur={this.update.bind(this)}/>
-					<button>Publish</button>
+					<input type="email" defaultValue={G.ifDefined(this, 'props.site.editing.email', "")} name="email" onBlur={this.update}/>
+					<button onClick={this.publish}>Publish</button>
 				</div>
 				<div>
 					{preview ? <div className="absolute w100"><Marked {...this.props}/></div> : null}
@@ -57,7 +64,7 @@ export default class extends React.Component {
 						className={"w100 padding bbb" + (preview ? ' transparent' : '')}
 						name="content"
 						onChange={this.onChange}
-						defaultValue={content}
+						defaultValue={this.markdown}
 						autoFocus={true}
 					/>
 				</div>

@@ -9,8 +9,14 @@ Meteor.methods({
 			email: Match.Maybe(String)
 		});
 
-		let domainExists = data.domain ? SitesCollection.findOne({'published.domain': data.domain}) : false;
-		let isOwner = siteId ? SitesCollection.findOne({_id: siteId, owners: this.userId}) : true;
+		// No duplicate domains allowed
+		const domainExists = data.domain ? SitesCollection.findOne({
+			$or: [
+				{'published.domain': data.domain},
+				{'editing.domain': data.domain}
+			]}) : false;
+		if (domainExists)
+			throw new Meteor.Error(403, 'Domain already in use');
 
 		// Don't allow accidental overwriting with empty content
 		if ("content" in data && !data.content)
@@ -18,26 +24,55 @@ Meteor.methods({
 
 		// New site
 		if (!siteId) {
+
 			if (!this.userId)
 				throw new Meteor.Error(403, "Guest id not generated yet");
-			data.owners = [this.userId]
-			return {newId: SitesCollection.insert(data), msg: "Autosave is enabled"};
+
+			let insert = {
+				editors: [this.userId],
+				createdAt: new Date(),
+				editing: data
+			};
+			return {newId: SitesCollection.insert(insert), msg: "Autosave is enabled"};
 		}
 
-		// No duplicate domains allowed
-		else if (data.domain && data.domain === domainExists)
-			throw new Meteor.Error(403, 'Domain already in use');
+		// User is editor: update
+		const site = SitesCollection.findOne({_id: siteId, editors: this.userId});
+		if (this.userId && site) {
 
-		// User is owner: update
-		else if (this.userId && isOwner) {
-			const result = SitesCollection.update(siteId, {$set: data});
+			const editing = _.extend(site.editing, data);
+			const result = SitesCollection.update(siteId, {$set: {editing}});
+
 			if (data.domain)
 				return {msg: "Domain updated", newId: data.domain};
 			else
 				return result
 		}
 
-		else
-			throw new Meteor.Error(403, 'Permission error');
+		throw new Meteor.Error(403, 'Permission error');
 	},
+	'sites.publish'(siteId) {
+		check(siteId, String);
+		check(this.userId, String);
+
+		const site = SitesCollection.findOne({_id: siteId, editors: this.userId});
+
+		let errors = [];
+		if (!site.editing.domain)
+			errors.push('domain');
+		if (!site.editing.email)
+			errors.push('email');
+		if (!site.editing.content)
+			errors.push('content');
+		if (!_.isEmpty(errors))
+			throw new Meteor.Error(403, "Missing information: " + errors.join(' '))
+
+		if (site) {
+			const data = site.editing;
+			SitesCollection.update(siteId, {$set: {published: data}, $addToSet: {history: data}});
+			const url = Meteor.absoluteUrl() + data.domain;
+			return {msg: `Site is now live at <a target="_blank" href="${url}">${url}</a>`, timeout: 15000};
+		}
+		
+	}
 });

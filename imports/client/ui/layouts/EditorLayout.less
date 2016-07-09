@@ -1,7 +1,7 @@
+@import './Layouts.less';
 @menuWidth: 250px;
-@mainMaxWidth: 900px;
 
-.MainLayout {
+.EditorLayout {
 	background-color: grey;
 	nav {
 		width: @menuWidth;
@@ -29,7 +29,7 @@
 }
 
 @media (max-width: (@menuWidth * 3)) {
-	.MainLayout {
+	.EditorLayout {
 		nav {
 			width: 100%;
 			div:nth-child(1) {

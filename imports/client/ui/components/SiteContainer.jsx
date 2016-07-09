@@ -17,8 +17,8 @@ export default SiteContainer = createContainer(({ siteId, content }) => {
 	const site = SitesCollection.findOne();
 
 	// Force url to use domain instead of _id
-	if (site && site.domain && site.domain !== FlowRouter.getParam('siteId'))
-		FlowRouter.go('writer', {siteId: site.domain});
+	if (G.isDefined(site, 'editing.domain') && site.editing.domain !== FlowRouter.getParam('siteId'))
+		FlowRouter.go('writer', {siteId: site.editing.domain});
 
 	return {
 		site,
