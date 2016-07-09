@@ -22,3 +22,5 @@ react-meteor-data
 accounts-base
 check
 artwells:accounts-guest
+accounts-password
+email

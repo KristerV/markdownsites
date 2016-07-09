@@ -14,13 +14,19 @@ Meteor.methods({
 			$or: [
 				{'published.domain': data.domain},
 				{'editing.domain': data.domain}
-			]}) : false;
+			]
+		}) : false;
 		if (domainExists)
 			throw new Meteor.Error(403, 'Domain already in use');
 
 		// Don't allow accidental overwriting with empty content
 		if ("content" in data && !data.content)
 			throw new Meteor.Error(403, 'Empty content overwriting disabled');
+
+		// Send login email when updating email
+		if (data.email && siteId)
+			Meteor.call('sites.addEditor', siteId, {email: data.email});
+
 
 		// New site
 		if (!siteId) {
@@ -73,6 +79,28 @@ Meteor.methods({
 			const url = Meteor.absoluteUrl() + data.domain;
 			return {msg: `Site is now live at <a target="_blank" href="${url}">${url}</a>`, timeout: 15000};
 		}
-		
+
+	},
+	'sites.addEditor'(siteId, data) {
+		check(data, {
+			email: Match.Maybe(String),
+			userId: Match.Maybe(String)
+		});
+		check(siteId, String);
+		check(this.userId, String);
+
+		function commitAdd(siteId, userId) {
+			return SitesCollection.update(siteId, {$addToSet: {editors: userId}});
+		}
+
+		if (data.email && !data.userId) {
+			Accounts.sendLoginEmail(data.email, function (result) {
+				commitAdd(siteId, result.userId);
+			})
+		} else {
+			const site = SitesCollection.findOne({_id: siteId, editors: this.userId});
+			if (site)
+				return commitAdd(siteId, this.userId)
+		}
 	}
 });

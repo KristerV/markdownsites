@@ -16,6 +16,19 @@ FlowRouter.route('/', {
 	}
 });
 
+
+FlowRouter.route('/login/:token', {
+	name: 'login-token',
+	action: function (params) {
+		Meteor.loginWithToken(params.token, function (err, result) {
+			if (err) {
+				sAlert.error(err.reason)
+			}
+			FlowRouter.go('/')
+		})
+	}
+});
+
 FlowRouter.route('/:siteId', {
 	name: 'published',
 	action: function (params, queryParams) {

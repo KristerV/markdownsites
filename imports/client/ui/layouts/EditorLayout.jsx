@@ -4,15 +4,15 @@ import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/bouncyflip.css';
 
-import NavBar from '../components/NavBar.jsx';
+import NavBarContainer from '../components/NavBarContainer.jsx';
 
 export default class extends React.Component {
 
 	render() {
 		return (<div className="wh100 EditorLayout">
 				<nav>
-					<NavBar/>
-					<NavBar/>
+					<NavBarContainer/>
+					<NavBarContainer/>
 				</nav>
 				<main>
 					{this.props.content}

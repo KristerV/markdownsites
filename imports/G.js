@@ -1,5 +1,6 @@
 import Alert from 'react-s-alert';
 
+// G as in Global helpers
 G = {
 	isDefined: (variable, path) => {
 		let list = path.split('.');
@@ -60,4 +61,7 @@ G = {
 			.split('\n');
 		console.info(stack)
 	},
+	isEmail(email) {
+		return /^[^@]+@[^@]+\.[^@]+$/.test(email)
+	}
 }

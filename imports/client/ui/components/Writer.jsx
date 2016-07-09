@@ -32,6 +32,11 @@ export default class extends React.Component {
 		else
 			data = {'content': this.markdown};
 
+		// Previewing empty content
+		const values = _.values(data);
+		if (values.length === 1 && values[0] === null)
+			return false;
+
 		callback = callback || Sites.useResults;
 		Meteor.call("sites.upsert", id, data, callback);
 	}
