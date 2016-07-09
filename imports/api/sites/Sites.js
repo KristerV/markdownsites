@@ -11,8 +11,6 @@ Sites = {
 					FlowRouter.go('writer', {siteId: res.newId});
 				if (res.msg)
 					Alert.success(res.msg);
-			} else {
-				Alert.success("Update successful");
 			}
 		}
 	}

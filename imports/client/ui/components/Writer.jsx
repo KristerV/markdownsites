@@ -10,7 +10,7 @@ export default class extends React.Component {
 		super();
 		this.updateTimerDelay = 3000;
 		this.updateTimer = null;
-		this.value = "";
+		this.markdown = "";
 
 		this.state = {
 			showPreview: false
@@ -24,11 +24,11 @@ export default class extends React.Component {
 
 	updateContent() {
 		let id = this.props.site ? this.props.site._id : null;
-		Meteor.call("sites.upsert", id, {content: this.value}, Sites.useResults);
+		Meteor.call("sites.upsert", id, {content: this.markdown}, Sites.useResults);
 	}
 
 	onChange(e) {
-		this.value = e.target.value;
+		this.markdown = e.target.value;
 		Meteor.clearTimeout(this.updateTimer);
 		this.updateTimer = Meteor.setTimeout(this.updateContent, this.updateTimerDelay);
 	}
@@ -53,6 +53,7 @@ export default class extends React.Component {
 		$('.writer').keydown((e) => {
 			if (e.which === 18) {
 				this.setState({showPreview: true})
+				this.updateContent().bind(this)
 			}
 		});
 		$('.writer').keyup((e) => {
