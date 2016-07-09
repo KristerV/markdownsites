@@ -6,6 +6,13 @@ import '/imports/api/sites/collection.js';
 
 export default SiteContainer = createContainer(({ siteId, content }) => {
 
+	if (!siteId)
+		return {
+			site: {},
+			subReady: true,
+			content: content
+		}
+
 	const sitesSub = Meteor.subscribe('sites.single', siteId);
 	const site = SitesCollection.findOne();
 	return {

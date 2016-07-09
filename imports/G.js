@@ -15,13 +15,5 @@ G = {
 			Alert.error(err.reason);
 		else if (result)
 			Alert.success(result);
-	},
-	checkUserId: () => {
-		let id = Meteor.userId();
-		console.log("id", id);
-		if (id)
-			console.log("checkUserId", id);
-		else
-			Meteor.setTimeout(G.checkUserId, 10);
 	}
 }

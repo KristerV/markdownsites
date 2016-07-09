@@ -12,9 +12,7 @@ import Alert from 'react-s-alert';
 
 FlowRouter.route('/', {
 	action: function (params, queryParams) {
-		console.log("Sites", Sites);
-		Sites.createNew();
-		mount(Loader)
+		mount(MainLayout, {content: <SiteContainer content={<Writer/>}/>});
 	}
 });
 

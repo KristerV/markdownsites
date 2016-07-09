@@ -1,18 +1,19 @@
+import Alert from 'react-s-alert';
+
 Sites = {
-	createNew: () => {
-		let userId = Meteor.userId();
-		if (userId) {
-			console.log("do new");
-			Meteor.call('sites.new', userId, (err, result) => {
-				if (err) {
-					Alert.error(err.reason);
-				} else {
-					FlowRouter.go(`/${result}`)
-				}
-			});
-		} else {
-			console.log("wait");
-			Meteor.setTimeout(Sites.createNew, 200);
+	useResults: (err, res) => {
+		if (err) {
+			Alert.error(err.reason);
+			console.error(err)
+		} else if (res) {
+			if (_.isObject(res)) {
+				if (res.newId)
+					FlowRouter.go('writer', {siteId: res.newId});
+				if (res.msg)
+					Alert.success(res.msg);
+			} else {
+				Alert.success("Update successful");
+			}
 		}
-	} 
+	}
 }

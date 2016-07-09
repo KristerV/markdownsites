@@ -8,7 +8,7 @@ export default class extends React.Component {
 		const linkPreview = `/${siteId}/preview`;
 		const linkSettings = `/${siteId}/settings`;
 		const linkAbout = `/${siteId}/about`;
-		const domain = siteId.indexOf('.') > -1 ? siteId : null;
+		const domain = siteId && siteId.includes('.') ? siteId : null; // Data isn't here so use router params
 		return (
 			<div>
 				{domain ? // If domain set

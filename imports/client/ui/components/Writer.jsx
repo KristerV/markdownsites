@@ -8,7 +8,7 @@ export default class extends React.Component {
 
 	constructor() {
 		super();
-		this.updateTimerDelay = 1000;
+		this.updateTimerDelay = 3000;
 		this.updateTimer = null;
 		this.value = "";
 
@@ -23,7 +23,8 @@ export default class extends React.Component {
 	}
 
 	updateContent() {
-		Meteor.call('sites.update', this.props.site._id, {content: this.value}, G.alertResult);
+		let id = this.props.site ? this.props.site._id : null;
+		Meteor.call("sites.upsert", id, {content: this.value}, Sites.useResults);
 	}
 
 	onChange(e) {
@@ -37,7 +38,12 @@ export default class extends React.Component {
 		let preview = this.state.showPreview;
 		return (<div className="writer relative">
 				{preview ? <div className="absolute bg-white"><Marked {...this.props}/></div> : null}
-				<Textarea className={"w100 padding bbb" + (preview ? ' transparent' : '')} onChange={this.onChange} defaultValue={content}/>
+				<Textarea
+					className={"w100 padding bbb" + (preview ? ' transparent' : '')}
+					onChange={this.onChange}
+					defaultValue={content}
+					autoFocus={true}
+				/>
 			</div>
 		)
 	}

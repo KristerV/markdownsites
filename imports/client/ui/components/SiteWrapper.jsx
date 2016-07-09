@@ -7,7 +7,9 @@ export default class extends React.Component {
 		if (!this.props.subReady)
 			return <Loader/>;
 
-		const content = React.cloneElement(this.props.content, {site: this.props.site});
+		let content = this.props.content;
+		const site = this.props.site;
+		content = React.cloneElement(content, {site: site});
 
 		return (<div className="wh100">
 			{content}

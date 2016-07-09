@@ -4,7 +4,7 @@ import Alert from 'react-s-alert';
 export default class extends React.Component {
 
 	updateValues(e) {
-		Meteor.call('sites.update', this.props.site._id, {[e.target.name]: e.target.value}, (err, res) => {
+		Meteor.call("sites.upsert", this.props.site._id, {[e.target.name]: e.target.value}, (err, res) => {
 			if (err)
 				Alert.error(err.reason);
 			else if (res)
