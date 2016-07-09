@@ -11,7 +11,7 @@ export default class extends React.Component {
 			breaks: true
 		});
 		return (
-			<div className="padding bbb" dangerouslySetInnerHTML={{__html: md.render(this.props.site.content)}}></div>
+			<div className="padding bbb w100 bg-white" dangerouslySetInnerHTML={{__html: md.render(this.props.site.content)}}></div>
 		)
 	}
 

@@ -6,11 +6,11 @@ import Textarea from 'react-autosize-textarea';
 
 export default class extends React.Component {
 
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		this.updateTimerDelay = 3000;
 		this.updateTimer = null;
-		this.markdown = "";
+		this.markdown = this.props.site.content;
 
 		this.state = {
 			showPreview: false
@@ -37,7 +37,7 @@ export default class extends React.Component {
 		let content = this.props.site.content;
 		let preview = this.state.showPreview;
 		return (<div className="writer relative">
-				{preview ? <div className="absolute bg-white"><Marked {...this.props}/></div> : null}
+				{preview ? <div className="absolute w100"><Marked {...this.props}/></div> : null}
 				<Textarea
 					className={"w100 padding bbb" + (preview ? ' transparent' : '')}
 					onChange={this.onChange}
@@ -49,16 +49,17 @@ export default class extends React.Component {
 	}
 
 	componentDidMount() {
+		_this = this;
 		// Alt preview
 		$('.writer').keydown((e) => {
 			if (e.which === 18) {
-				this.setState({showPreview: true})
-				this.updateContent().bind(this)
+				_this.setState({showPreview: true});
+				_this.updateContent();
 			}
 		});
 		$('.writer').keyup((e) => {
 			if (e.which === 18) {
-				this.setState({showPreview: false})
+				_this.setState({showPreview: false});
 			}
 		});
 	}

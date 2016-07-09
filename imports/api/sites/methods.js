@@ -12,10 +12,14 @@ Meteor.methods({
 		let domainExists = data.domain ? SitesCollection.findOne({'published.domain': data.domain}) : false;
 		let isOwner = siteId ? SitesCollection.findOne({_id: siteId, owners: this.userId}) : true;
 
+		// Don't allow accidental overwriting with empty content
+		if ("content" in data && !data.content)
+			throw new Meteor.Error(403, 'Empty content overwriting disabled');
+
 		// New site
 		if (!siteId) {
 			if (!this.userId)
-				throw new Meteor.Error(403, "Guest id not generated yet")
+				throw new Meteor.Error(403, "Guest id not generated yet");
 			data.owners = [this.userId]
 			return {newId: SitesCollection.insert(data), msg: "Autosave is enabled"};
 		}
