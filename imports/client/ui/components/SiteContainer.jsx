@@ -15,6 +15,11 @@ export default SiteContainer = createContainer(({ siteId, content }) => {
 
 	const sitesSub = Meteor.subscribe('sites.single', siteId);
 	const site = SitesCollection.findOne();
+
+	// Force url to use domain instead of _id
+	if (site && site.domain && site.domain !== FlowRouter.getParam('siteId'))
+		FlowRouter.go('writer', {siteId: site.domain});
+
 	return {
 		site,
 		subReady: sitesSub.ready(),
