@@ -29,8 +29,13 @@ Meteor.methods({
 			throw new Meteor.Error(403, 'Domain already in use');
 
 		// User is owner: update
-		else if (this.userId && isOwner)
-			return SitesCollection.update(siteId, {$set: data});
+		else if (this.userId && isOwner) {
+			const result = SitesCollection.update(siteId, {$set: data});
+			if (data.domain)
+				return {msg: "Domain updated", newId: data.domain};
+			else
+				return result
+		}
 
 		else
 			throw new Meteor.Error(403, 'Permission error');

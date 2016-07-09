@@ -3,7 +3,6 @@ import {mount} from "react-mounter";
 import MainLayout from "../ui/layouts/MainLayout.jsx";
 import SiteContainer from "../ui/components/SiteContainer.jsx";
 import Writer from "../ui/components/Writer.jsx";
-import Settings from "../ui/components/Settings.jsx";
 import About from "../ui/components/About.jsx";
 import Marked from "../ui/components/Marked.jsx";
 import Loader from "../ui/components/Loader.jsx";
@@ -27,9 +26,6 @@ FlowRouter.route('/:siteId/:pageName', {
 	action: function (params, queryParams) {
 		let content
 		switch (params.pageName) {
-			case 'settings':
-				content = <Settings/>;
-				break;
 			case 'preview':
 				content = <Marked/>;
 				break;

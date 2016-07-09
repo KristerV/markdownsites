@@ -19,31 +19,48 @@ export default class extends React.Component {
 		// http://stackoverflow.com/questions/33457220/onchange-callback-not-firing-in-react-component
 		this.onChange = this.onChange.bind(this);
 		this.componentDidMount = this.componentDidMount.bind(this);
-		this.updateContent = this.updateContent.bind(this);
+		this.update = this.update.bind(this);
 	}
 
-	updateContent() {
-		let id = this.props.site ? this.props.site._id : null;
-		Meteor.call("sites.upsert", id, {content: this.markdown}, Sites.useResults);
+	update(e) {
+		let id = G.isDefined(this, "props.site") ? this.props.site._id : null;
+
+		let data = {};
+		if (G.isDefined(e, 'target.name') && e.target.name !== 'content')
+			data = {[e.target.name]: e.target.value};
+		else
+			data = {'content': this.markdown};
+
+		Meteor.call("sites.upsert", id, data, Sites.useResults);
 	}
 
 	onChange(e) {
 		this.markdown = e.target.value;
 		Meteor.clearTimeout(this.updateTimer);
-		this.updateTimer = Meteor.setTimeout(this.updateContent, this.updateTimerDelay);
+		this.updateTimer = Meteor.setTimeout(this.update.bind(this), this.updateTimerDelay);
 	}
 
 	render() {
 		let content = this.props.site.content;
 		let preview = this.state.showPreview;
 		return (<div className="writer relative">
-				{preview ? <div className="absolute w100"><Marked {...this.props}/></div> : null}
-				<Textarea
-					className={"w100 padding bbb" + (preview ? ' transparent' : '')}
-					onChange={this.onChange}
-					defaultValue={content}
-					autoFocus={true}
-				/>
+				<div>
+					<span>domain</span>
+					<input defaultValue={this.props.site.domain} name="domain" onBlur={this.update.bind(this)}/>
+					<span>Owners email</span>
+					<input type="email" defaultValue={this.props.site.email} name="email" onBlur={this.update.bind(this)}/>
+					<button>Publish</button>
+				</div>
+				<div>
+					{preview ? <div className="absolute w100"><Marked {...this.props}/></div> : null}
+					<Textarea
+						className={"w100 padding bbb" + (preview ? ' transparent' : '')}
+						name="content"
+						onChange={this.onChange}
+						defaultValue={content}
+						autoFocus={true}
+					/>
+				</div>
 			</div>
 		)
 	}
@@ -54,7 +71,7 @@ export default class extends React.Component {
 		$('.writer').keydown((e) => {
 			if (e.which === 18) {
 				_this.setState({showPreview: true});
-				_this.updateContent();
+				_this.update();
 			}
 		});
 		$('.writer').keyup((e) => {
