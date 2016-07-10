@@ -18,7 +18,7 @@ export default class extends React.Component {
 					<ol className="no-bullets">
 						{sites.map((item, i) => {
 							return <a className="block" key={i}
-									  href={`/${item.editing.domain}/writer`}>{item.editing.domain}</a>
+									  href={`/${item.editing.domain || item._id}/writer`}>{item.editing.domain || 'new'}</a>
 						})}
 						<li><a href="#" onClick={this.newSite}>New site</a></li>
 					</ol>
