@@ -56,22 +56,33 @@ export default class extends React.Component {
 	render() {
 		let preview = this.state.showPreview;
 		return (<div className="writer relative">
-				<div>
-					<span>domain</span>
-					<input defaultValue={G.ifDefined(this, 'props.site.editing.domain', "")} name="domain" onBlur={this.update}/>
-					<span>Owners email</span>
-					<input type="email" defaultValue={G.ifDefined(this, 'props.site.editing.email', "")} name="email" onBlur={this.update}/>
-					<button onClick={this.publish}>Publish</button>
-				</div>
-				<div>
-					{preview ? <div className="absolute w100"><Marked {...this.props}/></div> : null}
-					<Textarea
-						className={"w100 padding bbb" + (preview ? ' transparent' : '')}
-						name="content"
-						onChange={this.onChange}
-						defaultValue={this.markdown}
-						autoFocus={true}
-					/>
+				<div className="ui form">
+					<div className="fields">
+						<div className="field">
+							<label>Domain</label>
+							<input defaultValue={G.ifDefined(this, 'props.site.editing.domain', "")} name="domain" onBlur={this.update}/>
+						</div>
+						<div className="field">
+							<label>Owners email</label>
+							<input type="email" defaultValue={G.ifDefined(this, 'props.site.editing.email', "")} name="email" onBlur={this.update}/>
+						</div>
+						<div className="field">
+							<label>&nbsp;</label>
+							<button className="ui button primary" onClick={this.publish}>Publish</button>
+						</div>
+					</div>
+					<div className="field relative">
+						<label>Markdown</label>
+						<Textarea
+							className={"w100 padding bbb" + (preview ? ' transparent' : '')}
+							name="content"
+							onChange={this.onChange}
+							defaultValue={this.markdown}
+							autoFocus={true}
+							rows={5}
+						/>
+						{preview ? <div className="absolute w100 top0"><Marked {...this.props}/></div> : null}
+					</div>
 				</div>
 			</div>
 		)

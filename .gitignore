@@ -2,3 +2,5 @@ node_modules/
 settings.json
 .idea/*
 .meteor/dev_bundle
+client/semantic-ui/*
+!client/semantic-ui/custom.semantic.json
