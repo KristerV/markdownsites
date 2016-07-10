@@ -14,15 +14,15 @@ export default class extends React.Component {
 		const sites = this.props.sites || [];
 		return (
 			<div>
-
-				<ol className="no-bullets">
-					{sites.map((item, i) => {
-						return <a className="block" key={i}
-								  href={`/${item.editing.domain}/writer`}>{item.editing.domain}</a>
-					})}
-					<li><a href="#" onClick={this.newSite}>New site</a></li>
-				</ol>
-
+				{Meteor.user() && Meteor.user().getEmail() ?
+					<ol className="no-bullets">
+						{sites.map((item, i) => {
+							return <a className="block" key={i}
+									  href={`/${item.editing.domain}/writer`}>{item.editing.domain}</a>
+						})}
+						<li><a href="#" onClick={this.newSite}>New site</a></li>
+					</ol>
+				: null}
 				<ol className="no-bullets">
 					<li><a href={linkAbout}>About</a></li>
 					<li>Markdown on/off</li>
