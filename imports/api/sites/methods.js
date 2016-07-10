@@ -7,7 +7,7 @@ Meteor.methods({
 			content: Match.Maybe(String),
 			domain: Match.Maybe(String),
 			email: Match.Maybe(String)
-		});
+		}, 'Sites.upsert data missing');
 
 		// No duplicate domains allowed
 		const domainExists = data.domain ? SitesCollection.findOne({
@@ -58,8 +58,8 @@ Meteor.methods({
 		throw new Meteor.Error(403, 'Permission error');
 	},
 	'sites.publish'(siteId) {
-		check(siteId, String);
-		check(this.userId, String);
+		check(siteId, String, 'SiteId neede for publishing site');
+		check(this.userId, String, 'Strangers can\'t publish sites');
 
 		const site = SitesCollection.findOne({_id: siteId, editors: this.userId});
 
