@@ -72,7 +72,7 @@ export default class extends React.Component {
 						</div>
 					</div>
 					<div className="field relative">
-						<label>Markdown</label>
+						<label>Markdown <span className="see-through text-normal">(hold alt for preview)</span></label>
 						<Textarea
 							className={"w100 padding bbb" + (preview ? ' transparent' : '')}
 							name="content"
