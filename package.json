@@ -16,9 +16,7 @@
     "react-mounter": "^1.2.0",
     "react-s-alert": "^1.1.4",
     "remarkable": "^1.6.2",
-    "textarea": "^0.3.0"
-  },
-  "devDependencies": {
+    "textarea": "^0.3.0",
     "autoprefixer": "^6.3.1"
   },
   "postcss": {
