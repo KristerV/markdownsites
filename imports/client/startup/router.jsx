@@ -32,6 +32,12 @@ FlowRouter.route('/login/:token', {
 FlowRouter.route('/:siteId', {
 	name: 'published',
 	action: function (params, queryParams) {
+		console.log("FlowRouter", FlowRouter);
+		console.log("Meteor.absoluteUrl()", Meteor.absoluteUrl());
+		console.log("window.location", window.location);
+		console.log("window.location.href", window.location.href);
+		console.log("document.URL", document.URL);
+		console.log("window.location.pathname", window.location.pathname);
 		mount(PublishedLayout, {content: <SiteContainer siteId={params.siteId} content={<Marked/>}/>});
 	}
 });

@@ -29,5 +29,8 @@
         ]
       }
     }
+  },
+  "scripts": {
+    "deploy": "DEPLOY_HOSTNAME=eu-west-1.galaxy.meteor.com meteor deploy markdownsites.com --settings settings.json"
   }
 }
