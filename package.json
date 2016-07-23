@@ -2,10 +2,13 @@
   "name": "markdownsites",
   "private": true,
   "scripts": {
-    "start": "meteor run"
+    "deploy": "DEPLOY_HOSTNAME=eu-west-1.galaxy.meteor.com meteor deploy markdownsites.com --settings settings.json"
   },
   "dependencies": {
+    "2checkout-node": "0.0.1",
+    "autoprefixer": "^6.3.1",
     "meteor-node-stubs": "~0.2.0",
+    "namecheap": "0.0.1",
     "object-assign": "^4.1.0",
     "react": "^15.2.1",
     "react-addons-pure-render-mixin": "^15.2.1",
@@ -16,8 +19,7 @@
     "react-mounter": "^1.2.0",
     "react-s-alert": "^1.1.4",
     "remarkable": "^1.6.2",
-    "textarea": "^0.3.0",
-    "autoprefixer": "^6.3.1"
+    "textarea": "^0.3.0"
   },
   "postcss": {
     "plugins": {
@@ -27,8 +29,5 @@
         ]
       }
     }
-  },
-  "scripts": {
-    "deploy": "DEPLOY_HOSTNAME=eu-west-1.galaxy.meteor.com meteor deploy markdownsites.com --settings settings.json"
   }
 }

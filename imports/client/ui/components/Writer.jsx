@@ -2,6 +2,7 @@ import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import '/imports/G.js';
 import Marked from './Marked.jsx';
+import TwoCheckout from './TwoCheckout.jsx';
 import Textarea from 'react-autosize-textarea';
 
 export default class extends React.Component {
@@ -61,6 +62,7 @@ export default class extends React.Component {
 						<div className="field">
 							<label>Domain</label>
 							<input defaultValue={G.ifDefined(this, 'props.site.editing.domain', "")} name="domain" onBlur={this.update}/>
+							<TwoCheckout domain={G.ifDefined(this, 'props.site.editing.domain')}/>
 						</div>
 						<div className="field">
 							<label>Owners email</label>
