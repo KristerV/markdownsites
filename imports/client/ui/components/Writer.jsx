@@ -2,7 +2,7 @@ import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import '/imports/G.js';
 import Marked from './Marked.jsx';
-import TwoCheckout from './TwoCheckout.jsx';
+import TwoCheckout from './Payment.jsx';
 import Textarea from 'react-autosize-textarea';
 
 export default class extends React.Component {

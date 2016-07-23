@@ -5,8 +5,9 @@
     "deploy": "DEPLOY_HOSTNAME=eu-west-1.galaxy.meteor.com meteor deploy markdownsites.com --settings settings.json"
   },
   "dependencies": {
-    "2checkout-node": "0.0.1",
     "autoprefixer": "^6.3.1",
+    "braintree-react": "^3.2.1",
+    "braintree-web": "^2.27.0",
     "meteor-node-stubs": "~0.2.0",
     "namecheap": "0.0.1",
     "object-assign": "^4.1.0",
