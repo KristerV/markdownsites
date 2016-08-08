@@ -7,20 +7,21 @@ namecheap.config.set("ClientIp", Meteor.settings.NAMECHEAP_CLIENTIP);
 Meteor.methods({
 	'domain.isAvailable'(siteId, domain) {
 		Meteor.call('sites.upsert', siteId, {domainAvailable: "checking"});
-		namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, Meteor.settings.NAMECHEAP_SANDBOXMODE).then(data => {
-			console.log("Done");
+		return namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, Meteor.settings.NAMECHEAP_SANDBOXMODE).then(data => {
+			
 			const domainlist = data.response[0].DomainCheckResult;
 			if (domainlist && domainlist.length === 1) {
 				const domain = d[0].Domain;
-				const available = d[0].Available ? 'available' : 'taken';
-				console.log("CALL 1");
-				Meteor.call('domain.updateAvailability', siteId, domain, available);
-
+				const available = d[0].Available;
+				return {result: 1, domain, available}
 			}
+			return {result: 0, msg: "not sure what happened"}
+
 		}).catch(data => {
-			console.log("catch");
+
 			const domain = data.requestPayload.DomainList;
 			const errorcode = parseInt(data.response.message.substring(0, 7));
+
 			let msg = "";
 			switch (errorcode) {
 				case 2030280:
@@ -29,8 +30,7 @@ Meteor.methods({
 				default:
 					msg = data.response.toString()
 			}
-			console.log("CALL 2");
-			Meteor.call('domain.updateAvailability', siteId, domain, msg);
+			return {result: 0, msg}
 		});
 	},
 	'domain.updateAvailability'(siteId, domain, message) {

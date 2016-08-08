@@ -56,7 +56,10 @@ export default class extends React.Component {
 
 	render() {
 		if (G.ifDefined(this, 'props.site.editing.domain')) {
-			Meteor.call('domain.isAvailable', this.props.site._id, this.props.site.editing.domain);
+			Meteor.call('domain.isAvailable', this.props.site._id, this.props.site.editing.domain, (err, res) => {
+				console.log("err", err);
+				console.log("res", res);
+			});
 		}
 		let preview = this.state.showPreview;
 		return (<div className="writer relative">
