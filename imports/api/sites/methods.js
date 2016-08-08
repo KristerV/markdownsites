@@ -2,11 +2,13 @@ import {check} from 'meteor/check';
 
 Meteor.methods({
 	'sites.upsert'(siteId, data) {
+		console.log("upsert data", data);
 		check(siteId, Match.Maybe(String));
 		check(data, {
 			content: Match.Maybe(String),
 			domain: Match.Maybe(String),
-			email: Match.Maybe(String)
+			email: Match.Maybe(String),
+			domainAvailable: Match.Maybe(String)
 		}, 'Sites.upsert data missing');
 
 		// No duplicate domains allowed

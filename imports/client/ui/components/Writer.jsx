@@ -2,7 +2,7 @@ import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import '/imports/G.js';
 import Marked from './Marked.jsx';
-import TwoCheckout from './Payment.jsx';
+import Payment from './Payment.jsx';
 import Textarea from 'react-autosize-textarea';
 
 export default class extends React.Component {
@@ -55,6 +55,9 @@ export default class extends React.Component {
 	}
 
 	render() {
+		if (G.ifDefined(this, 'props.site.editing.domain')) {
+			Meteor.call('domain.isAvailable', this.props.site._id, this.props.site.editing.domain);
+		}
 		let preview = this.state.showPreview;
 		return (<div className="writer relative">
 				<div className="ui form">
@@ -62,7 +65,8 @@ export default class extends React.Component {
 						<div className="field">
 							<label>Domain</label>
 							<input defaultValue={G.ifDefined(this, 'props.site.editing.domain', "")} name="domain" onBlur={this.update}/>
-							<TwoCheckout domain={G.ifDefined(this, 'props.site.editing.domain')}/>
+							{/*<Payment domain={G.ifDefined(this, 'props.site.editing.domain')}/>*/}
+							<p>Domain {G.ifDefined(this, 'props.site.editing.domain', "-")} is {G.ifDefined(this, 'props.site.editing.domainAvailable', "-")}</p>
 						</div>
 						<div className="field">
 							<label>Owners email</label>

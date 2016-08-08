@@ -10,6 +10,7 @@
     "braintree-web": "^2.27.0",
     "meteor-node-stubs": "~0.2.0",
     "namecheap": "0.0.1",
+    "namecheap-api": "^1.0.2",
     "object-assign": "^4.1.0",
     "react": "^15.2.1",
     "react-addons-pure-render-mixin": "^15.2.1",
