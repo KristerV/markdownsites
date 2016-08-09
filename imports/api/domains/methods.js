@@ -6,18 +6,28 @@ namecheap.config.set("ClientIp", Meteor.settings.NAMECHEAP_CLIENTIP);
 
 Meteor.methods({
 	'domain.isAvailable'(domain) {
+		const prices = DomainsCollection.find().fetch(); // bit of a hack I guess, but can't figure out fibers for this case
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, Meteor.settings.NAMECHEAP_SANDBOXMODE)
 			.then(data => {
 				const domainlist = data.response[0].DomainCheckResult;
 				if (domainlist && domainlist.length === 1) {
 					const d = domainlist[0].$;
 					const domain = d.Domain;
-					const available = d.Available === "true" && d.IsPremiumName === "false";
-					return {result: 1, domain, available}
+
+					// Keep availability on the safe side
+					const domainParts = domain.split('.');
+					const domainExtension = domainParts[domainParts.length - 1];
+					const price = _.find(prices, obj => {return obj.name === domainExtension}).mdsPrice;
+					const available = d.Available === "true" && d.IsPremiumName === "false" && price;
+
+					return {result: 1, domain, available, price};
 				}
 				return {result: 0, msg: "not sure what happened"}
 
 			}).catch(data => {
+				if (!data.requestPayload)
+					throw new Meteor.Error(data.toString());
+
 				const domain = data.requestPayload.DomainList;
 				const errorcode = parseInt(data.response.message.substring(0, 7));
 

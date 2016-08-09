@@ -55,6 +55,7 @@ export default class extends React.Component {
 		// Success
 		if (!err && res.result === 1) {
 			this.setState({status: res.available ? "available" : "taken"});
+			this.setState({price: res.price});
 		// Fail
 		} else if (!err && res.result === 0) {
 			this.setState({msg: res.msg});
@@ -66,32 +67,32 @@ export default class extends React.Component {
 		switch (this.state.status) {
 			case "checking":
 				button = <button className="ui basic button">
-					checking..
+					checking domain..
 				</button>;
 				break;
 			case "taken":
 				button = <button className="ui negative button basic">
-					taken
+					domain is taken
 				</button>;
 				break;
 			case "available":
 				button = <button className="ui positive button">
-					Available {this.state.price ? `for $${this.state.price} a year` : "(checking price)"}
+					Available for ${this.state.price} a year
 				</button>;
 				break;
 			case "purchased":
 				button = <button className="ui yellow basic button">
-					Bought, waiting for DNS
+					Purchased, waiting for DNS
 				</button>;
 				break;
 			case "connected":
 				button = <button className="ui positive basic button">
-					Connected
+					connected
 				</button>;
 				break;
 			default:
 				button = <button className="ui basic button">
-					not connected
+					no domain connected
 				</button>;
 				break;
 		}
