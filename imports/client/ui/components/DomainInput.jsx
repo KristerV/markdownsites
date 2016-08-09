@@ -1,4 +1,5 @@
 import React from 'react';
+import Payment from './Payment.jsx';
 
 export default class extends React.Component {
 
@@ -14,6 +15,7 @@ export default class extends React.Component {
 		this.handleAvailabilityResponse = this.handleAvailabilityResponse.bind(this);
 		this.update = this.update.bind(this);
 		this.checkDomain = this.checkDomain.bind(this);
+		this.showPaymentModal = this.showPaymentModal.bind(this);
 	}
 
 	componentDidMount() {
@@ -56,10 +58,14 @@ export default class extends React.Component {
 		if (!err && res.result === 1) {
 			this.setState({status: res.available ? "available" : "taken"});
 			this.setState({price: res.price});
-		// Fail
+			// Fail
 		} else if (!err && res.result === 0) {
 			this.setState({msg: res.msg});
 		}
+	}
+
+	showPaymentModal() {
+		$('#payment-modal').modal('show');
 	}
 
 	render() {
@@ -76,7 +82,7 @@ export default class extends React.Component {
 				</button>;
 				break;
 			case "available":
-				button = <button className="ui positive button">
+				button = <button className="ui positive button" onClick={this.showPaymentModal}>
 					Available for ${this.state.price} a year
 				</button>;
 				break;
@@ -100,10 +106,11 @@ export default class extends React.Component {
 		return (<div className="field">
 				<label>Domain</label>
 				<div className={"ui input action"}>
-					<input type="text" value={this.state.domain} name="domain" onBlur={this.update} onChange={this.handleChange}/>
+					<input type="text" value={this.state.domain} name="domain" onBlur={this.update}
+						   onChange={this.handleChange}/>
 					{button}
 				</div>
-				{/*<Payment domain={G.ifDefined(this, 'props.site.editing.domain')}/>*/}
+				<Payment domain={this.state.domain} price={this.state.price} siteId={this.props.siteId}/>
 				<p>{this.state.msg}</p>
 			</div>
 		)
