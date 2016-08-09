@@ -7,6 +7,7 @@ Sites = {
 			console.error(err)
 		} else if (res) {
 			if (_.isObject(res)) {
+				
 				if (res.newId)
 					FlowRouter.go('writer', {siteId: res.newId});
 				

@@ -2,7 +2,7 @@ import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import '/imports/G.js';
 import Marked from './Marked.jsx';
-import Payment from './Payment.jsx';
+import DomainInput from './DomainInput.jsx';
 import Textarea from 'react-autosize-textarea';
 
 export default class extends React.Component {
@@ -17,7 +17,6 @@ export default class extends React.Component {
 			showPreview: false
 		}
 
-		// http://stackoverflow.com/questions/33457220/onchange-callback-not-firing-in-react-component
 		this.onChange = this.onChange.bind(this);
 		this.componentDidMount = this.componentDidMount.bind(this);
 		this.update = this.update.bind(this);
@@ -55,22 +54,11 @@ export default class extends React.Component {
 	}
 
 	render() {
-		if (G.ifDefined(this, 'props.site.editing.domain')) {
-			Meteor.call('domain.isAvailable', this.props.site._id, this.props.site.editing.domain, (err, res) => {
-				console.log("err", err);
-				console.log("res", res);
-			});
-		}
 		let preview = this.state.showPreview;
 		return (<div className="writer relative">
 				<div className="ui form">
 					<div className="fields">
-						<div className="field">
-							<label>Domain</label>
-							<input defaultValue={G.ifDefined(this, 'props.site.editing.domain', "")} name="domain" onBlur={this.update}/>
-							{/*<Payment domain={G.ifDefined(this, 'props.site.editing.domain')}/>*/}
-							<p>Domain {G.ifDefined(this, 'props.site.editing.domain', "-")} is {G.ifDefined(this, 'props.site.editing.domainAvailable', "-")}</p>
-						</div>
+						<DomainInput siteId={G.ifDefined(this, 'props.site._id', null)} domain={G.ifDefined(this, 'props.site.editing.domain', "")}/>
 						<div className="field">
 							<label>Owners email</label>
 							<input type="email" defaultValue={G.ifDefined(this, 'props.site.editing.email', "")} name="email" onBlur={this.update}/>

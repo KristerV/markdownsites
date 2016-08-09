@@ -2,7 +2,6 @@ import {check} from 'meteor/check';
 
 Meteor.methods({
 	'sites.upsert'(siteId, data) {
-		console.log("upsert data", data);
 		check(siteId, Match.Maybe(String));
 		check(data, {
 			content: Match.Maybe(String),
@@ -18,16 +17,17 @@ Meteor.methods({
 				{'editing.domain': data.domain}
 			]
 		}) : false;
-		if (domainExists)
-			throw new Meteor.Error(403, 'Domain already in use');
+		if (domainExists && !_.contains(domainExists.editors, this.userId))
+			throw new Meteor.Error(403, 'Domain already registered on this site');
 
 		// Don't allow accidental overwriting with empty content
 		if ("content" in data && !data.content)
 			throw new Meteor.Error(403, 'Empty content overwriting disabled');
 
 		// Send login email when updating email
-		if (data.email && siteId)
+		if (data.email && siteId) {
 			Meteor.call('sites.addEditor', siteId, {email: data.email});
+		}
 
 
 		// New site
@@ -94,6 +94,7 @@ Meteor.methods({
 		function commitAdd(siteId, userId) {
 			return SitesCollection.update(siteId, {$addToSet: {editors: userId}});
 		}
+
 
 		if (data.email && !data.userId) {
 			Accounts.sendLoginEmail(data.email, function (result) {
