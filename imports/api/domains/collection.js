@@ -1,0 +1,1 @@
+DomainsCollection = new Mongo.Collection('domains');
