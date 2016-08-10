@@ -6,32 +6,48 @@ namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
 
 Meteor.methods({
 	'domain.isAvailable'(domain) {
+		console.log("isAvailable 1");
 		const prices = DomainsCollection.find().fetch(); // bit of a hack I guess, but can't figure out fibers for this case
+		console.log("isAvailable 2");
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(data => {
+				console.log("isAvailable 3");
 				const domainlist = data.response[0].DomainCheckResult;
+				console.log("isAvailable 4");
 				if (domainlist && domainlist.length === 1) {
+					console.log("isAvailable 5");
 					const d = domainlist[0].$;
 					const domain = d.Domain;
 
 					// Keep availability on the safe side
+					console.log("isAvailable 6");
 					const domainParts = domain.split('.');
 					const domainExtension = domainParts[domainParts.length - 1];
+					console.log("isAvailable 7");
 					const price = _.find(prices, obj => {return obj.name === domainExtension}).mdsPrice;
+					console.log("isAvailable 8");
 					const available = d.Available === "true" && d.IsPremiumName === "false" && price;
 
+					console.log("isAvailable 9");
 					return {result: 1, domain, available, price};
 				}
+				console.log("isAvailable 10");
 				return {result: 0, msg: "not sure what happened"}
+				console.log("isAvailable 11");
 
 			}).catch(data => {
+				console.log("isAvailable 12");
 				if (!data.requestPayload)
 					throw new Meteor.Error(data.toString());
+				console.log("isAvailable 13");
 
 				const domain = data.requestPayload.DomainList;
+				console.log("isAvailable 14");
 				const errorcode = parseInt(data.response.message.substring(0, 7));
+				console.log("isAvailable 15");
 
 				let msg = "";
+				console.log("isAvailable 16");
 				switch (errorcode) {
 					case 2030280:
 						msg = "Domain extension not supported. You may still connect manually.";
@@ -39,6 +55,7 @@ Meteor.methods({
 					default:
 						msg = data.response.toString()
 				}
+				console.log("isAvailable 17");
 				return {result: 0, domain, msg}
 			});
 	},
