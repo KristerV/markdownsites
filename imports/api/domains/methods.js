@@ -7,7 +7,7 @@ namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
 Meteor.methods({
 	'domain.isAvailable'(domain) {
 		const prices = DomainsCollection.find().fetch(); // bit of a hack I guess, but can't figure out fibers for this case
-		return namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, Meteor.settings.NAMECHEAP_SANDBOXMODE)
+		return namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(data => {
 				const domainlist = data.response[0].DomainCheckResult;
 				if (domainlist && domainlist.length === 1) {
@@ -44,7 +44,7 @@ Meteor.methods({
 	},
 	'domain.getAllPrices'() {
 		console.info("domain.getAllPrices: Fetch data");
-		return namecheap.apiCall('namecheap.users.getPricing', {ProductType: "DOMAIN", ProductCategory: "REGISTER"}, Meteor.settings.NAMECHEAP_SANDBOXMODE)
+		return namecheap.apiCall('namecheap.users.getPricing', {ProductType: "DOMAIN", ProductCategory: "REGISTER"}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(Meteor.bindEnvironment((data) => {
 				console.info("domain.getAllPrices: crunching..");
 				const services = data.response[0].UserGetPricingResult[0].ProductType[0].ProductCategory;
