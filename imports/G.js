@@ -63,5 +63,8 @@ G = {
 	},
 	isEmail(email) {
 		return /^[^@]+@[^@]+\.[^@]+$/.test(email)
+	},
+	getEnv(variable) {
+		return process.env[variable] || Meteor.settings[variable]
 	}
 }

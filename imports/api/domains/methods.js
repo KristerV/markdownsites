@@ -1,8 +1,8 @@
 import namecheap from 'namecheap-api';
 
-namecheap.config.set("ApiUser", Meteor.settings.NAMECHEAP_USER);
-namecheap.config.set("ApiKey", Meteor.settings.NAMECHEAP_APIKEY);
-namecheap.config.set("ClientIp", Meteor.settings.NAMECHEAP_CLIENTIP);
+namecheap.config.set("ApiUser", G.getEnv('NAMECHEAP_USER'));
+namecheap.config.set("ApiKey", G.getEnv('NAMECHEAP_APIKEY'));
+namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
 
 Meteor.methods({
 	'domain.isAvailable'(domain) {
