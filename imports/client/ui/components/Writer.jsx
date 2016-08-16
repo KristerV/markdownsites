@@ -58,7 +58,7 @@ export default class extends React.Component {
 		return (<div className="writer relative">
 				<div className="ui form">
 					<div className="fields">
-						<DomainInput siteId={G.ifDefined(this, 'props.site._id', null)} domain={G.ifDefined(this, 'props.site.editing.domain', "")}/>
+						<DomainInput site={G.ifDefined(this, 'props.site', null)} domain={G.ifDefined(this, 'props.site.editing.domain.name', "")}/>
 						<div className="field">
 							<label>Owners email</label>
 							<input type="email" defaultValue={G.ifDefined(this, 'props.site.editing.email', "")} name="email" onBlur={this.update}/>

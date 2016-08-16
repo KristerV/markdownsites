@@ -1,6 +1,34 @@
 Domains = {
 	updatePrices() {
 		Meteor.call('domain.getAllPrices')
+	},
+	getStatus(siteId) {
+		const site = SitesCollection.findOne(siteId);
+		console.log("Domains.js:13 getStatus()");
+		console.log("site", site);
+		if (!G.isDefined(site, 'domain.isChecking'))
+			return null
+		
+		// There are 3 main stages to statuses: isAvailable, isPaymentReceived, isConnected
+		if (site.editing.domain.isChecking)
+			return 'checking';
+		else if (site.editing.domain.isAvailable === false)
+			return 'taken';
+		else if (!site.editing.domain.isAvailable)
+			return null;
+		else if (site.editing.domain.isAvailable)
+			return 'available';
+		else if (site.editing.domain.isPaymentMade)
+			return 'paymentProcessing';
+		else if (site.editing.domain.isPaymentSent)
+			return 'paymentProcessing';
+		else if (site.editing.domain.isPaymentCleared)
+			return 'paymentCleared';
+		else if (site.editing.domain.isDomainBought)
+			return 'domainBought';
+		else if (site.editing.domain.isDomainConnected)
+			return 'domainConnected';
+		
 	}
 };
 

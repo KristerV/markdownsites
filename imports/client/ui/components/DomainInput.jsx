@@ -1,5 +1,7 @@
 import React from 'react';
 import Payment from './Payment.jsx';
+import '/imports/api/domains/Domains.js';
+import Loader from './Loader.jsx';
 
 export default class extends React.Component {
 
@@ -12,10 +14,10 @@ export default class extends React.Component {
 			price: null
 		};
 		this.handleChange = this.handleChange.bind(this);
-		this.handleAvailabilityResponse = this.handleAvailabilityResponse.bind(this);
 		this.update = this.update.bind(this);
 		this.checkDomain = this.checkDomain.bind(this);
 		this.showPaymentModal = this.showPaymentModal.bind(this);
+		this.paymentReceived = this.paymentReceived.bind(this);
 	}
 
 	componentDidMount() {
@@ -24,7 +26,7 @@ export default class extends React.Component {
 
 	update(e, callback) {
 		let data = {domain: e.target.value};
-		Meteor.call("sites.upsert", this.props.siteId, data, Sites.useResults);
+		Meteor.call("sites.upsert", this.props.site._id, data, Sites.useResults);
 	}
 
 	handleChange(e) {
@@ -36,6 +38,7 @@ export default class extends React.Component {
 	checkDomain(domain) {
 		this.setState({status: null});
 		this.setState({msg: null});
+		if (!domain) domain = this.state.domain;
 
 		// if http or slash, give warning
 		if (domain.match('http|\/'))
@@ -44,23 +47,7 @@ export default class extends React.Component {
 		// no strange characters and valid domain extension
 		if (!domain.match('[^a-zA-Z0-9\\-\\.]') && domain.match('\\.[a-zA-Z]{2,}$')) {
 			this.setState({status: "checking"});
-			Meteor.call('domain.isAvailable', domain, this.handleAvailabilityResponse);
-		}
-	}
-
-	handleAvailabilityResponse(err, res) {
-
-		// If domain has changed already
-		if (err || res.domain !== this.state.domain)
-			return;
-
-		// Success
-		if (!err && res.result === 1) {
-			this.setState({status: res.available ? "available" : "taken"});
-			this.setState({price: res.price});
-			// Fail
-		} else if (!err && res.result === 0) {
-			this.setState({msg: res.msg});
+			Meteor.call('domain.isAvailable', domain);
 		}
 	}
 
@@ -68,9 +55,24 @@ export default class extends React.Component {
 		$('#payment-modal').modal('show');
 	}
 
+	paymentReceived() {
+		console.log("DomainInput.jsx:74 paymentReceived()");
+		this.setState({status: 'paymentProcessing'});
+		Meteor.call('domain.isConnected', this.props.site._id, (err, res) => {
+			if (res)
+				this.checkDomain();
+			else
+				console.error("err", err);
+		});
+	}
+
 	render() {
 		let button = null;
-		switch (this.state.status) {
+		const price = G.ifDefined(this, 'props.site.editing.domain.price');
+		if (!this.props.site)
+			return <Loader/>
+		console.log("Domains.getStatus()", Domains.getStatus(this.props.site._id));
+		switch (Domains.getStatus(this.props.site._id)) {
 			case "checking":
 				button = <button className="ui basic button">
 					checking domain..
@@ -83,17 +85,27 @@ export default class extends React.Component {
 				break;
 			case "available":
 				button = <button className="ui positive button" onClick={this.showPaymentModal}>
-					Available for ${this.state.price} a year
+					Available for ${price} a year
 				</button>;
 				break;
-			case "purchased":
+			case "paymentProcessing":
+				button = <button className="ui positive button" onClick={this.showPaymentModal}>
+					Available for ${price} a year
+				</button>;
+				break;
+			case "paymentCleared":
 				button = <button className="ui yellow basic button">
 					Purchased, waiting for DNS
 				</button>;
 				break;
-			case "connected":
+			case "domainBought":
 				button = <button className="ui positive basic button">
-					connected
+					Setting up DNS
+				</button>;
+				break;
+			case "domainConnected":
+				button = <button className="ui positive basic button">
+					Domain is connected
 				</button>;
 				break;
 			default:
@@ -106,12 +118,13 @@ export default class extends React.Component {
 		return (<div className="field">
 				<label>Domain</label>
 				<div className={"ui input action"}>
-					<input type="text" value={this.state.domain} name="domain" onBlur={this.update}
+					<input type="text" value={this.state.domain} name="domainName" onBlur={this.update}
 						   onChange={this.handleChange}/>
 					{button}
 				</div>
-				<Payment domain={this.state.domain} price={this.state.price} siteId={this.props.siteId}/>
-				<p>{this.state.msg}</p>
+				<Payment domain={this.state.domain} price={this.state.price} siteId={this.props.site._id}
+						 onPaymentReceived={this.paymentReceived}/>
+				<p>{G.ifDefined(this, 'site.editing.domain.msg')}</p>
 			</div>
 		)
 	}

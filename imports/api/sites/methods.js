@@ -5,16 +5,16 @@ Meteor.methods({
 		check(siteId, Match.Maybe(String));
 		check(data, {
 			content: Match.Maybe(String),
-			domain: Match.Maybe(String),
+			domainName: Match.Maybe(String),
 			email: Match.Maybe(String),
 			domainAvailable: Match.Maybe(String)
 		}, 'Sites.upsert data missing');
 
 		// No duplicate domains allowed
-		const domainExists = data.domain ? SitesCollection.findOne({
+		const domainExists = data.domainName ? SitesCollection.findOne({
 			$or: [
-				{'published.domain': data.domain},
-				{'editing.domain': data.domain}
+				{'published.domain.name': data.domain},
+				{'editing.domain.name': data.domain}
 			]
 		}) : false;
 		if (domainExists && !_.contains(domainExists.editors, this.userId))
@@ -23,6 +23,10 @@ Meteor.methods({
 		// Don't allow accidental overwriting with empty content
 		if ("content" in data && !data.content)
 			throw new Meteor.Error(403, 'Empty content overwriting disabled');
+
+		data.domain = data.domain || {};
+		data.domain.name = data.domainName;
+		delete data.domainName;
 
 		// Send login email when updating email
 		if (data.email && siteId) {
@@ -66,7 +70,7 @@ Meteor.methods({
 		const site = SitesCollection.findOne({_id: siteId, editors: this.userId});
 
 		let errors = [];
-		if (!site.editing.domain)
+		if (!G.isDefined(site, 'editing.domain.name'))
 			errors.push('domain');
 		if (!site.editing.email)
 			errors.push('email');

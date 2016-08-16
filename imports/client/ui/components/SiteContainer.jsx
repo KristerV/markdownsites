@@ -17,14 +17,14 @@ export default SiteContainer = createContainer(({ siteId, content }) => {
 	const site = SitesCollection.findOne({
 		$or: [
 			{_id: siteId},
-			{'editing.domain': siteId}
+			{'editing.domain.name': siteId}
 		]
 	});
 
 	// Force url to use domain instead of _id
 	/* Disabled, because redirecting is annoyting, especially when testing out different domains
-	if (G.isDefined(site, 'editing.domain') && site.editing.domain !== FlowRouter.getParam('siteId')) {
-		FlowRouter.go('writer', {siteId: site.editing.domain});
+	if (G.isDefined(site, 'editing.domain.name') && site.editing.domain.name !== FlowRouter.getParam('siteId')) {
+		FlowRouter.go('writer', {siteId: site.editing.domain.name});
 	}*/
 
 	return {

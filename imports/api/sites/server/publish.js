@@ -12,7 +12,7 @@ Meteor.publish('sites.single', function(siteId) {
 		fields.editors = 1;
 
 	return SitesCollection.find(
-		{$or: [{_id: siteId}, {'editing.domain': siteId}]},
+		{$or: [{_id: siteId}, {'editing.domain.name': siteId}]},
 		{fields: fields}
 	);
 });

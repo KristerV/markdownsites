@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "autoprefixer": "^6.3.1",
+    "braintree": "^1.41.0",
     "braintree-react": "^3.2.1",
     "braintree-web": "^2.27.0",
     "meteor-node-stubs": "~0.2.0",
