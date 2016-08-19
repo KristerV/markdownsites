@@ -1,4 +1,5 @@
 import namecheap from 'namecheap-api';
+import '../sites/Sites.js';
 
 namecheap.config.set("ApiUser", G.getEnv('NAMECHEAP_USER'));
 namecheap.config.set("ApiKey", G.getEnv('NAMECHEAP_APIKEY'));
@@ -7,11 +8,11 @@ namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
 Meteor.methods({
 	'domain.isAvailable'(siteId, domain) {
 		check(siteId, String);
-		SitesCollection.update(siteId, {$set: {
-			'editing.domain.isAvailable': null,
-			'editing.domain.msg': null,
-			'editing.domain.isChecking': true
-		}});
+		console.log("siteId", siteId);
+		console.log("UPDATE");
+		Sites.setDomainChecking(siteId);
+		console.log(SitesCollection.findOne(siteId).editing.domain);
+
 		const prices = DomainsCollection.find().fetch(); // bit of a hack I guess, but can't figure out fibers for this case
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(Meteor.bindEnvironment(data => {
@@ -22,21 +23,14 @@ Meteor.methods({
 
 					// Keep availability on the safe side
 					const domainExtension = G.getDomainExtension(domain);
-					const price = _.find(prices, obj => {return obj.name === domainExtension}).mdsPrice;
+					const price = _.find(prices, obj => {
+						return obj.name === domainExtension
+					}).mdsPrice;
 					const available = d.Available === "true" && d.IsPremiumName === "false" && price;
 
-					SitesCollection.update(siteId, {$set: {
-						'editing.domain.isAvailable': available,
-						'editing.domain.price': price,
-						'editing.domain.msg': null,
-						'editing.domain.isChecking': false
-					}});
+					Sites.setDomainAvailability(siteId, available, price);
 				}
-				SitesCollection.update(siteId, {$set: {
-					'editing.domain.isAvailable': null,
-					'editing.domain.msg': 'Something went wrong: 6254',
-					'editing.domain.isChecking': false
-				}});
+				Sites.setDomainError(siteId, 'Something went wrong: 6254');
 
 			})).catch(Meteor.bindEnvironment(data => {
 				if (!data.requestPayload)
@@ -54,16 +48,15 @@ Meteor.methods({
 						msg = data.response.toString()
 				}
 
-				SitesCollection.update(siteId, {$set: {
-					'editing.domain.isAvailable': null,
-					'editing.domain.msg': msg,
-					'editing.domain.isChecking': false
-				}});
+				Sites.setDomainError(siteId, msg);
 			}));
 	},
 	'domain.getAllPrices'() {
 		console.info("domain.getAllPrices: Fetch data");
-		namecheap.apiCall('namecheap.users.getPricing', {ProductType: "DOMAIN", ProductCategory: "REGISTER"}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+		namecheap.apiCall('namecheap.users.getPricing', {
+			ProductType: "DOMAIN",
+			ProductCategory: "REGISTER"
+		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(Meteor.bindEnvironment((data) => {
 				console.info("domain.getAllPrices: crunching..");
 				const services = data.response[0].UserGetPricingResult[0].ProductType[0].ProductCategory;
@@ -92,8 +85,8 @@ Meteor.methods({
 				console.info("domain.getAllPrices: Done");
 
 			})).catch(data => {
-				console.error(data)
-			});
+			console.error(data)
+		});
 	},
 	'domain.isConnected'(siteId) {
 		check(siteId, String);
@@ -109,7 +102,9 @@ Meteor.methods({
 
 					// Keep availability on the safe side
 					const domainExtension = G.getDomainExtension(domain);
-					const price = _.find(prices, obj => {return obj.name === domainExtension}).mdsPrice;
+					const price = _.find(prices, obj => {
+						return obj.name === domainExtension
+					}).mdsPrice;
 					const available = d.Available === "true" && d.IsPremiumName === "false" && price;
 
 					return {result: 1, domain, available, price};

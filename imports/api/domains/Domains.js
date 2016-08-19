@@ -4,8 +4,10 @@ Domains = {
 	},
 	getStatus(siteId) {
 		const site = SitesCollection.findOne(siteId);
-		if (!G.isDefined(site, 'domain.isChecking'))
+		console.log("editing.domain.isChecking", G.isDefined(site, 'editing.domain.isChecking'));
+		if (_.isUndefined(G.isDefined(site, 'editing.domain.isChecking')))
 			return null
+		console.log("PASSED");
 		
 		// There are 3 main stages to statuses: isAvailable, isPaymentReceived, isConnected
 		if (site.editing.domain.isChecking)
