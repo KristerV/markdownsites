@@ -19,9 +19,7 @@ DomainServices = {
 	},
 	getAvailability(siteId) {
 		const site = Sites.findOne(siteId);
-		console.log("site", site.editing.domain);
 		const domainName = site.editing.domain.name;
-		console.log("domainName", domainName);
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 	},
 	parseAvailabilityResponse(data) {
@@ -32,10 +30,7 @@ DomainServices = {
 
 			// Keep availability on the safe side
 			const domainExtension = G.getDomainExtension(domain);
-			const prices = DomainsCollection.find().fetch();
-			const price = _.find(prices, obj => {
-				return obj.name === domainExtension
-			}).mdsPrice;
+			const price = DomainsCollection.findOne({name: domainExtension}).mdsPrice;
 			const available = d.Available === "true" && d.IsPremiumName === "false" && !!price;
 
 			return {available, price}

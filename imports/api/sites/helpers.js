@@ -18,7 +18,6 @@ SitesCollection.helpers({
 			const availability = DomainServices.parseAvailabilityResponse(values[2]);
 			console.log("availability", availability);
 
-			let status = {status: null, label: 'no domain', msg: null};
 		}))
 		.catch(DomainServices.parseError)
 	},
@@ -26,3 +25,9 @@ SitesCollection.helpers({
 		return SitesCollection.update(this._id, {$set: data});
 	}
 });
+
+Meteor.startup(() => {
+	console.log("---------------------------------");
+	console.log("");
+	Sites.findOne('ksdfakusydfgajevf.com').updateDomainStatus()
+})
