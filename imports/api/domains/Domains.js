@@ -4,8 +4,6 @@ Domains = {
 	},
 	getStatus(siteId) {
 		const site = SitesCollection.findOne(siteId);
-		console.log("Domains.js:13 getStatus()");
-		console.log("site", site);
 		if (!G.isDefined(site, 'domain.isChecking'))
 			return null
 		
@@ -34,7 +32,6 @@ Domains = {
 
 Meteor.startup(() => {
 	if (!Meteor.isDevelopment) {
-		console.log("Not dev, start timer");
 		Meteor.setTimeout(Domains.updatePrices, 1000 * 60 * 1);
 	}
 	Meteor.setInterval(Domains.updatePrices, 1000 * 60 * 60 * 24 * 3); // every 3 days

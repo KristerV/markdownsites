@@ -7,7 +7,6 @@ namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
 Meteor.methods({
 	'domain.isAvailable'(siteId, domain) {
 		check(siteId, String);
-		console.log("methods.js:9 'domain.isAvailable'()");
 		SitesCollection.update(siteId, {$set: {
 			'editing.domain.isAvailable': null,
 			'editing.domain.msg': null,

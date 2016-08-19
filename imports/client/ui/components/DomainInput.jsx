@@ -25,7 +25,7 @@ export default class extends React.Component {
 	}
 
 	update(e, callback) {
-		let data = {domain: e.target.value};
+		let data = {domainName: e.target.value};
 		Meteor.call("sites.upsert", this.props.site._id, data, Sites.useResults);
 	}
 
@@ -56,7 +56,6 @@ export default class extends React.Component {
 	}
 
 	paymentReceived() {
-		console.log("DomainInput.jsx:74 paymentReceived()");
 		this.setState({status: 'paymentProcessing'});
 		Meteor.call('domain.isConnected', this.props.site._id, (err, res) => {
 			if (res)
@@ -71,7 +70,6 @@ export default class extends React.Component {
 		const price = G.ifDefined(this, 'props.site.editing.domain.price');
 		if (!this.props.site)
 			return <Loader/>
-		console.log("Domains.getStatus()", Domains.getStatus(this.props.site._id));
 		switch (Domains.getStatus(this.props.site._id)) {
 			case "checking":
 				button = <button className="ui basic button">

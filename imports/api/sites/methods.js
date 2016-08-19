@@ -13,8 +13,8 @@ Meteor.methods({
 		// No duplicate domains allowed
 		const domainExists = data.domainName ? SitesCollection.findOne({
 			$or: [
-				{'published.domain.name': data.domain},
-				{'editing.domain.name': data.domain}
+				{'published.domain.name': data.domainName},
+				{'editing.domain.name': data.domainName}
 			]
 		}) : false;
 		if (domainExists && !_.contains(domainExists.editors, this.userId))
@@ -56,7 +56,7 @@ Meteor.methods({
 			const result = SitesCollection.update(siteId, {$set: {editing}});
 
 			if (data.domain)
-				return {msg: "Domain updated", newId: data.domain};
+				return {msg: "Domain updated", newId: data.domain.name};
 			else
 				return result
 		}

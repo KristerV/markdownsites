@@ -17,8 +17,9 @@ export default class extends React.Component {
 				{Meteor.user() && Meteor.user().getEmail() ?
 					<ol className="no-bullets">
 						{sites.map((item, i) => {
+							const domain = G.ifDefined(item, 'editing.domain.name');
 							return <a className="block" key={i}
-									  href={`/${item.editing.domain.name || item._id}/writer`}>{item.editing.domain.name || 'new'}</a>
+									  href={`/${domain || item._id}/writer`}>{domain || 'new'}</a>
 						})}
 						<li><a href="#" onClick={this.newSite}>New site</a></li>
 					</ol>
