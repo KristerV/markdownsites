@@ -1,6 +1,6 @@
 import React from 'react';
 import Payment from './Payment.jsx';
-import '/imports/api/domains/Domains.js';
+import '/imports/api/domains/main.js';
 import Loader from './Loader.jsx';
 
 export default class extends React.Component {

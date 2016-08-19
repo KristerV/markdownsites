@@ -6,9 +6,6 @@ import SiteContainer from "../ui/components/SiteContainer.jsx";
 import Writer from "../ui/components/Writer.jsx";
 import About from "../ui/components/About.jsx";
 import Marked from "../ui/components/Marked.jsx";
-import Loader from "../ui/components/Loader.jsx";
-import Sites from "/imports/api/sites/Sites.js";
-import Alert from 'react-s-alert';
 
 FlowRouter.route('/', {
 	action: function (params, queryParams) {

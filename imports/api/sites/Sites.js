@@ -42,15 +42,4 @@ Sites = {
 			'editing.domain.isChecking': false
 		}});
 	},
-	update(find, data) {
-		if (_.isObject(find))
-			return SitesCollection.update(find, data);
-		else
-			return SitesCollection.update({
-				$or: [
-					{_id: find},
-					{'editing.domain.name': find}
-				]
-			}, data);
-	}
 }

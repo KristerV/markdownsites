@@ -1,7 +1,7 @@
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import {createContainer} from 'meteor/react-meteor-data';
-import '/imports/api/sites/collection.js';
+import '/imports/api/sites/main.js';
 import NavBar from './NavBar.jsx';
 
 export default SiteContainer = createContainer(() => {

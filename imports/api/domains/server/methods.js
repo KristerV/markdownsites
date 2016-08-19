@@ -1,6 +1,7 @@
 import namecheap from 'namecheap-api';
-import '../sites/Sites.js';
+import '/imports/api/sites/main.js';
 
+console.log("G.getEnv('NAMECHEAP_USER')", G.getEnv('NAMECHEAP_USER'));
 namecheap.config.set("ApiUser", G.getEnv('NAMECHEAP_USER'));
 namecheap.config.set("ApiKey", G.getEnv('NAMECHEAP_APIKEY'));
 namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
@@ -11,7 +12,6 @@ Meteor.methods({
 		console.log("siteId", siteId);
 		console.log("UPDATE");
 		Sites.setDomainChecking(siteId);
-		console.log(SitesCollection.findOne(siteId).editing.domain);
 
 		const prices = DomainsCollection.find().fetch(); // bit of a hack I guess, but can't figure out fibers for this case
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
