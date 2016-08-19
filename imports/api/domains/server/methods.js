@@ -1,7 +1,6 @@
 import namecheap from 'namecheap-api';
 import '/imports/api/sites/main.js';
 
-console.log("G.getEnv('NAMECHEAP_USER')", G.getEnv('NAMECHEAP_USER'));
 namecheap.config.set("ApiUser", G.getEnv('NAMECHEAP_USER'));
 namecheap.config.set("ApiKey", G.getEnv('NAMECHEAP_APIKEY'));
 namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
@@ -9,9 +8,6 @@ namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
 Meteor.methods({
 	'domain.isAvailable'(siteId, domain) {
 		check(siteId, String);
-		console.log("siteId", siteId);
-		console.log("UPDATE");
-		Sites.setDomainChecking(siteId);
 
 		const prices = DomainsCollection.find().fetch(); // bit of a hack I guess, but can't figure out fibers for this case
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
@@ -28,9 +24,8 @@ Meteor.methods({
 					}).mdsPrice;
 					const available = d.Available === "true" && d.IsPremiumName === "false" && price;
 
-					Sites.setDomainAvailability(siteId, available, price);
+					return {success: true, available, price}
 				}
-				Sites.setDomainError(siteId, 'Something went wrong: 6254');
 
 			})).catch(Meteor.bindEnvironment(data => {
 				if (!data.requestPayload)
@@ -47,8 +42,7 @@ Meteor.methods({
 					default:
 						msg = data.response.toString()
 				}
-
-				Sites.setDomainError(siteId, msg);
+				return {success: false, msg};
 			}));
 	},
 	'domain.getAllPrices'() {
@@ -92,41 +86,10 @@ Meteor.methods({
 		check(siteId, String);
 		const site = SitesCollection.findOne(siteId);
 		const domain = site.editing.domain.name;
-		return;
+		return {testing: true};
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domain}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(data => {
-				const domainlist = data.response[0].DomainCheckResult;
-				if (domainlist && domainlist.length === 1) {
-					const d = domainlist[0].$;
-					const domain = d.Domain;
-
-					// Keep availability on the safe side
-					const domainExtension = G.getDomainExtension(domain);
-					const price = _.find(prices, obj => {
-						return obj.name === domainExtension
-					}).mdsPrice;
-					const available = d.Available === "true" && d.IsPremiumName === "false" && price;
-
-					return {result: 1, domain, available, price};
-				}
-				return {result: 0, msg: "not sure what happened"}
-
 			}).catch(data => {
-				if (!data.requestPayload)
-					throw new Meteor.Error(data.toString());
-
-				const domain = data.requestPayload.DomainList;
-				const errorcode = parseInt(data.response.message.substring(0, 7));
-
-				let msg = "";
-				switch (errorcode) {
-					case 2030280:
-						msg = "Domain extension not supported. You may still connect manually.";
-						break;
-					default:
-						msg = data.response.toString()
-				}
-				return {result: 0, domain, msg}
 			});
 	}
 });

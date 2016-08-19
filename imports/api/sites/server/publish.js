@@ -1,5 +1,6 @@
 Meteor.publish('sites.single', function(siteId) {
-	check(siteId, String, 'Sites.single is only published with siteId');
+	if (!siteId)
+		return;
 
 	let fields = {
 		editing: 1,

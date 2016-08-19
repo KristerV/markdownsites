@@ -20,26 +20,10 @@ Sites = {
 			}
 		}
 	},
-	setDomainChecking(siteId) {
-		Sites.update(siteId, {$set: {
-			'editing.domain.isAvailable': null,
-			'editing.domain.msg': null,
-			'editing.domain.isChecking': true
-		}});
-	},
-	setDomainAvailability(siteId, available, price) {
-		Sites.update(siteId, {$set: {
-			'editing.domain.isAvailable': available,
-			'editing.domain.price': price,
-			'editing.domain.msg': null,
-			'editing.domain.isChecking': false
-		}});
-	},
-	setDomainError(siteId, msg) {
-		Sites.update(siteId, {$set: {
-			'editing.domain.isAvailable': null,
-			'editing.domain.msg': msg,
-			'editing.domain.isChecking': false
-		}});
-	},
+	findOne(siteId) {
+		return SitesCollection.findOne({$or: [
+			{_id: siteId},
+			{'editing.domain.name': siteId}
+		]})
+	}
 }

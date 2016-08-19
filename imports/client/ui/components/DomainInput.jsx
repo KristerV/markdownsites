@@ -70,7 +70,6 @@ export default class extends React.Component {
 		const price = G.ifDefined(this, 'props.site.editing.domain.price');
 		if (!this.props.site)
 			return <Loader/>
-		console.log("Domains.getStatus()", Domains.getStatus(this.props.site._id));
 		switch (Domains.getStatus(this.props.site._id)) {
 			case "checking":
 				button = <button className="ui basic button">

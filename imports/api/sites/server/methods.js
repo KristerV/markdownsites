@@ -109,5 +109,9 @@ Meteor.methods({
 			if (site)
 				return commitAdd(siteId, this.userId)
 		}
+	},
+	'sites.updateDomainStatus'(siteId) {
+		check(siteId, String);
+		Sites.findOne(siteId).updateDomainStatus();
 	}
 });
