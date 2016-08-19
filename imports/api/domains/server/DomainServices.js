@@ -8,19 +8,16 @@ if (Meteor.isServer) {
 }
 
 DomainServices = {
-	updatePrices() {
-		Meteor.call('domain.getAllPrices')
-	},
-	getDNSStatus(siteId) {
-		return "you";
+	getDNSStatus(domainName) {
+		return; // Turns out namecheap doesn't have an API for this
+		const parts = domainName.split('.');
+		return namecheap.apiCall('namecheap.domains.dns.getList', {SLD: parts[0], TLD: parts[1]}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
 	},
 	getPaymentStatus(siteId) {
 		return "you";
 	},
-	getAvailability(siteId) {
-		const site = Sites.findOne(siteId);
-		const domainName = site.editing.domain.name;
-		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+	getAvailability(domainName) {
+		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
 	},
 	parseAvailabilityResponse(data) {
 		const domainlist = data.response[0].DomainCheckResult;
@@ -53,12 +50,47 @@ DomainServices = {
 				msg = data.response.toString()
 		}
 		return {success: false, msg};
+	},
+	updateDomainPrices() {
+		console.info("domain.getAllPrices: Fetch data");
+		namecheap.apiCall('namecheap.users.getPricing', {
+			ProductType: "DOMAIN",
+			ProductCategory: "REGISTER"
+		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+			.then(Meteor.bindEnvironment((data) => {
+				console.info("domain.getAllPrices: crunching..");
+				const services = data.response[0].UserGetPricingResult[0].ProductType[0].ProductCategory;
+				let restructure = {};
+				for (service of services) {
+					const serviceType = service.$.Name;
+					for (product of service.Product) {
+						const extension = product.$.Name;
+						if (!restructure[extension]) restructure[extension] = {}
+						const priceObj = product.Price[0].$;
+						const price = priceObj.Currency === "USD" ? parseFloat(priceObj.Price) : null;
+						restructure[extension][serviceType] = price;
+						restructure[extension].name = extension;
+					}
+				}
+
+				console.info("domain.getAllPrices: upserting..");
+				for (const key in restructure) {
+					let r = restructure[key];
+					r.mdsPrice = Math.round(Math.max(r.register, r.renew || 0));
+					if (r.mdsPrice) r.mdsPrice += 5;
+					DomainsCollection.upsert({name: key}, r);
+				}
+
+				console.info("domain.getAllPrices: Done");
+			})).catch(data => {
+			console.error(data)
+		});
 	}
 };
 
 Meteor.startup(() => {
 	if (!Meteor.isDevelopment) {
-		Meteor.setTimeout(DomainServices.updatePrices, 1000 * 60 * 1);
+		Meteor.setTimeout(DomainServices.updateDomainPrices, 1000 * 60 * 1);
 	}
-	Meteor.setInterval(DomainServices.updatePrices, 1000 * 60 * 60 * 24 * 3); // every 3 days
+	Meteor.setInterval(DomainServices.updateDomainPrices, 1000 * 60 * 60 * 24 * 3); // every 3 days
 })
