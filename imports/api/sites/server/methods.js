@@ -113,5 +113,9 @@ Meteor.methods({
 	'sites.updateDomainStatus'(siteId) {
 		check(siteId, String);
 		Sites.findOne(siteId).updateDomainStatus();
+	},
+	'sites.buyDomain'(siteId) {
+		check(siteId, String);
+		Sites.findOne(siteId).buyDomain();
 	}
 });

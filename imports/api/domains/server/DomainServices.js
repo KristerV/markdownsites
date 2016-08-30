@@ -85,6 +85,52 @@ DomainServices = {
 			})).catch(data => {
 			console.error(data)
 		});
+	},
+	buyDomain(siteId) {
+		console.log("DomainServices.js:90 buyDomain()");
+		const site = Sites.findOne(siteId);
+		const domain = site.editing.domain.name;
+		console.log("domain", domain);
+		return namecheap.apiCall('namecheap.domains.create', {
+			DomainName: domain,
+			Years: 1,
+			RegistrantFirstName: 'Krister',
+			RegistrantLastName: 'Viirsaar',
+			RegistrantAddress1: 'Vilmsi 29-4',
+			RegistrantCity: 'Tallinn',
+			RegistrantStateProvince: 'Harjumaa',
+			RegistrantPostalCode: '10126',
+			RegistrantCountry: 'Estonia',
+			RegistrantPhone: '+372.56355555',
+			RegistrantEmailAddress: 'krister.viirsaar@gmail.com',
+			TechFirstName: 'Krister',
+			TechLastName: 'Viirsaar',
+			TechAddress1: 'Vilmsi 29-4',
+			TechCity: 'Tallinn',
+			TechStateProvince: 'Harjumaa',
+			TechPostalCode: '10126',
+			TechCountry: 'Estonia',
+			TechPhone: '+372.56355555',
+			TechEmailAddress: 'krister.viirsaar@gmail.com',
+			AdminFirstName: 'Krister',
+			AdminLastName: 'Viirsaar',
+			AdminAddress1: 'Vilmsi 29-4',
+			AdminCity: 'Tallinn',
+			AdminStateProvince: 'Harjumaa',
+			AdminPostalCode: '10126',
+			AdminCountry: 'Estonia',
+			AdminPhone: '+372.56355555',
+			AdminEmailAddress: 'krister.viirsaar@gmail.com',
+			AuxBillingFirstName: 'Krister',
+			AuxBillingLastName: 'Viirsaar',
+			AuxBillingAddress1: 'Vilmsi 29-4',
+			AuxBillingCity: 'Tallinn',
+			AuxBillingStateProvince: 'Harjumaa',
+			AuxBillingPostalCode: '10126',
+			AuxBillingCountry: 'Estonia',
+			AuxBillingPhone: '+372.56355555',
+			AuxBillingEmailAddress: 'krister.viirsaar@gmail.com'
+		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 	}
 };
 
