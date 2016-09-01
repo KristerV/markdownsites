@@ -1,0 +1,1 @@
+DomainTransactionsCollection = new Mongo.Collection('domaintransactions');

@@ -1,31 +1,74 @@
+import '../payments/main.js';
+import '../domainTransactions/main.js';
+
 SitesCollection.helpers({
 	updateDomainStatus() {
+		// Only update if domain is valid
+		if () {
+			
+		}
+		
+		console.log("Checking 1")
 		if (Meteor.isClient) { // API keys are only on server
+			console.log("Checking 2")
 			Meteor.call('sites.updateDomainStatus', this._id);
 			return;
 		}
+		console.log("Checking 3")
 
-		const domainName = this.editing.domain.name;
+		const site = this;
 
-		if (!domainName)
-			this.update({$set: {'editing.domain.label': 'not connected'}});
-		else
-			this.update({$set: {'editing.domain.label': 'checking'}});
+		const domainName = site.editing.domain.name;
+		console.log("Checking 4")
+		if (!domainName || G.getDomainExtension(domainName).length <= 1)
+			site.domainStatus('notValidDomain');
 
-		// There are 3 things we need to know
-		Promise.all([DomainServices.getDNSStatus(domainName), DomainServices.getPaymentStatus(this._id), DomainServices.getAvailability(domainName)])
-		.then(Meteor.bindEnvironment(values => {
+		const payment = PaymentsCollection.findOne({domain: domainName});
+		const purchase = DomainTransactionsCollection.findOne({domain: domainName})
+		console.log("Checking 5")
 
-			// const dnsStatus = values[0];
-			const paymentStatus = values[1];
-			const availability = DomainServices.parseAvailabilityResponse(values[2]);
-
-			if (availability.available) {
-				this.update({$set: {'editing.domain.label': `available for $${availability.price}`}});
+		site.domainStatus('checking');
+		if (payment) { // domain paid for
+			console.log("Checking 6")
+			if (payment.siteId === site._id) { // user owns domain
+				console.log("Checking 7")
+				if (purchase) { // namecheap processed
+					console.log("Checking 8")
+					site.domainStatus('connected');
+				} else {
+					console.log("Checking 9")
+					site.domainStatus('paidNotBought');
+				}
+			} else {
+				console.log("Checking 10")
+				site.domainStatus('notAvailable');
 			}
+			console.log("Checking 11")
+		} else if (purchase) {
+			console.log("Checking 12")
+			site.domainStatus('notAvailable');
+		} else {
+			console.log("Checking 13")
+			DomainServices.getAvailability(domainName)
+				.then(Meteor.bindEnvironment(data => {
+					console.log("Checking 14")
 
-		}))
-		.catch(DomainServices.parseError)
+					const availability = DomainServices.parseAvailabilityResponse(data);
+
+					if (availability.available) {
+						console.log("Checking 15")
+						site.update({$set: {'editing.domain.price': availability.price}});
+						site.domainStatus('available');
+					} else {
+						console.log("Checking 16")
+						site.domainStatus('notAvailable');
+					}
+
+				}))
+				.catch(DomainServices.parseError);
+			console.log("Checking 17")
+		}
+
 	},
 	update(data) {
 		check(data, { // Overwriting protection
@@ -34,16 +77,19 @@ SitesCollection.helpers({
 		return SitesCollection.update(this._id, data);
 	},
 	buyDomain() {
-		console.log("helpers.js:37 buyDomain()");
+		const siteId = this._id;
 		if (Meteor.isClient) { // API keys are only on server
-			Meteor.call('sites.buyDomain', this._id);
+			Meteor.call('sites.buyDomain', siteId);
 			return;
 		}
-		console.log("helpers.js:42 buyDomain()");
-		DomainServices.buyDomain(this._id)
+		DomainServices.buyDomain(siteId)
 			.then(Meteor.bindEnvironment(data => {
-				console.log("DOMAIN BOUGHT");
-				console.log(data);
+				let response = data.response[0].DomainCreateResult[0].$
+				response.siteId = siteId;
 			})).catch(data => console.error(data))
+	},
+	domainStatus(status) {
+		check(status, String);
+		return this.update({$set: {'editing.domain.status': status}})
 	}
 });

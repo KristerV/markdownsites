@@ -1,0 +1,1 @@
+PaymentsCollection = new Mongo.Collection('payments');

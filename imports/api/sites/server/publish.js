@@ -19,6 +19,8 @@ Meteor.publish('sites.single', function(siteId) {
 });
 
 Meteor.publish('sites.list', function() {
+	if (!this.userId)
+		return;
 	check(this.userId, String, "Sites.list is published only with this.userId");
 	return SitesCollection.find({editors: this.userId});
 });

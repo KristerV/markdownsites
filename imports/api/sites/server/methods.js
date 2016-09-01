@@ -10,20 +10,24 @@ Meteor.methods({
 			domainAvailable: Match.Maybe(String)
 		}, 'Sites.upsert data missing');
 
-		// No duplicate domains allowed
-		const domainExists = data.domainName ? SitesCollection.findOne({
-			$or: [
-				{'published.domain.name': data.domainName},
-				{'editing.domain.name': data.domainName}
-			]
-		}) : false;
-		if (domainExists && !_.contains(domainExists.editors, this.userId))
-			throw new Meteor.Error(403, 'Domain already registered on this site');
+		if (data.domainName) {
+			// No duplicate domains allowed
+			const duplicateSite = Sites.findOne(data.domainName);
+			if (duplicateSite && !_.contains(duplicateSite.editors, this.userId))
+				throw new Meteor.Error(403, 'Domain already registered on this site');
+
+			// Validate domain
+			let domainMsg = null;
+			if (data.domainName.match('http|\/')) {
+				domainMsg = 'No need for http or /, just the domain.';
+			}
+		}
 
 		// Don't allow accidental overwriting with empty content
 		if ("content" in data && !data.content)
 			throw new Meteor.Error(403, 'Empty content overwriting disabled');
 
+		// Restructure domain part
 		data.domain = data.domain || {};
 		data.domain.name = data.domainName;
 		delete data.domainName;
@@ -32,7 +36,6 @@ Meteor.methods({
 		if (data.email && siteId) {
 			Meteor.call('sites.addEditor', siteId, {email: data.email});
 		}
-
 
 		// New site
 		if (!siteId) {
@@ -43,16 +46,18 @@ Meteor.methods({
 			let insert = {
 				editors: [this.userId],
 				createdAt: new Date(),
-				editing: data
+				editing: data,
+				domainMsg
 			};
 			return {newId: SitesCollection.insert(insert), msg: "Autosave is enabled"};
 		}
 
-		// User is editor: update
+		// User is editor of existing site: update
 		const site = SitesCollection.findOne({_id: siteId, editors: this.userId});
 		if (this.userId && site) {
 
 			const editing = _.extend(site.editing, data);
+			if (domainMsg) editing.domainMsg = domainMsg;
 			const result = SitesCollection.update(siteId, {$set: {editing}});
 
 			if (data.domain)

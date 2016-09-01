@@ -23,6 +23,7 @@ DomainServices = {
 		const domainlist = data.response[0].DomainCheckResult;
 		if (domainlist && domainlist.length === 1) {
 			const d = domainlist[0].$;
+			console.log(d);
 			const domain = d.Domain;
 
 			// Keep availability on the safe side
