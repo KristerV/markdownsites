@@ -3,10 +3,6 @@ import '../domainTransactions/main.js';
 
 SitesCollection.helpers({
 	updateDomainStatus() {
-		// Only update if domain is valid
-		if () {
-			
-		}
 		
 		console.log("Checking 1")
 		if (Meteor.isClient) { // API keys are only on server
@@ -23,11 +19,21 @@ SitesCollection.helpers({
 		if (!domainName || G.getDomainExtension(domainName).length <= 1)
 			site.domainStatus('notValidDomain');
 
+		// Only update if domain is valid
+		if (domainName.match('http|\/')) {
+			this.domainStatus('slashes');
+		}
+		// no strange characters and valid domain extension
+		if (!domainName.match('[^a-zA-Z0-9\\-\\.]') && domainName.match('\\.[a-zA-Z]{2,}$')) {
+			this.domainStatus('notValidDomainName')
+		}
+
 		const payment = PaymentsCollection.findOne({domain: domainName});
 		const purchase = DomainTransactionsCollection.findOne({domain: domainName})
 		console.log("Checking 5")
 
 		site.domainStatus('checking');
+		site.domainMsg('');
 		if (payment) { // domain paid for
 			console.log("Checking 6")
 			if (payment.siteId === site._id) { // user owns domain
@@ -65,7 +71,11 @@ SitesCollection.helpers({
 					}
 
 				}))
-				.catch(DomainServices.parseError);
+				.catch(Meteor.bindEnvironment(data => {
+					const result = DomainServices.parseError(data);
+					site.update({$set: {'editing.domain.msg': result.msg}});
+					site.domainStatus('error');
+				}));
 			console.log("Checking 17")
 		}
 
@@ -91,5 +101,9 @@ SitesCollection.helpers({
 	domainStatus(status) {
 		check(status, String);
 		return this.update({$set: {'editing.domain.status': status}})
+	},
+	domainMsg(msg) {
+		check(msg, String);
+		return this.update({$set: {'editing.domain.msg': msg}})
 	}
 });

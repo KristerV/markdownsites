@@ -24,9 +24,12 @@ export default class extends React.Component {
 
 	update(e, callback) {
 		const domainName = e.target.value;
-		if (!domain.match('[^a-zA-Z0-9\\-\\.]') && domain.match('\\.[a-zA-Z]{2,}$')) {
+		const site = this.props.site;
+		if (!domainName.match('[^a-zA-Z0-9\\-\\.]') && domainName.match('\\.[a-zA-Z]{2,}$')) {
 			let data = {domainName: domainName};
-			Meteor.call("sites.upsert", this.props.site._id, data, Sites.useResults);
+			Meteor.call("sites.upsert", this.props.site._id, data, Sites.useResults, () => {
+				site.updateDomainStatus();
+			});
 		}
 	}
 
@@ -47,7 +50,7 @@ export default class extends React.Component {
 		if (!this.props.site)
 			return <Loader/>
 		const site = this.props.site;
-		const domain = site.domain || {};
+		const domain = G.isDefined(site, 'editing.domain') || {};
 
 		let button = null;
 		const price = G.ifDefined(this, 'props.site.editing.domain.price');
@@ -70,6 +73,21 @@ export default class extends React.Component {
 			case "paidNotBought":
 				button = <button className="ui positive button" onClick={this.showPaymentModal}>
 					Available for ${price} a year
+				</button>;
+				break;
+			case "notValidDomainName":
+				button = <button className="ui positive button" onClick={this.showPaymentModal}>
+					not valid
+				</button>;
+				break;
+			case "slashes":
+				button = <button className="ui button" onClick={this.showPaymentModal}>
+					No http or /
+				</button>;
+				break;
+			case "error":
+				button = <button className="ui button" onClick={this.showPaymentModal}>
+					error
 				</button>;
 				break;
 			default:

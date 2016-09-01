@@ -15,12 +15,6 @@ Meteor.methods({
 			const duplicateSite = Sites.findOne(data.domainName);
 			if (duplicateSite && !_.contains(duplicateSite.editors, this.userId))
 				throw new Meteor.Error(403, 'Domain already registered on this site');
-
-			// Validate domain
-			let domainMsg = null;
-			if (data.domainName.match('http|\/')) {
-				domainMsg = 'No need for http or /, just the domain.';
-			}
 		}
 
 		// Don't allow accidental overwriting with empty content

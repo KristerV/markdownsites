@@ -47,6 +47,9 @@ DomainServices = {
 			case 2030280:
 				msg = "Domain extension not supported. You may still connect manually.";
 				break;
+			case 1011150:
+				msg = "Server error: IP not configured."
+				break;
 			default:
 				msg = data.response.toString()
 		}
