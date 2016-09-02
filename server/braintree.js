@@ -10,10 +10,11 @@ const braintreGateway = braintree.connect({
 });
 
 Meteor.methods({
-	'braintree-webhooks'(a, b) {
+	'braintree-webhooks'(a, b, c) {
 		console.log("braintree-webhooks");
 		console.log(a);
 		console.log(b);
+		console.log(c);
 	},
 	'braintree.noncePayment'(payload, siteId) {
 		let nonce = payload.nonce;
@@ -47,16 +48,14 @@ Meteor.methods({
 			options: {
 				submitForSettlement: true
 			}
-		},
-			Meteor.bindEnvironment((err, result) => {
+		}, Meteor.bindEnvironment((err, result) => {
 			if (result) {
 				if (result.success) {
-					SitesCollection.update(siteId, {
-						$set: {'editing.domain.isPaymentSent': true},
-						$addToSet: {payments: result.transaction.id}
-					});
+					result.domainName = domain;
+					result.siteId = site._id;
+					PaymentsCollection.insert(result);
 				} else {
-					console.warning(result.message)
+					console.error(result);
 				}
 			} else {
 				console.warning(err)
@@ -64,8 +63,3 @@ Meteor.methods({
 		}));
 	}
 });
-
-/*
-Meteor.startup(() => {
-	Meteor.call('braintree.noncePayment', {nonce: 'fake-valid-nonce'}, "FYhtwTgfBfCzaXBNn");
-})*/

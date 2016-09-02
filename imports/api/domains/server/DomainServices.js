@@ -13,9 +13,6 @@ DomainServices = {
 		const parts = domainName.split('.');
 		return namecheap.apiCall('namecheap.domains.dns.getList', {SLD: parts[0], TLD: parts[1]}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
 	},
-	getPaymentStatus(siteId) {
-		return "you";
-	},
 	getAvailability(domainName) {
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
 	},

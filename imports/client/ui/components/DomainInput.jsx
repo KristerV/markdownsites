@@ -37,12 +37,7 @@ export default class extends React.Component {
 	}
 
 	paymentReceived() {
-		Meteor.call('domain.isConnected', this.props.site._id, (err, res) => {
-			if (res)
-				this.checkDomain();
-			else
-				console.error("err", err);
-		});
+		console.log("DomainInput.jsx:40 paymentReceived()");
 	}
 
 	render() {
@@ -69,23 +64,33 @@ export default class extends React.Component {
 					Available for ${price} a year
 				</button>;
 				break;
-			case "paidNotBought":
-				button = <button className="ui positive button" onClick={this.showPaymentModal}>
-					Available for ${price} a year
+			case "confirmingPayment":
+				button = <button className="ui button basic" onClick={this.showPaymentModal}>
+					Confirming payment
+				</button>;
+				break;
+			case "settingDNS":
+				button = <button className="ui button basic" onClick={this.showPaymentModal}>
+					Setting up domain
+				</button>;
+				break;
+			case "unknownPaymentStatus":
+				button = <button className="ui negative button" onClick={this.showPaymentModal}>
+					Payment error
 				</button>;
 				break;
 			case "notValidDomainName":
-				button = <button className="ui positive button" onClick={this.showPaymentModal}>
+				button = <button className="ui negative button basic" onClick={this.showPaymentModal}>
 					not valid
 				</button>;
 				break;
 			case "slashes":
-				button = <button className="ui button" onClick={this.showPaymentModal}>
+				button = <button className="ui negative button basic" onClick={this.showPaymentModal}>
 					No http or /
 				</button>;
 				break;
 			case "error":
-				button = <button className="ui button" onClick={this.showPaymentModal}>
+				button = <button className="ui negative button" onClick={this.showPaymentModal}>
 					error
 				</button>;
 				break;
