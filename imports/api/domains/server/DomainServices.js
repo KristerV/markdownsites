@@ -23,20 +23,21 @@ DomainServices = {
 		const domainlist = data.response[0].DomainCheckResult;
 		if (domainlist && domainlist.length === 1) {
 			const d = domainlist[0].$;
-			console.log(d);
 			const domain = d.Domain;
 
-			// Keep availability on the safe side
+			let available = false;
+			let price = 0;
 			const domainExtension = G.getDomainExtension(domain);
-			const price = DomainsCollection.findOne({name: domainExtension}).mdsPrice;
-			const available = d.Available === "true" && d.IsPremiumName === "false" && !!price;
+			const domainData = DomainsCollection.findOne({name: domainExtension});
+			if (domainData) {
+				price = domainData.mdsPrice;
+				available = d.Available === "true" && d.IsPremiumName === "false" && !!price;
+			}
 
-			return {available, price}
+			return {available, price};
 		}
 	},
 	parseError(data) {
-		console.log("DomainServices.js:25 parseError()");
-		console.log(data);
 		if (!data.requestPayload || !G.isDefined(data, 'response.message'))
 			throw new Meteor.Error(data.toString());
 
@@ -91,10 +92,8 @@ DomainServices = {
 		});
 	},
 	buyDomain(siteId) {
-		console.log("DomainServices.js:90 buyDomain()");
 		const site = Sites.findOne(siteId);
 		const domain = site.editing.domain.name;
-		console.log("domain", domain);
 		return namecheap.apiCall('namecheap.domains.create', {
 			DomainName: domain,
 			Years: 1,
@@ -139,8 +138,9 @@ DomainServices = {
 };
 
 Meteor.startup(() => {
-	if (!Meteor.isDevelopment) {
-		Meteor.setTimeout(DomainServices.updateDomainPrices, 1000 * 60 * 1);
+	const dotCom = DomainsCollection.findOne({name: 'com'})
+	if (!dotCom) {
+		DomainServices.updateDomainPrices();
 	}
 	Meteor.setInterval(DomainServices.updateDomainPrices, 1000 * 60 * 60 * 24 * 3); // every 3 days
 })

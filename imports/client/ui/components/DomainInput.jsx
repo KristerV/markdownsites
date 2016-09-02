@@ -19,7 +19,8 @@ export default class extends React.Component {
 	}
 
 	componentDidMount() {
-		this.props.site.updateDomainStatus();
+		if (G.isDefined(this, "props.site.updateDomainStatus"))
+			this.props.site.updateDomainStatus();
 	}
 
 	update(e, callback) {
@@ -27,9 +28,7 @@ export default class extends React.Component {
 		const site = this.props.site;
 		if (!domainName.match('[^a-zA-Z0-9\\-\\.]') && domainName.match('\\.[a-zA-Z]{2,}$')) {
 			let data = {domainName: domainName};
-			Meteor.call("sites.upsert", this.props.site._id, data, Sites.useResults, () => {
-				site.updateDomainStatus();
-			});
+			Meteor.call("sites.upsert", this.props.site._id, data, Sites.useResults);
 		}
 	}
 

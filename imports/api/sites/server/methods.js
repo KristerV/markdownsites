@@ -41,9 +41,10 @@ Meteor.methods({
 				editors: [this.userId],
 				createdAt: new Date(),
 				editing: data,
-				domainMsg
 			};
-			return {newId: SitesCollection.insert(insert), msg: "Autosave is enabled"};
+			const siteId = SitesCollection.insert(insert);
+			Meteor.call('sites.updateDomainStatus', siteId);
+			return {newId: siteId, msg: "Autosave is enabled"};
 		}
 
 		// User is editor of existing site: update
@@ -51,8 +52,8 @@ Meteor.methods({
 		if (this.userId && site) {
 
 			const editing = _.extend(site.editing, data);
-			if (domainMsg) editing.domainMsg = domainMsg;
 			const result = SitesCollection.update(siteId, {$set: {editing}});
+			site.updateDomainStatus();
 
 			if (data.domain)
 				return {msg: "Domain updated", newId: data.domain.name};
@@ -111,6 +112,8 @@ Meteor.methods({
 	},
 	'sites.updateDomainStatus'(siteId) {
 		check(siteId, String);
+		console.log("siteId", siteId);
+		console.log("Sites.findOne(siteId)", Sites.findOne(siteId));
 		Sites.findOne(siteId).updateDomainStatus();
 	},
 	'sites.buyDomain'(siteId) {
