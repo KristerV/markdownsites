@@ -56,9 +56,3 @@ FlowRouter.route('/:siteId/:pageName', {
 		mount(EditorLayout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
 	}
 });
-
-FlowRouter.route('/braintree-webhooks', {
-	action: function(params, queryParams) {
-		Meteor.call('braintree-webhooks', params, queryParams);
-	}
-})

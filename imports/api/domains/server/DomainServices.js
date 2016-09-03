@@ -168,6 +168,7 @@ DomainServices = {
 	}
 };
 
+// Get domain prices
 Meteor.startup(() => {
 	const dotCom = DomainsCollection.findOne({name: 'com'})
 	if (!dotCom) {
@@ -175,9 +176,3 @@ Meteor.startup(() => {
 	}
 	Meteor.setInterval(DomainServices.updateDomainPrices, 1000 * 60 * 60 * 24 * 3); // every 3 days
 });
-
-Meteor.startup(() => {
-	Meteor.setTimeout(() => {
-		DomainServices.setupDNS('iuedsje2222uos.com');
-	}, 300)
-})
