@@ -1,13 +1,8 @@
 import util from 'util';
 import braintree from 'braintree';
 import '/imports/G.js';
+import braintreGateway from './initBraintree.js';
 
-const braintreGateway = braintree.connect({
-	environment: braintree.Environment.Sandbox,
-	merchantId: G.getEnv('BRAINTREE_MERCHANT_ID'),
-	publicKey: G.getEnv('BRAINTREE_PUBLIC_KEY'),
-	privateKey: G.getEnv('BRAINTREE_PRIVATE_KEY'),
-});
 
 Meteor.methods({
 	'braintree-webhooks'(a, b, c) {
@@ -56,7 +51,7 @@ Meteor.methods({
 		// nonce = 'fake-valid-debit-nonce'; // A nonce representing a valid debit card request
 		// nonce = 'fake-valid-payroll-nonce'; // A nonce representing a valid payroll card request
 		console.log("payment nonce 1");
-		
+
 		braintreGateway.transaction.sale({
 			amount: price,
 			paymentMethodNonce: nonce,
