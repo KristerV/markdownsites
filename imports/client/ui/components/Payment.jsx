@@ -10,6 +10,7 @@ export default class extends React.Component {
 		console.log(err);
 	}
 	onPaymentMethodReceived(payload) {
+		Meteor.call('braintree.paymentReceived', this.props.siteId, this.props.domain, payload)
 		Meteor.call('braintree.noncePayment', payload, this.props.siteId);
 		$('#payment-modal').modal('hide');
 		this.props.onPaymentReceived();

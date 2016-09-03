@@ -16,6 +16,17 @@ Meteor.methods({
 		console.log(b);
 		console.log(c);
 	},
+	'braintree.paymentReceived'(siteId, domain, payload) {
+		check(siteId, String);
+		check(domain, String);
+		check(payload, Object);
+		let data = {
+			domainName: domain,
+			siteId,
+			initialPayment: payload
+		};
+		PaymentsCollection.upsert({domainName: domain}, {$set: data});
+	},
 	'braintree.noncePayment'(payload, siteId) {
 		let nonce = payload.nonce;
 		check(nonce, String);
@@ -45,6 +56,7 @@ Meteor.methods({
 		braintreGateway.transaction.sale({
 			amount: price,
 			paymentMethodNonce: nonce,
+			orderId: `${siteId};${domain}`,
 			options: {
 				submitForSettlement: true
 			}
@@ -53,8 +65,9 @@ Meteor.methods({
 				if (result.success) {
 					result.domainName = domain;
 					result.siteId = site._id;
-					PaymentsCollection.insert(result);
+					PaymentsCollection.upsert({domainName: domain}, {$set: result});
 				} else {
+					console.log("THIS ERROR HERE");
 					console.error(result);
 				}
 			} else {
