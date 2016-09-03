@@ -1,5 +1,4 @@
 import util from 'util';
-import braintree from 'braintree';
 import '/imports/G.js';
 import braintreGateway from './initBraintree.js';
 
