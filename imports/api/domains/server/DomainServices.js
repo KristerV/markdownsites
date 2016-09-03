@@ -8,12 +8,8 @@ if (Meteor.isServer) {
 }
 
 DomainServices = {
-	getDNSStatus(domainName) {
-		return; // Turns out namecheap doesn't have an API for this
-		const parts = domainName.split('.');
-		return namecheap.apiCall('namecheap.domains.dns.getList', {SLD: parts[0], TLD: parts[1]}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
-	},
 	getAvailability(domainName) {
+		console.log("DomainServices.js:17 getAvailability()");
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
 	},
 	parseAvailabilityResponse(data) {
@@ -88,10 +84,11 @@ DomainServices = {
 			console.error(data)
 		});
 	},
-	buyDomain(siteId) {
-		const site = Sites.findOne(siteId);
-		const domain = site.editing.domain.name;
-		return namecheap.apiCall('namecheap.domains.create', {
+	buyDomain(domain, siteId) {
+		console.log("DomainServices.js:92 buyDomain()");
+		if (!domain || !siteId)
+			throw new Meteor.Error('DomainServices.js:92 buyDomain(): '+domain+', '+'siteId');
+		namecheap.apiCall('namecheap.domains.create', {
 			DomainName: domain,
 			Years: 1,
 			RegistrantFirstName: 'Krister',
@@ -131,6 +128,43 @@ DomainServices = {
 			AuxBillingPhone: '+372.56355555',
 			AuxBillingEmailAddress: 'krister.viirsaar@gmail.com'
 		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+			.then(Meteor.bindEnvironment(data => {
+				let response = data.response[0].DomainCreateResult[0].$;
+				response.siteId = siteId;
+				console.log("buyDomainResult", response);
+				DomainTransactionsCollection.insert(response);
+				Sites.findOne(siteId).updateDomainStatus();
+				DomainServices.setupDNS(response.Domain);
+			})).catch(data => console.error(data))
+	},
+	setupDNS(domain) {
+		DomainServices.setupNamecheapDNS(domain);
+		DomainServices.setupScalingoRouting(domain);
+	},
+	setupNamecheapDNS(domain) {
+		console.log(" ------------------- Namecheap DNS ------------------- ");
+		namecheap.apiCall('namecheap.domains.dns.setHosts', {
+			SLD: G.getDomainSLD(domain),
+			TLD:G.getDomainExtension(domain),
+			HostName1: '@',
+			RecordType1: 'URL301',
+			Address1: 'http://www.'+domain,
+			TTL1: 100,
+			HostName2: 'www',
+			RecordType2: 'CNAME',
+			Address2: 'markdownsites.scalingo.io',
+			TTL2: 100
+		}, G.getEnv('NAMECHEAP_SANDBOXMODE')).then(data => {
+			console.log("SUCCESS DNS");
+			console.log(data.response[0].DomainDNSSetHostsResult[0].$);
+		}).catch(data => {
+			console.log("ERROR DNS");
+			console.log(data);
+		})
+
+	},
+	setupScalingoRouting(domain) {
+		console.log(" ------------------- Namecheap DNS ------------------- ");
 	}
 };
 
@@ -140,4 +174,10 @@ Meteor.startup(() => {
 		DomainServices.updateDomainPrices();
 	}
 	Meteor.setInterval(DomainServices.updateDomainPrices, 1000 * 60 * 60 * 24 * 3); // every 3 days
+});
+
+Meteor.startup(() => {
+	Meteor.setTimeout(() => {
+		DomainServices.setupDNS('iuedsje2222uos.com');
+	}, 300)
 })

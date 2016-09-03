@@ -46,6 +46,10 @@ G = {
 		const domainParts = domain.split('.');
 		return domainParts[domainParts.length - 1];
 	},
+	getDomainSLD(domain) {
+		const domainParts = domain.split('.');
+		return domainParts[domainParts.length - 2];
+	},
 	rmTrailing(str, trail) {
 		if (!str || !trail) throw new Meteor.Error(`rmTrailing something missing: ${str}, ${trail}`)
 		if (str.substr(-1) === trail) {

@@ -17,6 +17,7 @@ Meteor.methods({
 		console.log(c);
 	},
 	'payment.received'(siteId, domain, payload) {
+		console.log("methods.js:20 'payment.received'()");
 		check(siteId, String);
 		check(domain, String);
 		check(payload, Object);
@@ -29,6 +30,7 @@ Meteor.methods({
 		Sites.findOne(siteId).updateDomainStatus();
 	},
 	'payment.noncePayment'(payload, siteId) {
+		console.log("methods.js:32 'payment.noncePayment'()");
 		let nonce = payload.nonce;
 		check(nonce, String);
 		check(siteId, String);
@@ -53,7 +55,8 @@ Meteor.methods({
 		// nonce = 'fake-valid-healthcare-nonce'; // A nonce representing a valid healthcare card request
 		// nonce = 'fake-valid-debit-nonce'; // A nonce representing a valid debit card request
 		// nonce = 'fake-valid-payroll-nonce'; // A nonce representing a valid payroll card request
-
+		console.log("payment nonce 1");
+		
 		braintreGateway.transaction.sale({
 			amount: price,
 			paymentMethodNonce: nonce,
@@ -62,18 +65,33 @@ Meteor.methods({
 				submitForSettlement: true
 			}
 		}, Meteor.bindEnvironment((err, result) => {
+			console.log("payment nonce 2");
 			if (result) {
 				if (result.success) {
+					console.log("payment nonce 3");
 					result.domainName = domain;
 					result.siteId = site._id;
 					PaymentsCollection.upsert({domainName: domain}, {$set: result});
 				} else {
-					console.log("THIS ERROR HERE");
+					console.log("payment nonce 4");
 					console.error(result);
 				}
+
+				// TEMP: Webhook simulation
+				Meteor.setTimeout(() => {
+					console.log("payment nonce 5");
+					Meteor.call('payments.transactionConfirmed', `${siteId};${domain}`);
+				}, 4000);
+
 			} else {
 				console.warning(err)
 			}
 		}));
+	},
+	'payments.transactionConfirmed'(orderId) {
+		check(orderId, String);
+		const paym = PaymentsCollection.findOne({'transaction.orderId': orderId});
+		console.log("methods.js:92 'payments.transactionConfirmed'()");
+		DomainServices.buyDomain(paym.domainName, paym.siteId);
 	}
 });

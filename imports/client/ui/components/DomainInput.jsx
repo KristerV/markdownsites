@@ -44,7 +44,6 @@ export default class extends React.Component {
 
 		let button = null;
 		const price = G.ifDefined(this, 'props.site.editing.domain.price');
-		console.log('editing.domain.status', G.ifDefined(site, 'editing.domain.status'));
 		switch (G.ifDefined(site, 'editing.domain.status')) {
 			case "checking":
 				button = <button className="ui basic button">
@@ -89,6 +88,11 @@ export default class extends React.Component {
 			case "takenLocally":
 				button = <button className="ui negative button basic" onClick={this.showPaymentModal}>
 					Already registered here
+				</button>;
+				break;
+			case "connected":
+				button = <button className="ui positive button basic" onClick={this.showPaymentModal}>
+					Domain is connected
 				</button>;
 				break;
 			case "error":

@@ -36,7 +36,7 @@ SitesCollection.helpers({
 		}
 
 		const payment = PaymentsCollection.findOne({domainName: domainName});
-		const purchase = DomainTransactionsCollection.findOne({domain: domainName})
+		const purchase = DomainTransactionsCollection.findOne({Domain: domainName});
 
 		site.domainStatus('checking');
 		site.domainMsg('');
@@ -91,18 +91,6 @@ SitesCollection.helpers({
 			$set: Match.Maybe(Object)
 		})
 		return SitesCollection.update(this._id, data);
-	},
-	buyDomain() {
-		const siteId = this._id;
-		if (Meteor.isClient) { // API keys are only on server
-			Meteor.call('sites.buyDomain', siteId);
-			return;
-		}
-		DomainServices.buyDomain(siteId)
-			.then(Meteor.bindEnvironment(data => {
-				let response = data.response[0].DomainCreateResult[0].$
-				response.siteId = siteId;
-			})).catch(data => console.error(data))
 	},
 	domainStatus(status) {
 		check(status, Match.Maybe(String));
