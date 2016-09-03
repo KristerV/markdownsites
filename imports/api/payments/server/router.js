@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser';
-import braintreGateway from './initBraintree.js';
+import {braintreGateway} from './initBraintree.js';
 
 Picker.middleware( bodyParser.json() );
 Picker.middleware( bodyParser.urlencoded( { extended: false } ) );

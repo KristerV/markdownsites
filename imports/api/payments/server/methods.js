@@ -1,6 +1,5 @@
-import util from 'util';
 import '/imports/G.js';
-import braintreGateway from './initBraintree.js';
+import {braintreGateway} from './initBraintree.js';
 
 
 Meteor.methods({
