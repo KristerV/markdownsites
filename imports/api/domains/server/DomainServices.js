@@ -31,7 +31,7 @@ DomainServices = {
 				available = d.Available === "true" && d.IsPremiumName === "false" && !!price;
 			}
 
-			return {available, price};
+			return {available, price, domain};
 		}
 	},
 	parseError(data) {

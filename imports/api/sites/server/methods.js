@@ -13,13 +13,15 @@ Meteor.methods({
 		if (data.domainName) {
 			// No duplicate domains allowed
 			const duplicateSite = Sites.findOne(data.domainName);
-			if (duplicateSite && !_.contains(duplicateSite.editors, this.userId))
-				throw new Meteor.Error(403, 'Domain already registered on this site');
+			if (duplicateSite && !_.contains(duplicateSite.editors, this.userId)) {
+				Sites.findOne(siteId).domainStatus('takenLocally');
+				return;
+			}
 		}
 
 		// Don't allow accidental overwriting with empty content
 		if ("content" in data && !data.content)
-			throw new Meteor.Error(403, 'Empty content overwriting disabled');
+			throw new Meteor.Error(403, 'Content is empty, will not save.');
 
 		// Restructure domain part
 		data.domain = data.domain || {};

@@ -25,11 +25,7 @@ export default class extends React.Component {
 
 	update(e, callback) {
 		const domainName = e.target.value;
-		const site = this.props.site;
-		if (!domainName.match('[^a-zA-Z0-9\\-\\.]') && domainName.match('\\.[a-zA-Z]{2,}$')) {
-			let data = {domainName: domainName};
-			Meteor.call("sites.upsert", this.props.site._id, data, Sites.useResults);
-		}
+		Meteor.call("sites.upsert", this.props.site._id, {domainName}, Sites.useResults);
 	}
 
 	showPaymentModal() {
@@ -81,12 +77,17 @@ export default class extends React.Component {
 				break;
 			case "notValidDomainName":
 				button = <button className="ui negative button basic" onClick={this.showPaymentModal}>
-					not valid
+					domain not valid
 				</button>;
 				break;
 			case "slashes":
 				button = <button className="ui negative button basic" onClick={this.showPaymentModal}>
 					No http or /
+				</button>;
+				break;
+			case "takenLocally":
+				button = <button className="ui negative button basic" onClick={this.showPaymentModal}>
+					Already registered here
 				</button>;
 				break;
 			case "error":

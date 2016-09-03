@@ -12,16 +12,27 @@ SitesCollection.helpers({
 		const site = this;
 
 		const domainName = site.editing.domain.name;
-		if (!domainName || G.getDomainExtension(domainName).length <= 1)
-			site.domainStatus('notValidDomain');
+		if (!domainName) {
+			site.domainStatus(null);
+			return;
+		}
 
 		// Only update if domain is valid
 		if (domainName.match('http|\/')) {
 			this.domainStatus('slashes');
+			return;
 		}
+
+		// Don't bother if there is no dot (for extension)
+		if (!domainName.match('\\.')) {
+			this.domainStatus(null);
+			return;
+		}
+
 		// no strange characters and valid domain extension
-		if (!domainName.match('[^a-zA-Z0-9\\-\\.]') && domainName.match('\\.[a-zA-Z]{2,}$')) {
-			this.domainStatus('notValidDomainName')
+		if (domainName.match('[^a-zA-Z0-9\\-\\.]') || !domainName.match('\\.[a-zA-Z]{2,}$')) {
+			this.domainStatus('notValidDomainName');
+			return;
 		}
 
 		const payment = PaymentsCollection.findOne({domainName: domainName});
@@ -49,8 +60,13 @@ SitesCollection.helpers({
 		} else {
 			DomainServices.getAvailability(domainName)
 				.then(Meteor.bindEnvironment(data => {
-
+					
 					const availability = DomainServices.parseAvailabilityResponse(data);
+
+					const updatedSite = Sites.findOne(site._id);
+					if (availability.domain !== updatedSite.editing.domain.name) {
+						return; // User is searching for new domain already
+					}
 
 					if (availability.available) {
 						site.update({$set: {'editing.domain.price': availability.price}});
@@ -87,7 +103,7 @@ SitesCollection.helpers({
 			})).catch(data => console.error(data))
 	},
 	domainStatus(status) {
-		check(status, String);
+		check(status, Match.Maybe(String));
 		return this.update({$set: {'editing.domain.status': status}})
 	},
 	domainMsg(msg) {

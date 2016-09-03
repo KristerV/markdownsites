@@ -1,4 +1,1 @@
-
-## Bugs
-
-- Kui kasutaja tahab mitmeid domeene proovida siis url muutub ja käib pinda
+https://github.com/michaltakac/meteor-saas-braintree
