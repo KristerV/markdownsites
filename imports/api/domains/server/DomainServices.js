@@ -180,8 +180,7 @@ DomainServices = {
 
 // Get domain prices
 Meteor.startup(() => {
-	DomainServices.setupScalingoRouting('sdufhsiufd.com')
-	const dotCom = DomainsCollection.findOne({name: 'com'})
+	const dotCom = DomainsCollection.findOne({name: 'com'});
 	if (!dotCom) {
 		DomainServices.updateDomainPrices();
 	}
