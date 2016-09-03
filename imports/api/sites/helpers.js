@@ -44,15 +44,12 @@ SitesCollection.helpers({
 			if (payment.siteId === site._id) { // user owns domain
 				if (purchase) { // namecheap processed
 					site.domainStatus('connected');
+				} else if (G.isDefined(payment, 'disbursment')) {
+					site.domainStatus('settingDNS');
 				} else if (G.isDefined(payment, 'transaction')) {
-					if (payment.transaction.status === 'submitted_for_settlement')
-						site.domainStatus('confirmingPayment');
-					else if (payment.transaction.status === 'settled')
-						site.domainStatus('settingDNS');
-					else
-						site.domainStatus('unknownPaymentStatus');
-				} else {
 					site.domainStatus('confirmingPayment');
+				} else {
+					site.domainStatus('paymentError');
 				}
 			} else {
 				site.domainStatus('notAvailable');

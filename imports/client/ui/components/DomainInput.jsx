@@ -95,6 +95,11 @@ export default class extends React.Component {
 					Domain is connected
 				</button>;
 				break;
+			case "paymentError":
+				button = <button className="ui negative button" onClick={this.showPaymentModal}>
+					Payment error
+				</button>;
+				break;
 			case "error":
 				button = <button className="ui negative button" onClick={this.showPaymentModal}>
 					error
