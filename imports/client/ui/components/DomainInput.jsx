@@ -33,7 +33,7 @@ export default class extends React.Component {
 	}
 
 	paymentReceived() {
-		console.log("DomainInput.jsx:40 paymentReceived()");
+		
 	}
 
 	render() {
@@ -44,6 +44,7 @@ export default class extends React.Component {
 
 		let button = null;
 		const price = G.ifDefined(this, 'props.site.editing.domain.price');
+		console.log('editing.domain.status', G.ifDefined(site, 'editing.domain.status'));
 		switch (G.ifDefined(site, 'editing.domain.status')) {
 			case "checking":
 				button = <button className="ui basic button">

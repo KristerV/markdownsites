@@ -26,6 +26,7 @@ Meteor.methods({
 			initialPayment: payload
 		};
 		PaymentsCollection.upsert({domainName: domain}, {$set: data});
+		Sites.findOne(siteId).updateDomainStatus();
 	},
 	'braintree.noncePayment'(payload, siteId) {
 		let nonce = payload.nonce;
