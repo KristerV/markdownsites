@@ -1,5 +1,6 @@
 import namecheap from 'namecheap-api';
 import '/imports/api/sites/main.js';
+import { HTTP } from 'meteor/http'
 
 if (Meteor.isServer) {
 	namecheap.config.set("ApiUser", G.getEnv('NAMECHEAP_USER'));
@@ -164,12 +165,22 @@ DomainServices = {
 
 	},
 	setupScalingoRouting(domain) {
-		console.log(" ------------------- Namecheap DNS ------------------- ");
+		console.log(" -------------------- Scalingo DNS -------------------- ");
+		HTTP.call('POST',
+			'https://api.scalingo.com/v1/apps/markdownsites/domains',
+			{
+				auth: G.getEnv('SCALINGO_USERNAME')+":"+G.getEnv('SCALINGO_APIKEY'),
+				data: { domain: {name: domain} }
+			}, result => {
+				console.info("SCALINGO RESULT");
+				console.info(result);
+			})
 	}
 };
 
 // Get domain prices
 Meteor.startup(() => {
+	DomainServices.setupScalingoRouting('sdufhsiufd.com')
 	const dotCom = DomainsCollection.findOne({name: 'com'})
 	if (!dotCom) {
 		DomainServices.updateDomainPrices();
