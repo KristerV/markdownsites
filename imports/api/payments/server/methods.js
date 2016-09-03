@@ -70,21 +70,9 @@ Meteor.methods({
 					console.error(result);
 				}
 
-				// TEMP: Webhook simulation
-				Meteor.setTimeout(() => {
-					console.log("payment nonce 5");
-					Meteor.call('payments.transactionConfirmed', `${siteId};${domain}`);
-				}, 4000);
-
 			} else {
 				console.warning(err)
 			}
 		}));
 	},
-	'payments.transactionConfirmed'(orderId) {
-		check(orderId, String);
-		const paym = PaymentsCollection.findOne({'transaction.orderId': orderId});
-		console.log("methods.js:92 'payments.transactionConfirmed'()");
-		DomainServices.buyDomain(paym.domainName, paym.siteId);
-	}
 });
