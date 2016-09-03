@@ -16,7 +16,7 @@ Meteor.methods({
 		console.log(b);
 		console.log(c);
 	},
-	'braintree.paymentReceived'(siteId, domain, payload) {
+	'payment.received'(siteId, domain, payload) {
 		check(siteId, String);
 		check(domain, String);
 		check(payload, Object);
@@ -28,7 +28,7 @@ Meteor.methods({
 		PaymentsCollection.upsert({domainName: domain}, {$set: data});
 		Sites.findOne(siteId).updateDomainStatus();
 	},
-	'braintree.noncePayment'(payload, siteId) {
+	'payment.noncePayment'(payload, siteId) {
 		let nonce = payload.nonce;
 		check(nonce, String);
 		check(siteId, String);
