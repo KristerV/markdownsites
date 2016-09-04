@@ -72,7 +72,7 @@ export default class extends React.Component {
 				break;
 			case "unknownPaymentStatus":
 				button = <button className="ui negative button" onClick={this.showPaymentModal}>
-					Payment error
+					Unknown payment status
 				</button>;
 				break;
 			case "notValidDomainName":

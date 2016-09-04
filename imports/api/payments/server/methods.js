@@ -9,6 +9,11 @@ Meteor.methods({
 		console.log(b);
 		console.log(c);
 	},
+	'payment.getClientToken'() {
+		var createToken = Meteor.wrapAsync(braintreGateway.clientToken.generate, braintreGateway.clientToken);
+		var response = createToken({});
+		return response.clientToken;
+	},
 	'payment.received'(siteId, domain, payload) {
 		console.log("methods.js:20 'payment.received'()");
 		check(siteId, String);
