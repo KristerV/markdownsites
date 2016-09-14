@@ -58,7 +58,7 @@ Meteor.methods({
 			site.updateDomainStatus();
 
 			if (data.domain)
-				return {msg: "Domain updated", newId: data.domain.name};
+				return {msg: "Domain updated"};
 			else
 				return result
 		}

@@ -9,16 +9,23 @@ export default class extends React.Component {
 		this.state = {
 			clientToken: null
 		};
+		this._isMounted = false;
 		this.onPaymentMethodReceived = this.onPaymentMethodReceived.bind(this);
 	}
 
 	componentDidMount() {
+		this._isMounted = true;
 		Meteor.call('payment.getClientToken', (err, res) => {
+			console.log("Payment.jsx:17 ()");
 			if (err)
 				console.error(err);
-			else
+			else if (this._isMounted)
 				this.setState({clientToken: res});
 		});
+	}
+
+	componentWillUnmount() {
+		this._isMounted = false;
 	}
 
 	onPaymentMethodReceived(payload) {
@@ -30,7 +37,7 @@ export default class extends React.Component {
 
 	render() {
 		if (!this.props.domain || !this.props.siteId)
-			return <div>No domain provided or site has no content.</div>;
+			return <div></div>;
 		return (<div className="ui modal small" id="payment-modal">
 			<i className="close icon"></i>
 			<div className="content">

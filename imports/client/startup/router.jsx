@@ -27,32 +27,33 @@ FlowRouter.route('/login/:token', {
 });
 
 FlowRouter.route('/:siteId', {
-	name: 'published',
-	action: function (params, queryParams) {
-		mount(PublishedLayout, {content: <SiteContainer siteId={params.siteId} content={<Marked/>}/>});
-	}
-});
-
-FlowRouter.route('/:siteId/writer', {
 	name: 'writer',
 	action: function (params, queryParams) {
-		mount(EditorLayout, {content: <SiteContainer siteId={params.siteId} content={<Writer/>} source="editing"/>});
+		let content;
+		let layout;
+		if (params.siteId === 'about') {
+			layout = EditorLayout;
+			content = <About/>;
+		} else {
+			layout = PublishedLayout;
+			content = <Marked/>;
+		}
+		mount(layout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
 	}
 });
 
 FlowRouter.route('/:siteId/:pageName', {
+	name: 'writer',
 	action: function (params, queryParams) {
-		let content
-		switch (params.pageName) {
-			case 'preview':
-				content = <Marked/>;
-				break;
-			case 'about':
-				content = <About/>;
-				break;
-			default:
-				content = <Writer/>
+		let content;
+		let layout;
+		if (params.pageName === 'writer') {
+			layout = EditorLayout;
+			content = <Writer/>;
+		} else {
+			layout = PublishedLayout;
+			content = <Marked/>;
 		}
-		mount(EditorLayout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
+		mount(layout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
 	}
 });

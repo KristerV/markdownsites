@@ -21,12 +21,6 @@ export default SiteContainer = createContainer(({ siteId, content }) => {
 		]
 	});
 
-	// Force url to use domain instead of _id
-	/* Disabled, because redirecting is annoyting, especially when testing out different domains
-	if (G.isDefined(site, 'editing.domain.name') && site.editing.domain.name !== FlowRouter.getParam('siteId')) {
-		FlowRouter.go('writer', {siteId: site.editing.domain.name});
-	}*/
-
 	return {
 		site,
 		subReady: sitesSub.ready(),

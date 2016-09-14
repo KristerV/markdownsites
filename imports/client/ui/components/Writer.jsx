@@ -15,7 +15,7 @@ export default class extends React.Component {
 
 		this.state = {
 			showPreview: false
-		}
+		};
 
 		this.onChange = this.onChange.bind(this);
 		this.componentDidMount = this.componentDidMount.bind(this);
@@ -24,7 +24,7 @@ export default class extends React.Component {
 	}
 
 	update(e, callback) {
-		let id = G.isDefined(this, "props.site") ? this.props.site._id : null;
+		let id = G.ifDefined(this, "props.site._id");
 
 		let data = {};
 		if (G.isDefined(e, 'target.name') && e.target.name !== 'content')
@@ -90,8 +90,8 @@ export default class extends React.Component {
 		// Alt preview
 		$('.writer').keydown((e) => {
 			if (e.which === 18) {
-				_this.setState({showPreview: true});
 				_this.update();
+				_this.setState({showPreview: true});
 			}
 		});
 		$('.writer').keyup((e) => {
