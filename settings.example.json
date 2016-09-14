@@ -1,0 +1,12 @@
+{
+  "BRAINTREE_MERCHANT_ID": "g4x3fqtx9nbrqc6w",
+  "BRAINTREE_PRIVATE_KEY": "4d489c35a0d9b50da29ee5e38d6e9b4d",
+  "BRAINTREE_PUBLIC_KEY": "5wgbpnkhk65qxysn",
+  "NAMECHEAP_APIKEY": "bb290d5f65954f12b2550c3c4895d1a0",
+  "NAMECHEAP_CLIENTIP": "94.125.104.17",
+  "NAMECHEAP_SANDBOXMODE": "true",
+  "NAMECHEAP_USER": "kristerv",
+  "ROOT_URL": "http://www.markdownsites.com",
+  "SCALINGO_APIKEY": "BAV71Me9rmDlz_YXaU9MDkxRc_zixnCYfT4g0GcaWKI",
+  "SCALINGO_USERNAME": "kristerv"
+}
