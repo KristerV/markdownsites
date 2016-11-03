@@ -2,15 +2,14 @@ import namecheap from 'namecheap-api';
 import '/imports/api/sites/main.js';
 import { HTTP } from 'meteor/http'
 
-if (Meteor.isServer) {
-	namecheap.config.set("ApiUser", G.getEnv('NAMECHEAP_USER'));
-	namecheap.config.set("ApiKey", G.getEnv('NAMECHEAP_APIKEY'));
-	namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
-}
+log.debug("INIT NAMECHEAP");
+namecheap.config.set("ApiUser", G.getEnv('NAMECHEAP_USER'));
+namecheap.config.set("ApiKey", G.getEnv('NAMECHEAP_APIKEY'));
+namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
 
 DomainServices = {
 	getAvailability(domainName) {
-		log.info('DomainServices.getAvailability', [domainName]);
+		log.info('NAMECHEAP get domain availability', [domainName]);
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
 	},
 	parseAvailabilityResponse(data) {
@@ -54,14 +53,14 @@ DomainServices = {
 		return {success: false, msg};
 	},
 	updateDomainPrices() {
-		log.info('DomainServices.updateDomainPrices');
+		log.info('NAMECHEAP get domain prices');
 		namecheap.apiCall('namecheap.users.getPricing', {
 			ProductType: "DOMAIN",
 			ProductCategory: "REGISTER"
 		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(Meteor.bindEnvironment((data) => {
 				const services = data.response[0].UserGetPricingResult[0].ProductType[0].ProductCategory;
-				log.info('DomainServices.updateDomainPrices.then', services);
+				log.info('NAMECHEAP get domain prices DONE', services);
 				let restructure = {};
 				for (service of services) {
 					const serviceType = service.$.Name;
@@ -82,13 +81,14 @@ DomainServices = {
 					DomainsCollection.upsert({name: key}, r);
 				}
 
-				log.info('DomainServices.updateDomainPrices DONE');
-			})).catch(data => log.error("DomainServices.updateDomainPrices FAIL", data));
+			})).catch(data => log.error("NAMECHEAP get domain prices", data));
 	},
 	buyDomain(domain, siteId) {
-		log.info('DomainServices.buyDomain', [domain, siteId]);
-		if (!domain || !siteId)
-			throw new Meteor.Error('DomainServices.buyDomain(): '+domain+', '+'siteId');
+		log.info('NAMECHEAP buy domain', {domain, siteId});
+		if (!domain || !siteId) {
+			log.warn('NAMECHEAP buy domain MISSING DATA', {domain, siteId});
+			return;
+		}
 		namecheap.apiCall('namecheap.domains.create', {
 			DomainName: domain,
 			Years: 1,
@@ -132,11 +132,11 @@ DomainServices = {
 			.then(Meteor.bindEnvironment(data => {
 				let response = data.response[0].DomainCreateResult[0].$;
 				response.siteId = siteId;
-				log.info('DomainServices.buyDomain.then', response);
+				log.info('NAMECHEAP buy domain DONE', response);
 				DomainTransactionsCollection.insert(response);
 				Sites.findOne(siteId).updateDomainStatus();
 				DomainServices.setupDNS(response.Domain);
-			})).catch(data => log.error('DomainServices.buyDomain.catch', response));
+			})).catch(data => log.error('NAMECHEAP buy domain', response));
 	},
 	setupDNS(domain) {
 		log.info('DomainServices.setupDNS', [domain]);
@@ -144,7 +144,7 @@ DomainServices = {
 		DomainServices.setupScalingoRouting(domain);
 	},
 	setupNamecheapDNS(domain) {
-		log.info('DomainServices.setupNamecheapDNS', [domain]);
+		log.info('NAMECHEAP set hosts', {domain});
 		namecheap.apiCall('namecheap.domains.dns.setHosts', {
 			SLD: G.getDomainSLD(domain),
 			TLD: G.getDomainExtension(domain),
@@ -157,20 +157,19 @@ DomainServices = {
 			Address2: 'markdownsites.scalingo.io',
 			TTL2: 100
 		}, G.getEnv('NAMECHEAP_SANDBOXMODE')).then(data => {
-			log.info('DomainServices.setupNamecheapDNS DONE', [domain]);
-			log.info('DomainServices.setupNamecheapDNS RESULT', data.response[0].DomainDNSSetHostsResult[0].$);
-		}).catch(data => log.error("DomainServices.setupNamecheapDNS.catch", data));
+			log.info('NAMECHEAP set hosts DONE', {domain, data});
+		}).catch(data => log.error("NAMECHEAP set hosts", data));
 
 	},
 	setupScalingoRouting(domain) {
-		log.info('DomainServices.setupScalingoRouting', [domain]);
+		log.info('SCALINGO setup route', [domain]);
 		HTTP.call('POST',
 			'https://api.scalingo.com/v1/apps/markdownsites/domains',
 			{
 				auth: G.getEnv('SCALINGO_USERNAME') + ":" + G.getEnv('SCALINGO_APIKEY'),
 				data: {domain: {name: domain}}
 			}, result => {
-				log.info('DomainServices.setupScalingoRouting', result);
+				log.info('SCALINGO setup route DONE', result);
 			});
 	}
 };
