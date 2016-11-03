@@ -13,7 +13,7 @@ DomainServices = {
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
 	},
 	parseAvailabilityResponse(data) {
-		log.info('DomainServices.parseAvailabilityResponse');
+		log.debug('DomainServices.parseAvailabilityResponse');
 		const domainlist = data.response[0].DomainCheckResult;
 		if (domainlist && domainlist.length === 1) {
 			const d = domainlist[0].$;
@@ -139,12 +139,12 @@ DomainServices = {
 			})).catch(data => log.error('NAMECHEAP buy domain', response));
 	},
 	setupDNS(domain) {
-		log.info('DomainServices.setupDNS', [domain]);
+		log.debug('DomainServices.setupDNS', [domain]);
 		DomainServices.setupNamecheapDNS(domain);
 		DomainServices.setupScalingoRouting(domain);
 	},
 	setupNamecheapDNS(domain) {
-		log.info('NAMECHEAP set hosts', {domain});
+		log.debug('NAMECHEAP set hosts', {domain});
 		namecheap.apiCall('namecheap.domains.dns.setHosts', {
 			SLD: G.getDomainSLD(domain),
 			TLD: G.getDomainExtension(domain),
@@ -162,7 +162,7 @@ DomainServices = {
 
 	},
 	setupScalingoRouting(domain) {
-		log.info('SCALINGO setup route', [domain]);
+		log.debug('SCALINGO setup route', [domain]);
 		HTTP.call('POST',
 			'https://api.scalingo.com/v1/apps/markdownsites/domains',
 			{

@@ -27,6 +27,7 @@ Meteor.methods({
 		Sites.findOne(siteId).updateDomainStatus();
 	},
 	'payment.noncePayment'(payload, siteId) {
+		log.debug("BRAINTREE start sale1", {siteId});
 		let nonce = payload.nonce;
 		check(nonce, String);
 		check(siteId, String);
@@ -60,7 +61,7 @@ Meteor.methods({
 				submitForSettlement: true
 			}
 		}
-		log.debug("BRAINTREE start sale", {siteId, options});
+		log.debug("BRAINTREE start sale2", {siteId, options});
 		braintreGateway.transaction.sale(options,
 			Meteor.bindEnvironment((err, result) => {
 			if (err) {
@@ -68,7 +69,7 @@ Meteor.methods({
 			} else if (result && result.success !== true)
 				log.error("BRAINTREE sale error2", {msg: result.message, result});
 			else {
-				log.info("BRAINTREE sale complete", result);
+				log.info("BRAINTREE sale DONE", result);
 				result.domainName = domain;
 				result.siteId = site._id;
 				PaymentsCollection.upsert({domainName: domain}, {$set: result});
