@@ -8,5 +8,9 @@
   "NAMECHEAP_USER": "kristerv",
   "ROOT_URL": "http://www.markdownsites.com",
   "SCALINGO_APIKEY": "BAV71Me9rmDlz_YXaU9MDkxRc_zixnCYfT4g0GcaWKI",
-  "SCALINGO_USERNAME": "kristerv"
+  "SCALINGO_USERNAME": "kristerv",
+  "kadira": {
+    "appId": "Sn7ByDJDkujsMmS3T",
+    "appSecret": "77969b61-b228-4791-888d-4ac9cdb52b51"
+  }
 }

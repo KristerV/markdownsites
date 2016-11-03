@@ -5,7 +5,9 @@ import 'winston-mongodb';
 log = new (winston.Logger)({
 	level: 'debug',
 	transports: [
-		new (winston.transports.Console)(),
+		new winston.transports.Console({
+			handleExceptions: true
+		}),
 		new winston.transports.MongoDB({
 			db: G.getEnv('MONGO_URL'),
 			level: 'debug',
@@ -16,4 +18,4 @@ log = new (winston.Logger)({
 	],
 	exitOnError: false
 });
-log.info("APPRESTARTED");
+log.info("app restarted");

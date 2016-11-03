@@ -4,12 +4,13 @@
   tr {
 	background-color: rgba(0,0,0,0.02);
 	border-bottom: 1px solid white;
+	white-space: nowrap;
+	word-break: break-word;
   }
   td {
 	padding: 3px 6px;
 	vertical-align: top;
-	word-break: break-word;
-	white-space: pre-wrap;
+	overflow: hidden;
   }
 
   .log-error {
@@ -20,9 +21,15 @@
   }
   .log-debug {
 	color: rgba(0,0,0,0.5) !important;
-	//background-color: transparent !important;
   }
   .log-apprestarted {
 	background-color: grey;
   }
+  td:active {
+	white-space: pre-wrap;
+  }
+}
+
+.log-togglebutton {
+  position: fixed;
 }
