@@ -1,5 +1,6 @@
 import braintree from 'braintree';
 
+log.info("Init Braintree");
 export const braintreGateway = braintree.connect({
 	environment: braintree.Environment.Sandbox,
 	merchantId: G.getEnv('BRAINTREE_MERCHANT_ID'),

@@ -1,4 +1,5 @@
 Meteor.publish('sites.single', function(siteId) {
+	log.debug("Publish sites.single", siteId);
 	if (!siteId)
 		return;
 
@@ -19,6 +20,7 @@ Meteor.publish('sites.single', function(siteId) {
 });
 
 Meteor.publish('sites.list', function() {
+	log.debug("Publish sites.list", this.userId);
 	if (!this.userId)
 		return;
 	check(this.userId, String, "Sites.list is published only with this.userId");

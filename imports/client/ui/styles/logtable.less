@@ -1,0 +1,28 @@
+.logTable {
+  width: 100%;
+  table-layout: fixed;
+  tr {
+	background-color: rgba(0,0,0,0.02);
+	border-bottom: 1px solid white;
+  }
+  td {
+	padding: 3px 6px;
+	vertical-align: top;
+	word-break: break-word;
+	white-space: pre-wrap;
+  }
+
+  .log-error {
+	background-color: rgba(255, 39, 51, 0.41) !important;
+  }
+  .log-warning {
+	background-color: rgba(255, 206, 55, 0.41) !important;
+  }
+  .log-debug {
+	color: rgba(0,0,0,0.5) !important;
+	//background-color: transparent !important;
+  }
+  .log-apprestarted {
+	background-color: grey;
+  }
+}

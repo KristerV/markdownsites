@@ -3,6 +3,7 @@ import {Accounts} from 'meteor/accounts-base';
 import {Email} from 'meteor/email';
 
 Accounts.sendLoginEmail = function (address, callback) {
+	log.info("Send login email", address);
 	address = address.trim();
 
 	if (!address) {

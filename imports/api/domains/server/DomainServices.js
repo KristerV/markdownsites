@@ -10,10 +10,11 @@ if (Meteor.isServer) {
 
 DomainServices = {
 	getAvailability(domainName) {
-		console.log("DomainServices.js:17 getAvailability()");
+		log.info('DomainServices.getAvailability', domainName);
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
 	},
 	parseAvailabilityResponse(data) {
+		log.info('DomainServices.parseAvailabilityResponse', data);
 		const domainlist = data.response[0].DomainCheckResult;
 		if (domainlist && domainlist.length === 1) {
 			const d = domainlist[0].$;
@@ -32,6 +33,7 @@ DomainServices = {
 		}
 	},
 	parseError(data) {
+		log.info('DomainServices.parseError', data);
 		if (!data.requestPayload || !G.isDefined(data, 'response.message'))
 			throw new Meteor.Error(data.toString());
 
@@ -51,14 +53,14 @@ DomainServices = {
 		return {success: false, msg};
 	},
 	updateDomainPrices() {
-		console.info("domain.getAllPrices: Fetch data");
+		log.info('DomainServices.updateDomainPrices');
 		namecheap.apiCall('namecheap.users.getPricing', {
 			ProductType: "DOMAIN",
 			ProductCategory: "REGISTER"
 		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(Meteor.bindEnvironment((data) => {
-				console.info("domain.getAllPrices: crunching..");
 				const services = data.response[0].UserGetPricingResult[0].ProductType[0].ProductCategory;
+				log.info('DomainServices.updateDomainPrices.then', services.length);
 				let restructure = {};
 				for (service of services) {
 					const serviceType = service.$.Name;
@@ -72,7 +74,6 @@ DomainServices = {
 					}
 				}
 
-				console.info("domain.getAllPrices: upserting..");
 				for (const key in restructure) {
 					let r = restructure[key];
 					r.mdsPrice = Math.round(Math.max(r.register, r.renew || 0));
@@ -80,15 +81,13 @@ DomainServices = {
 					DomainsCollection.upsert({name: key}, r);
 				}
 
-				console.info("domain.getAllPrices: Done");
-			})).catch(data => {
-			console.error(data)
-		});
+				log.info('DomainServices.updateDomainPrices DONE');
+			})).catch(data => log.error("DomainServices.updateDomainPrices FAIL", data));
 	},
 	buyDomain(domain, siteId) {
-		console.log("DomainServices.js:92 buyDomain()");
+		log.info('DomainServices.buyDomain', domain, siteId);
 		if (!domain || !siteId)
-			throw new Meteor.Error('DomainServices.js:92 buyDomain(): '+domain+', '+'siteId');
+			throw new Meteor.Error('DomainServices.buyDomain(): '+domain+', '+'siteId');
 		namecheap.apiCall('namecheap.domains.create', {
 			DomainName: domain,
 			Years: 1,
@@ -132,49 +131,46 @@ DomainServices = {
 			.then(Meteor.bindEnvironment(data => {
 				let response = data.response[0].DomainCreateResult[0].$;
 				response.siteId = siteId;
-				console.log("buyDomainResult", response);
+				log.info('DomainServices.buyDomain.then', response);
 				DomainTransactionsCollection.insert(response);
 				Sites.findOne(siteId).updateDomainStatus();
 				DomainServices.setupDNS(response.Domain);
-			})).catch(data => console.error(data))
+			})).catch(data => log.error('DomainServices.buyDomain.catch', response));
 	},
 	setupDNS(domain) {
+		log.info('DomainServices.setupDNS', domain);
 		DomainServices.setupNamecheapDNS(domain);
 		DomainServices.setupScalingoRouting(domain);
 	},
 	setupNamecheapDNS(domain) {
-		console.log(" ------------------- Namecheap DNS ------------------- ");
+		log.info('DomainServices.setupNamecheapDNS', domain);
 		namecheap.apiCall('namecheap.domains.dns.setHosts', {
 			SLD: G.getDomainSLD(domain),
-			TLD:G.getDomainExtension(domain),
+			TLD: G.getDomainExtension(domain),
 			HostName1: '@',
 			RecordType1: 'URL301',
-			Address1: 'http://www.'+domain,
+			Address1: 'http://www.' + domain,
 			TTL1: 100,
 			HostName2: 'www',
 			RecordType2: 'CNAME',
 			Address2: 'markdownsites.scalingo.io',
 			TTL2: 100
 		}, G.getEnv('NAMECHEAP_SANDBOXMODE')).then(data => {
-			console.log("SUCCESS DNS");
-			console.log(data.response[0].DomainDNSSetHostsResult[0].$);
-		}).catch(data => {
-			console.log("ERROR DNS");
-			console.log(data);
-		})
+			log.info('DomainServices.setupNamecheapDNS DONE', domain);
+			log.info('DomainServices.setupNamecheapDNS RESULT', data.response[0].DomainDNSSetHostsResult[0].$);
+		}).catch(data => log.error("DomainServices.setupNamecheapDNS.catch", data));
 
 	},
 	setupScalingoRouting(domain) {
-		console.log(" -------------------- Scalingo DNS -------------------- ");
+		log.info('DomainServices.setupScalingoRouting', domain);
 		HTTP.call('POST',
 			'https://api.scalingo.com/v1/apps/markdownsites/domains',
 			{
-				auth: G.getEnv('SCALINGO_USERNAME')+":"+G.getEnv('SCALINGO_APIKEY'),
-				data: { domain: {name: domain} }
+				auth: G.getEnv('SCALINGO_USERNAME') + ":" + G.getEnv('SCALINGO_APIKEY'),
+				data: {domain: {name: domain}}
 			}, result => {
-				console.info("SCALINGO RESULT");
-				console.info(result);
-			})
+				log.info('DomainServices.setupScalingoRouting', result);
+			});
 	}
 };
 
@@ -186,3 +182,4 @@ Meteor.startup(() => {
 	}
 	Meteor.setInterval(DomainServices.updateDomainPrices, 1000 * 60 * 60 * 24 * 3); // every 3 days
 });
+

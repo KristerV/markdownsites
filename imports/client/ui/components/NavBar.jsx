@@ -1,5 +1,4 @@
 import React from 'react';
-import '/imports/api/users/collection.js';
 
 export default class extends React.Component {
 

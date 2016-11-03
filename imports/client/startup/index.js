@@ -3,6 +3,7 @@ import '../ui/styles/elements.less';
 import '../ui/styles/font.less';
 import '../ui/styles/helpers.less';
 import '../ui/styles/layout.less';
+import '../ui/styles/logtable.less';
 
 import './router.jsx';
 

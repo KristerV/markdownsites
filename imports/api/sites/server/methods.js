@@ -2,6 +2,7 @@ import {check} from 'meteor/check';
 
 Meteor.methods({
 	'sites.upsert'(siteId, data) {
+		log.debug("sites.upsert", siteId, data);
 		check(siteId, Match.Maybe(String));
 		check(data, {
 			content: Match.Maybe(String),
@@ -66,6 +67,7 @@ Meteor.methods({
 		throw new Meteor.Error(403, 'Permission error');
 	},
 	'sites.publish'(siteId) {
+		log.debug("sites.publish", siteId);
 		check(siteId, String, 'SiteId neede for publishing site');
 		check(this.userId, String, 'Strangers can\'t publish sites');
 
@@ -90,6 +92,7 @@ Meteor.methods({
 
 	},
 	'sites.addEditor'(siteId, data) {
+		log.debug("sites.addEditor", siteId, data);
 		check(data, {
 			email: Match.Maybe(String),
 			userId: Match.Maybe(String)
@@ -113,10 +116,12 @@ Meteor.methods({
 		}
 	},
 	'sites.updateDomainStatus'(siteId) {
+		log.debug("sites.updateDomainStatus", siteId);
 		check(siteId, String);
 		Sites.findOne(siteId).updateDomainStatus();
 	},
 	'sites.buyDomain'(siteId) {
+		log.debug("sites.buyDomain", siteId);
 		check(siteId, String);
 		Sites.findOne(siteId).buyDomain();
 	}

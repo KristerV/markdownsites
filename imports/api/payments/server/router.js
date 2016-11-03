@@ -6,9 +6,9 @@ Picker.middleware( bodyParser.json() );
 Picker.middleware( bodyParser.urlencoded( { extended: false } ) );
 
 Picker.route( '/braintree-webhooks', function( params, req, res, next ) {
-	console.log(" ---------------- Braintree webhook ---------------- ");
-	console.log(params);
-	console.log(req.body);
+	log.debug(" ---------------- Braintree webhook ---------------- ");
+	log.debug(params);
+	log.debug(req.body);
 	if (!req.body.bt_signature || !req.body.bt_payload) {
 		res.end('Not braintree signature')
 		return;
@@ -17,20 +17,20 @@ Picker.route( '/braintree-webhooks', function( params, req, res, next ) {
 		req.body.bt_signature,
 		req.body.bt_payload,
 		function (err, wh) {
-			console.log(wh);
+			log.debug(wh);
 			if (wh.kind === 'transaction_disbursed') {
-				console.log(" ------- IS DISBURSEMENT ------- ");
+				log.debug(" ------- IS DISBURSEMENT ------- ");
 				PaymentsCollection.update({'transaction.id': wh.transaction.id}, {$set: {disbursment: wh}});
 				const paym = PaymentsCollection.findOne({'transaction.id': wh.transaction.id});
 				if (!paym) {
-					console.error('Braintree webhook trying to confirm non-existent payment:', wh);
+					log.error('Braintree webhook trying to confirm non-existent payment:', wh);
 					return;
 				}
 				Meteor.call('payments.transactionConfirmed', `${paym.siteId};${paym.domainName}`);
 				DomainServices.buyDomain(paym.domainName, paym.siteId);
 			} else {
-				console.error(" ------------------- UNKNOWN KIND OF NOTIFICATION ------------------- ");
-				console.error(wh);
+				log.error(" ------------------- UNKNOWN KIND OF NOTIFICATION ------------------- ");
+				log.error(wh);
 			}
 		}
 	);

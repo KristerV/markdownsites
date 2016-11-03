@@ -4,7 +4,7 @@ import {createContainer} from 'meteor/react-meteor-data';
 import '/imports/api/sites/main.js';
 import NavBar from './NavBar.jsx';
 
-export default SiteContainer = createContainer(() => {
+export default createContainer(() => {
 
 	const sitesSub = Meteor.subscribe('sites.list');
 	const sites = SitesCollection.find().fetch();

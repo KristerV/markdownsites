@@ -6,6 +6,7 @@ import SiteContainer from "../ui/components/SiteContainer.jsx";
 import Writer from "../ui/components/Writer.jsx";
 import About from "../ui/components/About.jsx";
 import Marked from "../ui/components/Marked.jsx";
+import LogViewContainer from "../ui/components/LogViewContainer.jsx";
 
 FlowRouter.route('/', {
 	action: function (params, queryParams) {
@@ -23,6 +24,13 @@ FlowRouter.route('/login/:token', {
 			}
 			FlowRouter.go('/')
 		})
+	}
+});
+
+FlowRouter.route('/logs', {
+	name: 'logs',
+	action: function (params, queryParams) {
+		mount(LogViewContainer);
 	}
 });
 

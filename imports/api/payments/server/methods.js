@@ -4,18 +4,20 @@ import {braintreGateway} from './initBraintree.js';
 
 Meteor.methods({
 	'braintree-webhooks'(a, b, c) {
-		console.log("braintree-webhooks");
-		console.log(a);
-		console.log(b);
-		console.log(c);
+		log.info('braintree-webhooks', a, b, c);
+		log.debug("braintree-webhooks");
+		log.debug(a);
+		log.debug(b);
+		log.debug(c);
 	},
 	'payment.getClientToken'() {
+		log.info('payment.getClientToken');
 		var createToken = Meteor.wrapAsync(braintreGateway.clientToken.generate, braintreGateway.clientToken);
 		var response = createToken({});
 		return response.clientToken;
 	},
 	'payment.received'(siteId, domain, payload) {
-		console.log("methods.js:20 'payment.received'()");
+		log.info('payment.received',siteId, domain, payload);
 		check(siteId, String);
 		check(domain, String);
 		check(payload, Object);
@@ -28,7 +30,7 @@ Meteor.methods({
 		Sites.findOne(siteId).updateDomainStatus();
 	},
 	'payment.noncePayment'(payload, siteId) {
-		console.log("methods.js:32 'payment.noncePayment'()");
+		log.info('payment.noncePayment',payload, siteId);
 		let nonce = payload.nonce;
 		check(nonce, String);
 		check(siteId, String);
@@ -53,7 +55,7 @@ Meteor.methods({
 		// nonce = 'fake-valid-healthcare-nonce'; // A nonce representing a valid healthcare card request
 		// nonce = 'fake-valid-debit-nonce'; // A nonce representing a valid debit card request
 		// nonce = 'fake-valid-payroll-nonce'; // A nonce representing a valid payroll card request
-		console.log("payment nonce 1");
+		log.debug("payment nonce 1");
 
 		braintreGateway.transaction.sale({
 			amount: price,
@@ -63,20 +65,19 @@ Meteor.methods({
 				submitForSettlement: true
 			}
 		}, Meteor.bindEnvironment((err, result) => {
-			console.log("payment nonce 2");
+			log.debug("payment nonce 2");
 			if (result) {
 				if (result.success) {
-					console.log("payment nonce 3");
+					log.debug("payment nonce 3");
 					result.domainName = domain;
 					result.siteId = site._id;
 					PaymentsCollection.upsert({domainName: domain}, {$set: result});
 				} else {
-					console.log("payment nonce 4");
-					console.error(result);
+					log.error("payment nonce 4", result);
 				}
 
 			} else {
-				console.warning(err)
+				log.warning(err)
 			}
 		}));
 	},
