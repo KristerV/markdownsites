@@ -2,14 +2,14 @@ import namecheap from 'namecheap-api';
 import '/imports/api/sites/main.js';
 import { HTTP } from 'meteor/http'
 
-log.debug("INIT NAMECHEAP");
+log.debug("NAMECHEAP init");
 namecheap.config.set("ApiUser", G.getEnv('NAMECHEAP_USER'));
 namecheap.config.set("ApiKey", G.getEnv('NAMECHEAP_APIKEY'));
 namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
 
 DomainServices = {
 	getAvailability(domainName) {
-		log.info('NAMECHEAP get domain availability', [domainName]);
+		log.info('NAMECHEAP get domain availability', {domainName});
 		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
 	},
 	parseAvailabilityResponse(data) {
