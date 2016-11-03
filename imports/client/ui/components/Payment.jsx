@@ -16,7 +16,6 @@ export default class extends React.Component {
 	componentDidMount() {
 		this._isMounted = true;
 		Meteor.call('payment.getClientToken', (err, res) => {
-			console.log("Payment.jsx:17 ()");
 			if (err)
 				console.error(err);
 			else if (this._isMounted)

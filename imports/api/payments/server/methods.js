@@ -4,20 +4,17 @@ import {braintreGateway} from './initBraintree.js';
 
 Meteor.methods({
 	'braintree-webhooks'(a, b, c) {
-		log.info('braintree-webhooks', a, b, c);
-		log.debug("braintree-webhooks");
-		log.debug(a);
-		log.debug(b);
-		log.debug(c);
+		log.warn('braintree-webhooks', {a, b, c});
 	},
 	'payment.getClientToken'() {
-		log.info('payment.getClientToken');
+		log.debug('payment.getClientToken');
 		var createToken = Meteor.wrapAsync(braintreGateway.clientToken.generate, braintreGateway.clientToken);
 		var response = createToken({});
+		log.info('payment.getClientToken DONE', {response});
 		return response.clientToken;
 	},
 	'payment.received'(siteId, domain, payload) {
-		log.info('payment.received',siteId, domain, payload);
+		log.debug('payment.received', {siteId, domain, payload});
 		check(siteId, String);
 		check(domain, String);
 		check(payload, Object);
@@ -30,7 +27,6 @@ Meteor.methods({
 		Sites.findOne(siteId).updateDomainStatus();
 	},
 	'payment.noncePayment'(payload, siteId) {
-		log.info('payment.noncePayment',payload, siteId);
 		let nonce = payload.nonce;
 		check(nonce, String);
 		check(siteId, String);
@@ -55,29 +51,27 @@ Meteor.methods({
 		// nonce = 'fake-valid-healthcare-nonce'; // A nonce representing a valid healthcare card request
 		// nonce = 'fake-valid-debit-nonce'; // A nonce representing a valid debit card request
 		// nonce = 'fake-valid-payroll-nonce'; // A nonce representing a valid payroll card request
-		log.debug("payment nonce 1");
 
-		braintreGateway.transaction.sale({
+		const options = {
 			amount: price,
 			paymentMethodNonce: nonce,
 			orderId: `${siteId};${domain}`,
 			options: {
 				submitForSettlement: true
 			}
-		}, Meteor.bindEnvironment((err, result) => {
-			log.debug("payment nonce 2");
-			if (result) {
-				if (result.success) {
-					log.debug("payment nonce 3");
-					result.domainName = domain;
-					result.siteId = site._id;
-					PaymentsCollection.upsert({domainName: domain}, {$set: result});
-				} else {
-					log.error("payment nonce 4", result);
-				}
-
-			} else {
-				log.warning(err)
+		}
+		log.debug("BRAINTREE start sale", {siteId, options});
+		braintreGateway.transaction.sale(options,
+			Meteor.bindEnvironment((err, result) => {
+			if (err) {
+				log.error("BRAINTREE sale error1", err);
+			} else if (result && result.success !== true)
+				log.error("BRAINTREE sale error2", {msg: result.message, result});
+			else {
+				log.info("BRAINTREE sale complete", result);
+				result.domainName = domain;
+				result.siteId = site._id;
+				PaymentsCollection.upsert({domainName: domain}, {$set: result});
 			}
 		}));
 	},
