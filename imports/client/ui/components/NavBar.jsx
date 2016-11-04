@@ -2,25 +2,19 @@ import React from 'react';
 
 export default class extends React.Component {
 
-	newSite() {
-		const email = Meteor.user().getEmail();
-		Meteor.call("sites.upsert", null, {email}, Sites.useResults);
-	}
-
 	render() {
 		const siteId = FlowRouter.getParam('siteId');
-		const linkAbout = `/${siteId}/about`;
+		const linkAbout = `/about`;
 		const sites = this.props.sites || [];
 		return (
 			<div>
 				<ol className="no-bullets">
 					<li className="nav-title">My sites</li>
 					{sites.map((item, i) => {
-						const domain = G.ifDefined(item, 'editing.domain.name');
 						return <a className="block" key={i}
-								  href={`/${item._id}/writer`}>{domain || 'Unnamed site'}</a>
+								  href={`/${item._id}/writer`}>{item.domain || 'Unnamed site'}</a>
 					})}
-					<li><a href="#" onClick={this.newSite}> + new</a></li>
+					<li><a href="/"> + new</a></li>
 				</ol>
 				<ol className="no-bullets">
 					<li className="nav-title">Info</li>
@@ -30,5 +24,4 @@ export default class extends React.Component {
 			</div>
 		)
 	}
-
 }

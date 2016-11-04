@@ -4,53 +4,51 @@ import '/imports/G.js';
 import Marked from './Marked.jsx';
 import DomainInput from './DomainInput.jsx';
 import Textarea from 'react-autosize-textarea';
+import Alert from 'react-s-alert';
 
 export default class extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.updateTimerDelay = 3000;
-		this.updateTimer = null;
-		this.markdown = G.ifDefined(this, 'props.site.editing.content', "");
 
-		this.state = {
-			showPreview: false
-		};
+		let state = {
+			showPreview: false,
+			domain: G.ifDefined(this, 'props.site.domain', ""),
+			email: G.ifDefined(this, 'props.site.email', ""),
+			content: G.ifDefined(this, 'props.site.content', "")
+		}
 
-		this.onChange = this.onChange.bind(this);
+		const user = Meteor.user();
+		if (user && user.getEmail())
+			state.email = user.getEmail();
+
+		this.state = state;
+
+		this.handleChange = this.handleChange.bind(this);
 		this.componentDidMount = this.componentDidMount.bind(this);
-		this.update = this.update.bind(this);
-		this.publish = this.publish.bind(this);
+		this.saveAndPublish = this.saveAndPublish.bind(this);
 	}
 
-	update(e, callback) {
-		let id = G.ifDefined(this, "props.site._id");
-
-		let data = {};
-		if (G.isDefined(e, 'target.name') && e.target.name !== 'content')
-			data = {[e.target.name]: e.target.value};
-		else
-			data = {'content': this.markdown};
-
-		// Previewing empty content
-		const values = _.values(data);
-		if (values.length === 1 && values[0] === null)
-			return false;
-
-		callback = callback || Sites.useResults;
-		Meteor.call("sites.upsert", id, data, callback);
+	handleChange(e) {
+		this.setState({[e.target.name]: e.target.value});
 	}
 
-	onChange(e) {
-		this.markdown = e.target.value;
-		Meteor.clearTimeout(this.updateTimer);
-		this.updateTimer = Meteor.setTimeout(this.update.bind(this), this.updateTimerDelay);
-	}
-
-	publish() {
-		this.update(null, () => {
-			Meteor.call('sites.publish', this.props.site._id, Sites.useResults);
-		})
+	saveAndPublish() {
+		const siteId = G.ifDefined(this, "props.site._id");
+		let data = {
+			domain: this.state.domain,
+			email: this.state.email,
+			content: this.state.content
+		};
+		Meteor.call('sites.upsert', siteId, data, function(err, result){
+			if (err)
+				Alert.error(err.message);
+			else {
+				if (result.siteId) {
+					FlowRouter.go('writer', {siteId: result.siteId, pageName: "writer"});
+				}
+			}
+		});
 	}
 
 	render() {
@@ -58,14 +56,17 @@ export default class extends React.Component {
 		return (<div className="writer relative">
 				<div className="ui form">
 					<div className="fields">
-						<DomainInput site={G.ifDefined(this, 'props.site', null)} domain={G.ifDefined(this, 'props.site.editing.domain.name', "")}/>
+						<div className="field">
+							<label>Domain</label>
+							<input type="text" value={this.state.domain} name="domain" onChange={this.handleChange}/>
+						</div>
 						<div className="field">
 							<label>Owners email</label>
-							<input type="email" defaultValue={G.ifDefined(this, 'props.site.editing.email', "")} name="email" onBlur={this.update}/>
+							<input type="text" value={this.state.email} name="email" onChange={this.handleChange}/>
 						</div>
 						<div className="field">
 							<label>&nbsp;</label>
-							<button className="ui button primary" onClick={this.publish}>Publish</button>
+							<button className="ui button primary" onClick={this.saveAndPublish}>Save and Publish</button>
 						</div>
 					</div>
 					<div className="field relative">
@@ -73,12 +74,12 @@ export default class extends React.Component {
 						<Textarea
 							className={"w100 padding bbb" + (preview ? ' transparent' : '')}
 							name="content"
-							onChange={this.onChange}
-							defaultValue={this.markdown}
+							value={this.state.content}
 							autoFocus={true}
 							rows={5}
+							onChange={this.handleChange}
 						/>
-						{preview ? <div className="absolute w100 top0"><Marked {...this.props}/></div> : null}
+						{preview ? <div className="absolute w100 top0"><Marked content={this.state.content}/></div> : null}
 					</div>
 				</div>
 			</div>
@@ -88,13 +89,12 @@ export default class extends React.Component {
 	componentDidMount() {
 		_this = this;
 		// Alt preview
-		$('.writer').keydown((e) => {
+		$(document).keydown((e) => {
 			if (e.which === 18) {
-				_this.update();
 				_this.setState({showPreview: true});
 			}
 		});
-		$('.writer').keyup((e) => {
+		$(document).keyup((e) => {
 			if (e.which === 18) {
 				_this.setState({showPreview: false});
 			}

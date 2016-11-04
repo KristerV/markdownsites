@@ -7,12 +7,11 @@ export default class extends React.Component {
 		var md = new Remarkable({
 			breaks: true
 		});
-		const source = this.props.source || 'published';
-		const markdown = G.ifDefined(this, `props.site.${source}.content`);
+		const content = G.ifDefined(this, 'props.content') || G.ifDefined(this, 'props.site.content');
 		return (
 			<div
 				className="padding bbb w100 bg-white"
-				dangerouslySetInnerHTML={{__html: md.render(markdown)}}
+				dangerouslySetInnerHTML={{__html: md.render(content)}}
 			></div>
 		)
 	}

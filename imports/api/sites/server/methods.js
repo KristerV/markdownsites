@@ -2,127 +2,40 @@ import {check} from 'meteor/check';
 
 Meteor.methods({
 	'sites.upsert'(siteId, data) {
+
 		log.debug("METHOD sites.upsert", {siteId, data});
+
 		check(siteId, Match.Maybe(String));
 		check(data, {
-			content: Match.Maybe(String),
-			domainName: Match.Maybe(String),
-			email: Match.Maybe(String),
-			domainAvailable: Match.Maybe(String)
+			content: String,
+			domain: String,
+			email: String
 		}, 'Sites.upsert data missing');
+		check(this.userId, String, "Upsert requester has no userId");
 
-		if (data.domainName) {
-			// No duplicate domains allowed
-			const duplicateSite = Sites.findOne(data.domainName);
-			if (duplicateSite && !_.contains(duplicateSite.editors, this.userId)) {
-				Sites.findOne(siteId).domainStatus('takenLocally');
-				return;
-			}
-		}
-
-		// Don't allow accidental overwriting with empty content
-		if ("content" in data && !data.content)
-			throw new Meteor.Error(403, 'Content is empty, will not save.');
-
-		// Restructure domain part
-		data.domain = data.domain || {};
-		data.domain.name = data.domainName;
-		delete data.domainName;
-
-		// Send login email when updating email
-		if (data.email && siteId) {
-			Meteor.call('sites.addEditor', siteId, {email: data.email});
-		}
-
-		// New site
+		// Insert new site
 		if (!siteId) {
-
-			if (!this.userId)
-				throw new Meteor.Error(403, "Guest id not generated yet");
-
-			let insert = {
-				editors: [this.userId],
-				createdAt: new Date(),
-				editing: data,
-			};
-			const siteId = SitesCollection.insert(insert);
-			Meteor.call('sites.updateDomainStatus', siteId);
-			return {newId: siteId, msg: "Autosave is enabled"};
-		}
-
-		// User is editor of existing site: update
-		const site = SitesCollection.findOne({_id: siteId, editors: this.userId});
-		if (this.userId && site) {
-
-			const editing = _.extend(site.editing, data);
-			const result = SitesCollection.update(siteId, {$set: {editing}});
-			site.updateDomainStatus();
-
-			if (data.domain)
-				return {msg: "Domain updated"};
-			else
-				return result
-		}
-
-		throw new Meteor.Error(403, 'Permission error');
-	},
-	'sites.publish'(siteId) {
-		log.debug("METHOD sites.publish", {siteId});
-		check(siteId, String, 'SiteId neede for publishing site');
-		check(this.userId, String, 'Strangers can\'t publish sites');
-
-		const site = SitesCollection.findOne({_id: siteId, editors: this.userId});
-
-		let errors = [];
-		if (!G.isDefined(site, 'editing.domain.name'))
-			errors.push('domain');
-		if (!site.editing.email)
-			errors.push('email');
-		if (!site.editing.content)
-			errors.push('content');
-		if (!_.isEmpty(errors))
-			throw new Meteor.Error(403, "Missing information: " + errors.join(' '))
-
-		if (site) {
-			const data = site.editing;
-			SitesCollection.update(siteId, {$set: {published: data}, $addToSet: {history: data}});
-			const url = Meteor.absoluteUrl() + data.domain;
-			return {msg: `Site is now live at <a target="_blank" href="${url}">${url}</a>`, timeout: 15000};
-		}
-
-	},
-	'sites.addEditor'(siteId, data) {
-		log.debug("METHOD sites.addEditor", {siteId, data});
-		check(data, {
-			email: Match.Maybe(String),
-			userId: Match.Maybe(String)
-		});
-		check(siteId, String);
-		check(this.userId, String);
-
-		function commitAdd(siteId, userId) {
-			return SitesCollection.update(siteId, {$addToSet: {editors: userId}});
-		}
-
-
-		if (data.email && !data.userId) {
-			Accounts.sendLoginEmail(data.email, function (result) {
-				commitAdd(siteId, result.userId);
-			})
+			data.editors = [this.userId];
+			data.createdAt = new Date();
+			siteId = SitesCollection.insert(data);
+			Meteor.call('sites.sendLoginEmail', data.email, siteId);
+			return {siteId};
+		// Update existing site
 		} else {
 			const site = SitesCollection.findOne({_id: siteId, editors: this.userId});
-			if (site)
-				return commitAdd(siteId, this.userId)
+			if (!site)
+				throw new Meteor.Error(403, "User does not own the site");
+			data.modifiedAt = new Date();
+			const update = SitesCollection.update(siteId, {$set: data});
+			if (site.email !== data.email)
+				Meteor.call('sites.sendLoginEmail', data.email, siteId);
+			return {update};
 		}
 	},
-	'sites.updateDomainStatus'(siteId) {
-		log.debug("METHOD sites.updateDomainStatus", {siteId});
-		check(siteId, String);
-		Sites.findOne(siteId).updateDomainStatus();
-	},
-	'sites.buyDomain'(siteId) {
-		log.debug("METHOD sites.buyDomain", {siteId});
-		check(siteId, String);
-		Sites.findOne(siteId).buyDomain();
+	'sites.sendLoginEmail'(email, siteId) {
+		Accounts.sendLoginEmail(email, userId => {
+			if (siteId)
+				SitesCollection.update(siteId, {$addToSet: {editors: userId}});
+		});
 	}
 });

@@ -1,17 +1,22 @@
 Meteor.publish('sites.single', function(siteId) {
+
 	log.debug("PUBLISH sites.single", {siteId});
+
 	if (!siteId)
-		return;
+		return SitesCollection.find({_id: "findnothing-hahaha"});
+	// why return this fake find? Because otherwise going from a /:siteId to / will not empty the fields
 
 	let fields = {
-		editing: 1,
-		published: 1,
-		createdAt: 1
+		domain: 1,
+		content: 1,
 	};
 
 	let isOwner = !!SitesCollection.findOne({_id: siteId, editors: this.userId});
-	if (isOwner)
+	if (isOwner) {
 		fields.editors = 1;
+		fields.email = 1;
+		fields.createdAt = 1;
+	}
 
 	return SitesCollection.find(
 		{$or: [{_id: siteId}, {'editing.domain.name': siteId}]},

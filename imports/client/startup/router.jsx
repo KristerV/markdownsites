@@ -7,8 +7,10 @@ import Writer from "../ui/components/Writer.jsx";
 import About from "../ui/components/About.jsx";
 import Marked from "../ui/components/Marked.jsx";
 import LogViewContainer from "../ui/components/LogViewContainer.jsx";
+import Alert from 'react-s-alert';
 
 FlowRouter.route('/', {
+	name: 'home',
 	action: function (params, queryParams) {
 		mount(EditorLayout, {content: <SiteContainer content={<Writer/>}/>});
 	}
@@ -20,7 +22,7 @@ FlowRouter.route('/login/:token', {
 	action: function (params) {
 		Meteor.loginWithToken(params.token, function (err, result) {
 			if (err) {
-				sAlert.error(err.reason)
+				Alert.error(err.reason)
 			}
 			FlowRouter.go('/')
 		})
@@ -35,7 +37,7 @@ FlowRouter.route('/logs', {
 });
 
 FlowRouter.route('/:siteId', {
-	name: 'writer',
+	name: 'page',
 	action: function (params, queryParams) {
 		let content;
 		let layout;

@@ -24,7 +24,7 @@ G = {
 	},
 	ifDefined: (variable, path, ifNot) => {
 		const result = G.isDefined(variable, path);
-		ifNot = ifNot || null;
+		ifNot = typeof ifNot === 'undefined' ? null : ifNot;
 		return result ? result : ifNot;
 	},
 	getRandomInt(min, max) {
