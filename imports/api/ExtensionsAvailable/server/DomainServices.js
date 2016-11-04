@@ -22,7 +22,7 @@ DomainServices = {
 			let available = false;
 			let price = 0;
 			const domainExtension = G.getDomainExtension(domain);
-			const domainData = DomainsCollection.findOne({name: domainExtension});
+			const domainData = ExtensionsAvailableCollection.findOne({name: domainExtension});
 			if (domainData) {
 				price = domainData.mdsPrice;
 				available = d.Available === "true" && d.IsPremiumName === "false" && !!price;
@@ -60,7 +60,6 @@ DomainServices = {
 		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(Meteor.bindEnvironment((data) => {
 				const services = data.response[0].UserGetPricingResult[0].ProductType[0].ProductCategory;
-				log.info('NAMECHEAP get domain prices DONE', services);
 				let restructure = {};
 				for (service of services) {
 					const serviceType = service.$.Name;
@@ -74,11 +73,12 @@ DomainServices = {
 					}
 				}
 
+				log.info('NAMECHEAP get domain prices DONE', {"Number of extensions fetched": Object.keys(restructure).length});
 				for (const key in restructure) {
 					let r = restructure[key];
 					r.mdsPrice = Math.round(Math.max(r.register, r.renew || 0));
 					if (r.mdsPrice) r.mdsPrice += 5;
-					DomainsCollection.upsert({name: key}, r);
+					ExtensionsAvailableCollection.upsert({extension: key}, r);
 				}
 
 			})).catch(data => log.error("NAMECHEAP get domain prices", data));
@@ -133,7 +133,7 @@ DomainServices = {
 				let response = data.response[0].DomainCreateResult[0].$;
 				response.siteId = siteId;
 				log.info('NAMECHEAP buy domain DONE', response);
-				DomainTransactionsCollection.insert(response);
+				DomainPurchasesCollection.insert(response);
 				Sites.findOne(siteId).updateDomainStatus();
 				DomainServices.setupDNS(response.Domain);
 			})).catch(data => log.error('NAMECHEAP buy domain', response));
@@ -164,7 +164,7 @@ DomainServices = {
 	setupScalingoRouting(domain) {
 		log.debug('SCALINGO setup route', [domain]);
 		HTTP.call('POST',
-			'https://api.scalingo.com/v1/apps/markdownsites/domains',
+			'https://api.scalingo.com/v1/apps/markdownsites/ExtensionsAvailable',
 			{
 				auth: G.getEnv('SCALINGO_USERNAME') + ":" + G.getEnv('SCALINGO_APIKEY'),
 				data: {domain: {name: domain}}
@@ -176,7 +176,7 @@ DomainServices = {
 
 // Get domain prices
 Meteor.startup(() => {
-	const dotCom = DomainsCollection.findOne({name: 'com'});
+	const dotCom = ExtensionsAvailableCollection.findOne({name: 'com'});
 	if (!dotCom) {
 		DomainServices.updateDomainPrices();
 	}

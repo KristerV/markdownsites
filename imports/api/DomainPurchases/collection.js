@@ -1,0 +1,1 @@
+DomainPurchasesCollection = new Mongo.Collection('domain-purchases');

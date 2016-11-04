@@ -34,7 +34,7 @@ Meteor.methods({
 
 		const site = SitesCollection.findOne(siteId);
 		const domain = G.ifDefined(site, 'editing.domain.name');
-		const price = DomainsCollection.findOne({name: G.getDomainExtension(domain)}).mdsPrice;
+		const price = ExtensionsAvailableCollection.findOne({name: G.getDomainExtension(domain)}).mdsPrice;
 
 		// For testing
 		nonce = 'fake-valid-nonce'; // A valid nonce that can be used to create a transaction

@@ -1,0 +1,1 @@
+ExtensionsAvailableCollection = new Mongo.Collection('extensions-available');

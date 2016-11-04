@@ -1,6 +1,6 @@
 import React from 'react';
 import Payment from './Payment.jsx';
-import '/imports/api/domains/main.js';
+import '/imports/api/ExtensionsAvailable/main.js';
 import Loader from './Loader.jsx';
 
 export default class extends React.Component {
@@ -9,41 +9,19 @@ export default class extends React.Component {
 		super(props);
 		this.state = {
 			msg: null,
-			domain: this.props.domain || "",
-			status: null,
-			price: null
 		};
-		this.update = this.update.bind(this);
 		this.showPaymentModal = this.showPaymentModal.bind(this);
-		this.paymentReceived = this.paymentReceived.bind(this);
-	}
-
-	componentDidMount() {
-		if (G.isDefined(this, "props.site.updateDomainStatus"))
-			this.props.site.updateDomainStatus();
-	}
-
-	update(e, callback) {
-		const domainName = e.target.value;
-		Meteor.call("sites.upsert", this.props.site._id, {domainName}, Sites.useResults);
 	}
 
 	showPaymentModal() {
 		$('#payment-modal').modal('show');
 	}
 
-	paymentReceived() {
-		
-	}
-
 	render() {
-		if (!this.props.site)
-			return <Loader/>
-		const site = this.props.site;
-		const domain = G.isDefined(site, 'editing.domain') || {};
-
 		let button = null;
-		const price = G.ifDefined(this, 'props.site.editing.domain.price');
+		console.log(this.props);
+		const price = this.props.extensionAvailability;
+		return(<div>STOP</div>)
 		switch (G.ifDefined(site, 'editing.domain.status')) {
 			case "checking":
 				button = <button className="ui basic button">
@@ -115,12 +93,12 @@ export default class extends React.Component {
 		return (<div className="field">
 				<label>Domain</label>
 				<div className={"ui input action"}>
-					<input type="text" defaultValue={domain.name} name="domainName" onBlur={this.update}/>
+					<input type="text" value={this.props.domain} name={this.props.name} />
 					{button}
 				</div>
-				<Payment domain={this.state.domain} price={this.state.price} siteId={this.props.site._id}
+				<Payment domain={this.props.domain} price={price} siteId={this.props.site._id}
 						 onPaymentReceived={this.paymentReceived}/>
-				<p>{domain.msg}</p>
+				<p>{this.state.msg}</p>
 			</div>
 		)
 	}

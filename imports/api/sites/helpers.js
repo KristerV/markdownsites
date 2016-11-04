@@ -1,5 +1,5 @@
 import '../payments/main.js';
-import '../domainTransactions/main.js';
+import '../DomainPurchases/main.js';
 
 SitesCollection.helpers({
 	updateDomainStatus() {
@@ -36,7 +36,7 @@ SitesCollection.helpers({
 		}
 
 		const payment = PaymentsCollection.findOne({domainName: domainName});
-		const purchase = DomainTransactionsCollection.findOne({Domain: domainName});
+		const purchase = DomainPurchasesCollection.findOne({Domain: domainName});
 
 		site.domainStatus('checking');
 		site.domainMsg('');

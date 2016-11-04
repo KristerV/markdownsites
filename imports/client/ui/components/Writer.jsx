@@ -2,7 +2,7 @@ import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import '/imports/G.js';
 import Marked from './Marked.jsx';
-import DomainInput from './DomainInput.jsx';
+import DomainInputContainer from './DomainInputContainer.jsx';
 import Textarea from 'react-autosize-textarea';
 import Alert from 'react-s-alert';
 
@@ -56,10 +56,7 @@ export default class extends React.Component {
 		return (<div className="writer relative">
 				<div className="ui form">
 					<div className="fields">
-						<div className="field">
-							<label>Domain</label>
-							<input type="text" value={this.state.domain} name="domain" onChange={this.handleChange}/>
-						</div>
+						<DomainInputContainer domain={this.state.domain} onChange={this.handleChange} name="domain"/>
 						<div className="field">
 							<label>Owners email</label>
 							<input type="text" value={this.state.email} name="email" onChange={this.handleChange}/>
