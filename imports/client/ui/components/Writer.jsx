@@ -11,12 +11,18 @@ export default class extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
+		let state = {
 			showPreview: false,
-			domain: G.ifDefined(this, "props.site.domain", ""),
-			email: G.ifDefined(this, "props.site.email", ""),
-			content: G.ifDefined(this, "props.site.content", "")
-		};
+			domain: G.ifDefined(this, 'props.site.domain', ""),
+			email: G.ifDefined(this, 'props.site.email', ""),
+			content: G.ifDefined(this, 'props.site.content', "")
+		}
+
+		const user = Meteor.user();
+		if (user && user.getEmail())
+			state.email = user.getEmail();
+
+		this.state = state;
 
 		this.handleChange = this.handleChange.bind(this);
 		this.componentDidMount = this.componentDidMount.bind(this);

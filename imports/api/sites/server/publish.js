@@ -1,7 +1,10 @@
 Meteor.publish('sites.single', function(siteId) {
+
 	log.debug("PUBLISH sites.single", {siteId});
+
 	if (!siteId)
-		return;
+		return SitesCollection.find({_id: "findnothing-hahaha"});
+	// why return this fake find? Because otherwise going from a /:siteId to / will not empty the fields
 
 	let fields = {
 		editing: 1,

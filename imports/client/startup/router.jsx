@@ -10,6 +10,7 @@ import LogViewContainer from "../ui/components/LogViewContainer.jsx";
 import Alert from 'react-s-alert';
 
 FlowRouter.route('/', {
+	name: 'home',
 	action: function (params, queryParams) {
 		mount(EditorLayout, {content: <SiteContainer content={<Writer/>}/>});
 	}
