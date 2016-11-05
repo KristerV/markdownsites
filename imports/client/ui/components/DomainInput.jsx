@@ -132,7 +132,7 @@ export default class extends React.Component {
 				msg = this.props.domainPurchase.msg;
 				break;
 			case "undefined":
-				button = <button className="ui basic button" onClick={this.startNextStep}>
+				button = <button className="ui teal button" onClick={this.startNextStep}>
 					check availability
 				</button>;
 				break;
