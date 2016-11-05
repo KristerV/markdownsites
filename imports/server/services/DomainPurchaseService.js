@@ -19,7 +19,7 @@ export default {
 
 			// All of the show stoppers are at the end
 			checkAvailabilityError: () => {this.tryStepAgain(domain, siteId, ['checkAvailabilityError', 'checkAvailabilityStarted'])},
-			noncePaymentError: () => {this.tryStepAgain(domain, siteId, ['all'])},
+			noncePaymentError: () => {this.tryStepAgain(domain, siteId, ['noncePaymentError', 'noncePaymentStart'])},
 			buyDomainError: () => {this.tryStepAgain(domain, siteId, ['buyDomainStart', 'buyDomainError'])},
 			buyDomainWithoutTransactionError: () => {this.tryStepAgain(domain, siteId, ['all'])},
 		};
