@@ -14,7 +14,8 @@ log = new (winston.Logger)({
 			capped: true,
 			collection: 'winstonLogs',
 			handleExceptions: true
-		})
+		}),
+		new (winston.transports.File)({ filename: 'markdownsites.log' })
 	],
 	exitOnError: false
 });

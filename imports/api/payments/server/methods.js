@@ -10,7 +10,7 @@ Meteor.methods({
 		log.debug('payment.getClientToken');
 		var createToken = Meteor.wrapAsync(braintreGateway.clientToken.generate, braintreGateway.clientToken);
 		var response = createToken({});
-		log.info('payment.getClientToken DONE', {response});
+		log.info('payment.getClientToken DONE');
 		return response.clientToken;
 	},
 	'payment.noncePayment'(payload, siteId, domain) {
