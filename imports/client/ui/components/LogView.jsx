@@ -33,7 +33,7 @@ export default class extends React.Component {
 						var tableClass = "";
 						if (item.level === 'error')
 							tableClass = "log-error";
-						else if (item.level === 'warning')
+						else if (item.level === 'warn')
 							tableClass = "log-warning";
 						else if (item.level === 'debug')
 							tableClass = "log-debug";

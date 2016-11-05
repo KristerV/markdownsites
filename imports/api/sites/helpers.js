@@ -1,6 +1,5 @@
 import '../payments/main.js';
 import '../DomainPurchases/main.js';
-import NamecheapServices from '../../server/services/NamecheapServices';
 
 SitesCollection.helpers({
 	updateDomainStatus() {
@@ -58,6 +57,7 @@ SitesCollection.helpers({
 		} else if (purchase) {
 			site.domainStatus('notAvailable');
 		} else {
+			/*
 			NamecheapServices.getAvailability(domainName)
 				.then(Meteor.bindEnvironment(data => {
 					
@@ -81,6 +81,7 @@ SitesCollection.helpers({
 					site.update({$set: {'editing.domain.msg': result.msg}});
 					site.domainStatus('error');
 				}));
+				*/
 		}
 
 	},

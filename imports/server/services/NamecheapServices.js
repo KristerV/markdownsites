@@ -1,5 +1,7 @@
 import namecheap from 'namecheap-api';
 import ScalingoServices from './ScalingoServices';
+import DomainPurchaseService from './DomainPurchaseService';
+import NamecheapServices from './NamecheapServices';
 
 log.debug("NAMECHEAP init");
 namecheap.config.set("ApiUser", G.getEnv('NAMECHEAP_USER'));
@@ -7,9 +9,23 @@ namecheap.config.set("ApiKey", G.getEnv('NAMECHEAP_APIKEY'));
 namecheap.config.set("ClientIp", G.getEnv('NAMECHEAP_CLIENTIP'));
 
 export default {
-	getAvailability(domainName) {
-		log.info('NAMECHEAP get domain availability', {domainName});
-		return namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'));
+	getAvailability(domainName, siteId) {
+		log.debug('NAMECHEAP get domain availability', {domainName, siteId});
+		DomainPurchaseService.setStep(domainName, siteId, 'checkAvailabilityStarted', true);
+		namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+			.then(Meteor.bindEnvironment(data => {
+				const availability = NamecheapServices.parseAvailabilityResponse(data);
+				log.info('NAMECHEAP get domain availability DONE', {domainName, siteId, availability});
+				if (availability.available)
+					DomainPurchaseService.setStep(domainName, siteId, 'checkAvailabilityAvailable');
+				else
+					DomainPurchaseService.setStep(domainName, siteId, 'checkAvailabilityNotAvailable');
+			}))
+			.catch(Meteor.bindEnvironment(data => {
+				const result = NamecheapServices.parseError(data);
+				log.error("NAMECHEAP get availability", {domainName, siteId, result});
+				DomainPurchaseService.setStep(domainName, siteId, 'checkAvailabilityError', result);
+			}));
 	},
 	parseAvailabilityResponse(data) {
 		log.debug('NAMECHEAP parseAvailabilityResponse');
@@ -32,24 +48,27 @@ export default {
 		}
 	},
 	parseError(data) {
-		log.info('NAMECHEAP parseError', data);
+		log.debug('NAMECHEAP parseError', data);
 		if (!data.requestPayload || !G.isDefined(data, 'response.message'))
 			throw new Meteor.Error(data.toString());
 
 		const errorcode = parseInt(data.response.message.substring(0, 7));
 
 		let msg = "";
+		let title = "";
 		switch (errorcode) {
 			case 2030280:
-				msg = "Domain extension not supported. You may still connect manually.";
+				title = "Extension not supported";
+				msg = "Do you own this domain?";
 				break;
 			case 1011150:
-				msg = "Server error: IP not configured."
+				title = "Server connection error";
+				msg = "IP not whitelisted NC";
 				break;
 			default:
-				msg = data.response.toString()
+				log.error("Unable to parse error", {response: data.response})
 		}
-		return {success: false, msg};
+		return {success: false, msg, title};
 	},
 	updateDomainPrices() {
 		log.info('NAMECHEAP get domain prices');
@@ -77,7 +96,7 @@ export default {
 					let r = restructure[key];
 					r.mdsPrice = Math.round(Math.max(r.register, r.renew || 0));
 					if (r.mdsPrice) r.mdsPrice += 5;
-					ExtensionsAvailableCollection.upsert({extension: key}, r);
+					ExtensionsAvailableCollection.upsert({name: key}, r);
 				}
 
 			})).catch(data => log.error("NAMECHEAP get domain prices", data));

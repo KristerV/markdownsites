@@ -5,13 +5,13 @@ import '/imports/api/ExtensionsAvailable/main.js';
 import '/imports/api/DomainPurchases/main.js';
 import DomainInput from './DomainInput.jsx';
 
-export default createContainer(({domain, onChange, name}) => {
+export default createContainer(({domain, siteId, onChange, name}) => {
 
 	const extension = G.getDomainExtension(domain);
-	const sub1 = Meteor.subscribe('domain-purchases');
-	const domainPurchase = DomainPurchasesCollection.findOne({domain});
-	const sub2 = Meteor.subscribe('domains-available');
-	const extensionAvailability = ExtensionsAvailableCollection.findOne({extension});
+	const sub1 = Meteor.subscribe('domain-purchases', domain, siteId);
+	const domainPurchase = DomainPurchasesCollection.findOne({domain, siteId});
+	const sub2 = Meteor.subscribe('extensions-available', extension);
+	const extensionAvailability = ExtensionsAvailableCollection.findOne({name: extension});
 
 	return {
 		domainPurchase,

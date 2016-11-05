@@ -7,7 +7,7 @@ import LogView from './LogView.jsx';
 export default createContainer(() => {
 
 	const subs = Meteor.subscribe('winstonLogs', localStorage.getItem("secretLogsKey"));
-	const fetch = LogCollection.find({}, {limit: 1000, sort: {timestamp: -1}}).fetch();
+	const fetch = LogCollection.find().fetch();
 
 	return {
 		logs: fetch
