@@ -21,7 +21,7 @@ export default class extends React.Component {
 		const cacheEnabled = !!this.state.logsCache;
 		let logs;
 		if (cacheEnabled)
-			logs = this.state.logsCache
+			logs = this.state.logsCache;
 		else
 			logs = this.props.logs;
 		return (
@@ -40,11 +40,12 @@ export default class extends React.Component {
 						else if (item.message === "app restarted")
 							tableClass = "log-apprestarted";
 
+						const meta = JSON.stringify(item.meta, null, 4).substring(0, 30000);
 						return <tr key={index} className={tableClass}>
 							<td style={{width: "150px"}}>{item.timestamp.toLocaleString()}</td>
 							<td style={{width: "50px"}}>{item.level}</td>
 							<td style={{width: "350px"}}>{item.message}</td>
-							<td>{JSON.stringify(item.meta, null, 4)}</td>
+							<td>{meta}</td>
 						</tr>;
 					})}
 					</tbody>
