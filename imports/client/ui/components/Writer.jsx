@@ -59,7 +59,7 @@ export default class extends React.Component {
 					<div className="fields">
 						<DomainInputContainer domain={this.state.domain} onChange={this.handleChange} name="domain" siteId={siteId} saveChanges={this.saveAndPublish}/>
 						<div className="field">
-							<label>Owners email</label>
+							<label>Your email</label>
 							<input type="text" value={this.state.email} name="email" onChange={this.handleChange}/>
 						</div>
 						<div className="field">
