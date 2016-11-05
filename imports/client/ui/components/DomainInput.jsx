@@ -36,29 +36,11 @@ export default class extends React.Component {
 		console.log(this.props);
 		let button = null;
 		let msg = "";
+		const price = G.ifDefined(this, "props.extensionAvailability.mdsPrice", "error");
 		const steps = G.ifDefined(this, "props.domainPurchase.steps");
 		const currentStep = steps ? steps[steps.length-1] : "undefined";
 		switch (currentStep) {
-			/*case "checking":
-				button = <button className="ui basic button">
-					checking domain..
-				</button>;
-				break;
-			case "confirmingPayment":
-				button = <button className="ui button basic" onClick={this.startNextStep}>
-					Confirming payment
-				</button>;
-				break;
-			case "settingDNS":
-				button = <button className="ui button basic" onClick={this.startNextStep}>
-					Setting up domain
-				</button>;
-				break;
-			case "unknownPaymentStatus":
-				button = <button className="ui negative button" onClick={this.startNextStep}>
-					Unknown payment status
-				</button>;
-				break;
+			/*
 			case "notValidDomainName":
 				button = <button className="ui negative button basic" onClick={this.startNextStep}>
 					domain not valid
@@ -68,36 +50,64 @@ export default class extends React.Component {
 				button = <button className="ui negative button basic" onClick={this.startNextStep}>
 					No http or /
 				</button>;
-				break;
-			case "takenLocally":
-				button = <button className="ui negative button basic" onClick={this.startNextStep}>
-					Already registered here
-				</button>;
-				break;
-			case "connected":
-				button = <button className="ui positive button basic" onClick={this.startNextStep}>
-					Domain is connected
-				</button>;
-				break;
-			case "paymentError":
-				button = <button className="ui negative button" onClick={this.startNextStep}>
-					Payment error
-				</button>;
-				break;
-			case "error":
-				button = <button className="ui negative button" onClick={this.startNextStep}>
-					error
-				</button>;
 				break;*/
 
+			case "setHostsError":
+				button = <button className="ui negative button">
+					DNS settings failed
+				</button>;
+				msg = "Please contact support";
+				break;
+			case "setHostsDone":
+				button = <button className="ui button basic">
+					DNS settings complete
+				</button>;
+				break;
+			case "setHostsStart":
+				button = <button className="ui button basic">
+					Setting up DNS
+				</button>;
+				break;
+			case "buyDomainWithoutTransactionError":
+				button = <button className="ui negative button">
+					Payment hasn't gone through
+				</button>;
+				msg = "You may want to contact support";
+				break;
+			case "buyDomainDone":
+				button = <button className="ui button basic">
+					Registering complete...
+				</button>;
+				break;
+			case "buyDomainStart":
+				button = <button className="ui button basic">
+					Registering domain...
+				</button>;
+				break;
+			case "noncePaymentDone":
+				button = <button className="ui button basic">
+					Payment received...
+				</button>;
+				break;
+			case "noncePaymentStart":
+				button = <button className="ui button basic">
+					Processing payment...
+				</button>;
+				break;
+			case "noncePaymentError":
+				button = <button className="ui button basic">
+					Technical error
+				</button>;
+				msg = "Payment did not go through."
+				break;
 			case "checkAvailabilityNotAvailable":
 				button = <button className="ui negative button basic">
 					domain is taken
 				</button>;
 				break;
 			case "checkAvailabilityAvailable":
-				button = <button className="ui positive button" onClick={this.startNextStep}>
-					Available for ${this.props.extensionAvailability.mdsPrice} a year
+				button = <button className="ui positive button" onClick={this.showPaymentModal}>
+					Available for ${price} a year
 				</button>;
 				break;
 			case "checkAvailabilityError":
@@ -117,7 +127,7 @@ export default class extends React.Component {
 				</button>;
 				break;
 			default:
-				button = <button className="ui basic button" onClick={this.startNextStep}>
+				button = <button className="ui button" onClick={this.startNextStep}>
 					{currentStep}
 				</button>;
 		}
@@ -128,7 +138,7 @@ export default class extends React.Component {
 					<input type="text" value={this.props.domain} name={this.props.name} onChange={this.props.onChange}/>
 					{button}
 				</div>
-				<Payment domain={this.props.domain} price={99} siteId={this.props.siteId}
+				<Payment domain={this.props.domain} price={price} siteId={this.props.siteId}
 						 onPaymentReceived={this.paymentReceived}/>
 				<p>{msg}</p>
 			</div>

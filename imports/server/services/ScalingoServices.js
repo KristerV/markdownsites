@@ -1,8 +1,8 @@
 import { HTTP } from 'meteor/http'
 
 ScalingoServices = {
-	setupScalingoRouting(domain) {
-		log.debug('SCALINGO setup route', [domain]);
+	setupRoute(domain, siteId) {
+		log.debug('SCALINGO setup route', {domain, siteId});
 		HTTP.call('POST',
 			'https://api.scalingo.com/v1/apps/markdownsites/ExtensionsAvailable',
 			{

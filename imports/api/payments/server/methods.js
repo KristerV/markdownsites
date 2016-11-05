@@ -1,5 +1,6 @@
 import '/imports/G.js';
 import {braintreGateway} from '/imports/server/services/BraintreeServices';
+import DomainPurchaseService from '/imports/server/services/DomainPurchaseService';
 
 Meteor.methods({
 	'braintree-webhooks'(a, b, c) {
@@ -12,28 +13,13 @@ Meteor.methods({
 		log.info('payment.getClientToken DONE', {response});
 		return response.clientToken;
 	},
-	'payment.received'(siteId, domain, payload) {
-		log.debug('payment.received', {siteId, domain, payload});
-		check(siteId, String);
-		check(domain, String);
-		check(payload, Object);
-		let data = {
-			domainName: domain,
-			siteId,
-			initialPayment: payload
-		};
-		PaymentsCollection.upsert({domainName: domain}, {$set: data});
-		Sites.findOne(siteId).updateDomainStatus();
-	},
-	'payment.noncePayment'(payload, siteId) {
-		log.debug("BRAINTREE start sale1", {siteId});
+	'payment.noncePayment'(payload, siteId, domain) {
+		DomainPurchaseService.setStep(domain, siteId, 'noncePaymentStart');
 		let nonce = payload.nonce;
+		log.debug("BRAINTREE process payment1", {domain, siteId});
 		check(nonce, String);
 		check(siteId, String);
-
-		const site = SitesCollection.findOne(siteId);
-		const domain = G.ifDefined(site, 'editing.domain.name');
-		const price = ExtensionsAvailableCollection.findOne({name: G.getDomainExtension(domain)}).mdsPrice;
+		check(domain, String);
 
 		// For testing
 		nonce = 'fake-valid-nonce'; // A valid nonce that can be used to create a transaction
@@ -52,6 +38,7 @@ Meteor.methods({
 		// nonce = 'fake-valid-debit-nonce'; // A nonce representing a valid debit card request
 		// nonce = 'fake-valid-payroll-nonce'; // A nonce representing a valid payroll card request
 
+		const price = ExtensionsAvailableCollection.findOne({name: G.getDomainExtension(domain)}).mdsPrice;
 		const options = {
 			amount: price,
 			paymentMethodNonce: nonce,
@@ -60,18 +47,20 @@ Meteor.methods({
 				submitForSettlement: true
 			}
 		}
-		log.debug("BRAINTREE start sale2", {siteId, options});
+		log.debug("BRAINTREE process payment2", {siteId, options});
 		braintreGateway.transaction.sale(options,
 			Meteor.bindEnvironment((err, result) => {
 			if (err) {
+				DomainPurchaseService.setStep(domain, siteId, "noncePaymentError");
 				log.error("BRAINTREE sale error1", err);
-			} else if (result && result.success !== true)
+			} else if (result && result.success !== true) {
+				DomainPurchaseService.setStep(domain, siteId, "noncePaymentError");
 				log.error("BRAINTREE sale error2", {msg: result.message, result});
-			else {
+			} else {
 				log.info("BRAINTREE sale DONE", result);
-				result.domainName = domain;
-				result.siteId = site._id;
-				PaymentsCollection.upsert({domainName: domain}, {$set: result});
+				DomainPurchaseService.setStep(domain, siteId, "noncePaymentDone");
+				DomainPurchasesCollection.update({domain, siteId}, {$set: {transactionResult: result}});
+				DomainPurchaseService.startNextStep(domain, siteId);
 			}
 		}));
 	},

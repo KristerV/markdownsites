@@ -10,21 +10,16 @@ export default {
 		// What action comes after current step?
 		const stepsActions = {
 			checkAvailability: () => NamecheapServices.getAvailability(domain, siteId),
-			checkAvailabilityAvailable: () => log.warn("Ask for credit card"),
-			clientTokenStart: () => log.error("This step doesn't have a next: clientTokenStart"),
-			clientTokenSent: () => log.error("This step doesn't have a next: clientTokenSent"),
-			noncePaymentStart: () => log.error("This step doesn't have a next: noncePaymentStart"),
-			noncePaymentDone: () => log.error("This step doesn't have a next: noncePaymentDone"),
-			confirmPaymentStart: () => log.error("This step doesn't have a next: confirmPaymentStart"),
-			confirmPaymentDone: () => log.error("This step doesn't have a next: confirmPaymentDone"),
-			buyDomainStart: () => log.error("This step doesn't have a next: buyDomainStart"),
-			buyDomainDone: () => log.error("This step doesn't have a next: buyDomainDone"),
-			setHostsStart: () => log.error("This step doesn't have a next: setHostsStart"),
-			setHostsDone: () => log.error("This step doesn't have a next: setHostsDone"),
+			noncePaymentDone: () => NamecheapServices.buyDomain(domain, siteId),
+			buyDomainDone: () => NamecheapServices.setupDNS(domain, siteId),
+			setHostsDone: () => ScalingoServices.setupRoute(domain, siteId),
 			setScalingoRouteStart: () => log.error("This step doesn't have a next: setScalingoRouteStart"),
 			setScalingoRouteDone: () => log.error("This step doesn't have a next: setScalingoRouteDone"),
 			// All of the show stoppers are at the end
 			checkAvailabilityError: () => {this.tryStepAgain(domain, siteId, ['checkAvailabilityError', 'checkAvailabilityStarted'])},
+			noncePaymentError: () => {this.tryStepAgain(domain, siteId, ['all'])},
+			buyDomainError: () => {this.tryStepAgain(domain, siteId, ['buyDomainStart', 'buyDomainError'])},
+			buyDomainWithoutTransactionError: () => {this.tryStepAgain(domain, siteId, ['all'])},
 			error: () => log.error("This step doesn't have a next: error"),
 		};
 
@@ -54,7 +49,10 @@ export default {
 		DomainPurchasesCollection.update({domain, siteId}, {$addToSet: {steps: stepName}, $set: {msg: details.msg, title: details.title}});
 	},
 	tryStepAgain(domain, siteId, arr) {
-		DomainPurchasesCollection.update({domain, siteId}, {$pullAll: {steps: arr}});
+		if (arr.length === 1 && arr[0] == 'all')
+			DomainPurchasesCollection.update({domain, siteId}, {$set: {steps: []}});
+		else
+			DomainPurchasesCollection.update({domain, siteId}, {$pullAll: {steps: arr}});
 		this.startNextStep(domain, siteId);
 	}
 }
@@ -62,5 +60,8 @@ export default {
 Meteor.methods({
 	'DomainPurchases.startNextStep'(domain, siteId) {
 		DomainPurchaseService.startNextStep(domain, siteId);
-	}
+	},
+	'DomainPurchases.setStep'(domain, siteId, stepName, details) {
+		DomainPurchaseService.setStep(domain, siteId, stepName, details);
+	},
 })

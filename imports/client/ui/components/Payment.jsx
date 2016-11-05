@@ -28,10 +28,8 @@ export default class extends React.Component {
 	}
 
 	onPaymentMethodReceived(payload) {
-		Meteor.call('payment.received', this.props.siteId, this.props.domain, payload)
-		Meteor.call('payment.noncePayment', payload, this.props.siteId);
+		Meteor.call('payment.noncePayment', payload, this.props.siteId,this.props.domain);
 		$('#payment-modal').modal('hide');
-		this.props.onPaymentReceived();
 	}
 
 	render() {

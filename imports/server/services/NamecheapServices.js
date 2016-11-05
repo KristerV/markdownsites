@@ -102,11 +102,19 @@ export default {
 			})).catch(data => log.error("NAMECHEAP get domain prices", data));
 	},
 	buyDomain(domain, siteId) {
+		DomainPurchaseService.setStep(domain, siteId, 'buyDomainStart');
 		log.info('NAMECHEAP buy domain', {domain, siteId});
 		if (!domain || !siteId) {
 			log.warn('NAMECHEAP buy domain MISSING DATA', {domain, siteId});
 			return;
 		}
+		const dpc = DomainPurchasesCollection.findOne({domain, siteId});
+		if (!('transactionResult' in dpc)) {
+			log.error("NAMECHEAP can't buy domain if payment hasn't finished", {domain, siteId});
+			DomainPurchaseService.setStep(domain, siteId, 'buyDomainWithoutTransactionError')
+			return;
+		}
+
 		namecheap.apiCall('namecheap.domains.create', {
 			DomainName: domain,
 			Years: 1,
@@ -151,18 +159,15 @@ export default {
 				let response = data.response[0].DomainCreateResult[0].$;
 				response.siteId = siteId;
 				log.info('NAMECHEAP buy domain DONE', response);
-				DomainPurchasesCollection.insert(response);
-				Sites.findOne(siteId).updateDomainStatus();
-				NamecheapServices.setupDNS(response.Domain);
-			})).catch(data => log.error('NAMECHEAP buy domain', response));
+				DomainPurchaseService.setStep(domain, siteId, 'buyDomainDone');
+				DomainPurchaseService.startNextStep(domain, siteId);
+			})).catch(data => {
+				log.error('NAMECHEAP buy domain', response);
+				DomainPurchaseService.setStep(domain, siteId, 'buyDomainError');
+		});
 	},
-	setupDNS(domain) {
-		log.debug('NAMECHEAP setupDNS', [domain]);
-		NamecheapServices.setupNamecheapDNS(domain);
-		ScalingoServices.setupScalingoRouting(domain);
-	},
-	setupNamecheapDNS(domain) {
-		log.debug('NAMECHEAP set hosts', {domain});
+	setupDNS(domain, siteId) {
+		log.debug('NAMECHEAP set hosts', {domain, siteId});
 		namecheap.apiCall('namecheap.domains.dns.setHosts', {
 			SLD: G.getDomainSLD(domain),
 			TLD: G.getDomainExtension(domain),
@@ -174,10 +179,15 @@ export default {
 			RecordType2: 'CNAME',
 			Address2: 'markdownsites.scalingo.io',
 			TTL2: 100
-		}, G.getEnv('NAMECHEAP_SANDBOXMODE')).then(data => {
+		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+		.then(data => {
 			log.info('NAMECHEAP set hosts DONE', {domain, data});
-		}).catch(data => log.error("NAMECHEAP set hosts", data));
-
+			DomainPurchaseService.setStep(domain, siteId, 'setHostsDone');
+			DomainPurchaseService.startNextStep(domain, siteId);
+		}).catch(data => {
+			log.error("NAMECHEAP set hosts", data);
+			DomainPurchaseService.setStep(domain, siteId, 'setHostsError')
+		});
 	}
 }
 
