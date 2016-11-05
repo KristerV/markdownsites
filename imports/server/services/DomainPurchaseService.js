@@ -9,18 +9,20 @@ export default {
 
 		// What action comes after current step?
 		const stepsActions = {
+
+			// Process from start to finish
 			checkAvailability: () => NamecheapServices.getAvailability(domain, siteId),
 			noncePaymentDone: () => NamecheapServices.buyDomain(domain, siteId),
 			buyDomainDone: () => NamecheapServices.setupDNS(domain, siteId),
 			setHostsDone: () => ScalingoServices.setupRoute(domain, siteId),
 			setScalingoRouteStart: () => log.error("This step doesn't have a next: setScalingoRouteStart"),
-			setScalingoRouteDone: () => log.error("This step doesn't have a next: setScalingoRouteDone"),
+			setScalingoRouteDone: () => DomainPurchaseService.setStep(domain, siteId, 'complete'),
+
 			// All of the show stoppers are at the end
 			checkAvailabilityError: () => {this.tryStepAgain(domain, siteId, ['checkAvailabilityError', 'checkAvailabilityStarted'])},
 			noncePaymentError: () => {this.tryStepAgain(domain, siteId, ['all'])},
 			buyDomainError: () => {this.tryStepAgain(domain, siteId, ['buyDomainStart', 'buyDomainError'])},
 			buyDomainWithoutTransactionError: () => {this.tryStepAgain(domain, siteId, ['all'])},
-			error: () => log.error("This step doesn't have a next: error"),
 		};
 
 		// Figure out next step
@@ -60,8 +62,5 @@ export default {
 Meteor.methods({
 	'DomainPurchases.startNextStep'(domain, siteId) {
 		DomainPurchaseService.startNextStep(domain, siteId);
-	},
-	'DomainPurchases.setStep'(domain, siteId, stepName, details) {
-		DomainPurchaseService.setStep(domain, siteId, stepName, details);
-	},
+	}
 })
