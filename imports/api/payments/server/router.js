@@ -1,11 +1,11 @@
 import bodyParser from 'body-parser';
-import {braintreGateway} from './initBraintree.js';
-import braintree from 'braintree';
+import {braintreGateway} from '/imports/server/services/BraintreeServices';
+import NamecheapServices from '../../../server/services/NamecheapServices';
 
-Picker.middleware( bodyParser.json() );
-Picker.middleware( bodyParser.urlencoded( { extended: false } ) );
+Picker.middleware(bodyParser.json());
+Picker.middleware(bodyParser.urlencoded({extended: false}));
 
-Picker.route( '/braintree-webhooks', function( params, req, res, next ) {
+Picker.route('/braintree-webhooks', function(params, req, res, next) {
 	log.debug(" ---------------- Braintree webhook ---------------- ");
 	log.debug(params);
 	log.debug(req.body);
@@ -16,7 +16,7 @@ Picker.route( '/braintree-webhooks', function( params, req, res, next ) {
 	braintreGateway.webhookNotification.parse(
 		req.body.bt_signature,
 		req.body.bt_payload,
-		function (err, wh) {
+		function(err, wh) {
 			log.debug(wh);
 			if (wh.kind === 'transaction_disbursed') {
 				log.debug(" ------- IS DISBURSEMENT ------- ");
@@ -27,7 +27,7 @@ Picker.route( '/braintree-webhooks', function( params, req, res, next ) {
 					return;
 				}
 				Meteor.call('payments.transactionConfirmed', `${paym.siteId};${paym.domainName}`);
-				DomainServices.buyDomain(paym.domainName, paym.siteId);
+				NamecheapServices.buyDomain(paym.domainName, paym.siteId);
 			} else {
 				log.error(" ------------------- UNKNOWN KIND OF NOTIFICATION ------------------- ");
 				log.error(wh);

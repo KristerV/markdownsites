@@ -1,6 +1,5 @@
 import '/imports/G.js';
-import {braintreGateway} from './initBraintree.js';
-
+import {braintreGateway} from '/imports/server/services/BraintreeServices';
 
 Meteor.methods({
 	'braintree-webhooks'(a, b, c) {
