@@ -163,7 +163,7 @@ export default {
 				log.info('NAMECHEAP buy domain DONE', response);
 				DomainPurchaseService.setStep(domain, siteId, 'buyDomainDone');
 				DomainPurchaseService.startNextStep(domain, siteId);
-			})).catchMeteor.bindEnvironment((data => {
+			})).catch(Meteor.bindEnvironment(data => {
 				log.error('NAMECHEAP buy domain', response);
 				DomainPurchaseService.setStep(domain, siteId, 'buyDomainError');
 		}));
