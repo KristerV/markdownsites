@@ -44,7 +44,8 @@ Meteor.methods({
 				DomainPurchaseService.setStep(domain, siteId, "noncePaymentError");
 				log.error("BRAINTREE sale error1", err);
 			} else if (result && result.success !== true) {
-				DomainPurchaseService.setStep(domain, siteId, "noncePaymentError", {msg: result.message});
+				const details = {msg: result.message};
+				DomainPurchaseService.setStep(domain, siteId, "noncePaymentError", details);
 				log.error("BRAINTREE sale error2", {msg: result.message, result, details});
 			} else {
 				log.info("BRAINTREE sale DONE", result);
