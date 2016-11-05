@@ -127,8 +127,8 @@ export default {
 			RegistrantStateProvince: 'Harjumaa',
 			RegistrantPostalCode: '10126',
 			RegistrantCountry: 'Estonia',
-			RegistrantPhone: '+372.56355555',
-			RegistrantEmailAddress: 'krister.viirsaar@gmail.com',
+			RegistrantPhone: '+372.5635555',
+			RegistrantEmailAddress: 'domains@markdownsites.com',
 			TechFirstName: 'Krister',
 			TechLastName: 'Viirsaar',
 			TechAddress1: 'Vilmsi 29-4',
@@ -136,8 +136,8 @@ export default {
 			TechStateProvince: 'Harjumaa',
 			TechPostalCode: '10126',
 			TechCountry: 'Estonia',
-			TechPhone: '+372.56355555',
-			TechEmailAddress: 'krister.viirsaar@gmail.com',
+			TechPhone: '+372.5635555',
+			TechEmailAddress: 'domains@markdownsites.com',
 			AdminFirstName: 'Krister',
 			AdminLastName: 'Viirsaar',
 			AdminAddress1: 'Vilmsi 29-4',
@@ -145,8 +145,8 @@ export default {
 			AdminStateProvince: 'Harjumaa',
 			AdminPostalCode: '10126',
 			AdminCountry: 'Estonia',
-			AdminPhone: '+372.56355555',
-			AdminEmailAddress: 'krister.viirsaar@gmail.com',
+			AdminPhone: '+372.5635555',
+			AdminEmailAddress: 'domains@markdownsites.com',
 			AuxBillingFirstName: 'Krister',
 			AuxBillingLastName: 'Viirsaar',
 			AuxBillingAddress1: 'Vilmsi 29-4',
@@ -154,8 +154,8 @@ export default {
 			AuxBillingStateProvince: 'Harjumaa',
 			AuxBillingPostalCode: '10126',
 			AuxBillingCountry: 'Estonia',
-			AuxBillingPhone: '+372.56355555',
-			AuxBillingEmailAddress: 'krister.viirsaar@gmail.com'
+			AuxBillingPhone: '+372.5635555',
+			AuxBillingEmailAddress: 'domains@markdownsites.com'
 		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
 			.then(Meteor.bindEnvironment(data => {
 				let response = data.response[0].DomainCreateResult[0].$;
