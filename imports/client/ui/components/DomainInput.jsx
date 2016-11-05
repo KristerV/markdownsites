@@ -110,10 +110,10 @@ export default class extends React.Component {
 				</button>;
 				break;
 			case "noncePaymentError":
-				button = <button className="ui button basic">
-					Technical error
+				button = <button className="ui button negative" onClick={this.startNextStep}>
+					Payment error
 				</button>;
-				msg = "Payment did not go through."
+				msg = this.props.domainPurchase.msg;
 				break;
 			case "checkAvailabilityNotAvailable":
 				button = <button className="ui negative button basic">
