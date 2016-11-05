@@ -10,12 +10,11 @@ export default {
 		// What action comes after current step?
 		const stepsActions = {
 
-			// Process from start to finish
+			// Process from start to finish (excluding payment stuff)
 			checkAvailability: () => NamecheapServices.getAvailability(domain, siteId),
 			noncePaymentDone: () => NamecheapServices.buyDomain(domain, siteId),
 			buyDomainDone: () => NamecheapServices.setupDNS(domain, siteId),
 			setHostsDone: () => ScalingoServices.setupRoute(domain, siteId),
-			setScalingoRouteStart: () => log.error("This step doesn't have a next: setScalingoRouteStart"),
 			setScalingoRouteDone: () => DomainPurchaseService.setStep(domain, siteId, 'complete'),
 
 			// All of the show stoppers are at the end

@@ -52,6 +52,21 @@ export default class extends React.Component {
 				</button>;
 				break;*/
 
+			case "complete":
+				button = <button className="ui basic button positive">
+					Domain connected
+				</button>;
+				break;
+			case "setScalingoRouteStart":
+				button = <button className="ui basic button">
+					Creating server route
+				</button>;
+				break;
+			case "setScalingoRouteDone":
+				button = <button className="ui basic button">
+					Server route done
+				</button>;
+				break;
 			case "setHostsError":
 				button = <button className="ui negative button">
 					DNS settings failed
@@ -60,12 +75,12 @@ export default class extends React.Component {
 				break;
 			case "setHostsDone":
 				button = <button className="ui button basic">
-					DNS settings complete
+					DNS settings complete...
 				</button>;
 				break;
 			case "setHostsStart":
 				button = <button className="ui button basic">
-					Setting up DNS
+					Setting up DNS...
 				</button>;
 				break;
 			case "buyDomainWithoutTransactionError":

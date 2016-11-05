@@ -1,9 +1,10 @@
 import { HTTP } from 'meteor/http';
 import DomainPurchaseService from './DomainPurchaseService';
 
-ScalingoServices = {
+export default {
 	setupRoute(domain, siteId) {
 		log.debug('SCALINGO setup route', {domain, siteId});
+		DomainPurchaseService.setStep(domain, siteId, 'setScalingoRouteStart');
 		HTTP.call('POST',
 			'https://api.scalingo.com/v1/apps/markdownsites/domains',
 			{

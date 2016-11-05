@@ -99,7 +99,9 @@ export default {
 					ExtensionsAvailableCollection.upsert({name: key}, r);
 				}
 
-			})).catch(data => log.error("NAMECHEAP get domain prices", data));
+			})).catch(Meteor.bindEnvironment(data => {
+				log.error("NAMECHEAP get domain prices", data)
+			}));
 	},
 	buyDomain(domain, siteId) {
 		DomainPurchaseService.setStep(domain, siteId, 'buyDomainStart');
@@ -161,13 +163,14 @@ export default {
 				log.info('NAMECHEAP buy domain DONE', response);
 				DomainPurchaseService.setStep(domain, siteId, 'buyDomainDone');
 				DomainPurchaseService.startNextStep(domain, siteId);
-			})).catch(data => {
+			})).catchMeteor.bindEnvironment((data => {
 				log.error('NAMECHEAP buy domain', response);
 				DomainPurchaseService.setStep(domain, siteId, 'buyDomainError');
-		});
+		}));
 	},
 	setupDNS(domain, siteId) {
 		log.debug('NAMECHEAP set hosts', {domain, siteId});
+		DomainPurchaseService.setStep(domain, siteId, 'setHostsStart');
 		namecheap.apiCall('namecheap.domains.dns.setHosts', {
 			SLD: G.getDomainSLD(domain),
 			TLD: G.getDomainExtension(domain),
@@ -180,14 +183,14 @@ export default {
 			Address2: 'markdownsites.scalingo.io',
 			TTL2: 100
 		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
-		.then(data => {
+		.then(Meteor.bindEnvironment(data => {
 			log.info('NAMECHEAP set hosts DONE', {domain, data});
 			DomainPurchaseService.setStep(domain, siteId, 'setHostsDone');
 			DomainPurchaseService.startNextStep(domain, siteId);
-		}).catch(data => {
+		})).catch(Meteor.bindEnvironment(data => {
 			log.error("NAMECHEAP set hosts", data);
 			DomainPurchaseService.setStep(domain, siteId, 'setHostsError')
-		});
+		}));
 	}
 }
 
