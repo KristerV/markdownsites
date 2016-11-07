@@ -1,10 +1,11 @@
 import React from 'react';
-import {Meteor} from 'meteor/meteor';
+import { Meteor } from 'meteor/meteor';
 import '/imports/G.js';
 import Marked from './Marked.jsx';
 import DomainInputContainer from './DomainInputContainer.jsx';
 import Textarea from 'react-autosize-textarea';
 import Alert from 'react-s-alert';
+import Introduction from './Introduction';
 
 export default class extends React.Component {
 
@@ -40,7 +41,7 @@ export default class extends React.Component {
 			email: this.state.email,
 			content: this.state.content
 		};
-		Meteor.call('sites.upsert', siteId, data, function(err, result){
+		Meteor.call('sites.upsert', siteId, data, function(err, result) {
 			if (err)
 				Alert.error(err.message);
 			else {
@@ -57,14 +58,16 @@ export default class extends React.Component {
 		return (<div className="writer relative">
 				<div className="ui form">
 					<div className="fields">
-						<DomainInputContainer domain={this.state.domain} onChange={this.handleChange} name="domain" siteId={siteId} saveChanges={this.saveAndPublish}/>
+						<DomainInputContainer domain={this.state.domain} onChange={this.handleChange} name="domain"
+											  siteId={siteId} saveChanges={this.saveAndPublish}/>
 						<div className="field">
 							<label>Your email</label>
 							<input type="text" value={this.state.email} name="email" onChange={this.handleChange}/>
 						</div>
 						<div className="field">
 							<label>&nbsp;</label>
-							<button className="ui button primary" onClick={this.saveAndPublish}>Save and Publish</button>
+							<button className="ui button primary" onClick={this.saveAndPublish}>Save and Publish
+							</button>
 						</div>
 					</div>
 					<div className="field relative">
@@ -77,8 +80,10 @@ export default class extends React.Component {
 							rows={5}
 							onChange={this.handleChange}
 						/>
-						{preview ? <div className="absolute w100 top0"><Marked content={this.state.content}/></div> : null}
+						{preview ?
+							<div className="absolute w100 top0"><Marked content={this.state.content}/></div> : null}
 					</div>
+					{this.state.content.length < 30 ? <div className="field relative"><Introduction/></div> : null}
 				</div>
 			</div>
 		)

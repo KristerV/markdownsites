@@ -11,7 +11,7 @@ To publish your site you have three options.
 - Buy a domain through this website and let us do the setting up part
 - Buy a domain elsewhere and connect it to your markdown site manually.
 
-## Connecting a domain you own
+## Connecting a domain you own elsewhere
 
 123...
 `

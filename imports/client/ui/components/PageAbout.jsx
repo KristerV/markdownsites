@@ -5,9 +5,11 @@ export default class extends React.Component {
 
 	render() {
 		return (<Marked content={`
-- Your text based website up in 5 minutes
-- As easy as markdown
-- Extremely low annual cost
+I made this site out of personal need for a quick way to deploy markdown based websites and connect them with domains. Managing them in one place is a massive plus. I put in the extra effort to make it usable for everyone, hopefully you can find it useful.
+
+You can contact me though the support chat or email: krister.viirsaar@gmail.com.
+
+Krister
 `
 		}/>)
 	}
