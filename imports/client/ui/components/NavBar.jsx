@@ -4,7 +4,6 @@ export default class extends React.Component {
 
 	render() {
 		const siteId = FlowRouter.getParam('siteId');
-		const linkAbout = `/about`;
 		const sites = this.props.sites || [];
 		return (
 			<div>
@@ -18,7 +17,10 @@ export default class extends React.Component {
 				</ol>
 				<ol className="no-bullets">
 					<li className="nav-title">Info</li>
-					<li><a href={linkAbout}>About</a></li>
+					<li><a href="/markdown">Markdown Guide</a></li>
+					<li><a href="/customdomain">Custom Domain</a></li>
+					<li><a href="/policy">Policy</a></li>
+					<li><a href="/about">About</a></li>
 				</ol>
 
 			</div>

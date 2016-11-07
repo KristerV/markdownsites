@@ -4,10 +4,15 @@ import EditorLayout from "../ui/layouts/EditorLayout.jsx";
 import PublishedLayout from "../ui/layouts/PublishedLayout.jsx";
 import SiteContainer from "../ui/components/SiteContainer.jsx";
 import Writer from "../ui/components/Writer.jsx";
-import About from "../ui/components/About.jsx";
 import Marked from "../ui/components/Marked.jsx";
 import LogViewContainer from "../ui/components/LogViewContainer.jsx";
 import Alert from 'react-s-alert';
+
+// static pages
+import PageAbout from "../ui/components/PageAbout.jsx";
+import PageCustomDomain from "../ui/components/PageCustomDomain.jsx";
+import PageMarkdown from "../ui/components/PageMarkdown.jsx";
+import PagePolicy from "../ui/components/PagePolicy.jsx";
 
 FlowRouter.route('/', {
 	name: 'home',
@@ -40,13 +45,24 @@ FlowRouter.route('/:siteId', {
 	name: 'page',
 	action: function (params, queryParams) {
 		let content;
-		let layout;
-		if (params.siteId === 'about') {
-			layout = EditorLayout;
-			content = <About/>;
-		} else {
-			layout = PublishedLayout;
-			content = <Marked/>;
+		let layout = EditorLayout;
+		switch (params.siteId) {
+			case 'markdown':
+				content = <PageMarkdown/>;
+				break;
+			case 'customdomain':
+				content = <PageCustomDomain/>;
+				break;
+			case 'policy':
+				content = <PagePolicy/>;
+				break;
+			case 'about':
+				content = <PageAbout/>;
+				break;
+			default:
+				layout = PublishedLayout;
+				content = <Marked/>;
+
 		}
 		mount(layout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
 	}
