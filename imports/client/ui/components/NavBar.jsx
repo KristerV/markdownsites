@@ -23,7 +23,9 @@ export default class extends React.Component {
 					<li><a href="/about">About</a></li>
 				</ol>
 				{guest ?
-					<a href="/login" className="ui blue basic button bottom w100" style={{bottom: "14px"}}>Login</a>
+					<ol className="no-bullets">
+						<a href="/login" className="ui blue basic button" style={{bottom: "14px"}}>Login</a>
+					</ol>
 					:
 					null
 				}
