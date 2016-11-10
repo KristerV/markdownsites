@@ -5,8 +5,9 @@ export default class extends React.Component {
 	render() {
 		const siteId = FlowRouter.getParam('siteId');
 		const sites = this.props.sites || [];
+		const guest = Meteor.user() && Meteor.user().profile.guest;
 		return (
-			<div>
+			<div className="relative h100">
 				<ol className="no-bullets">
 					<li className="nav-title">My sites</li>
 					{sites.map((item, i) => {
@@ -21,6 +22,11 @@ export default class extends React.Component {
 					<li><a href="/policy">Policy</a></li>
 					<li><a href="/about">About</a></li>
 				</ol>
+				{guest ?
+					<a href="/login" className="ui blue basic button bottom w100" style={{bottom: "14px"}}>Login</a>
+					:
+					null
+				}
 
 			</div>
 		)
