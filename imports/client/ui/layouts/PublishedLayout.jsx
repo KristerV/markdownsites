@@ -5,9 +5,7 @@ export default class extends React.Component {
 
 	render() {
 		return (<div className="PublishedLayout">
-				<main>
-					{this.props.content}
-				</main>
+				{this.props.content}
 			</div>
 		)
 	}

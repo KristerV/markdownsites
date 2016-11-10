@@ -1,0 +1,60 @@
+@menuwidth: 315px;
+
+.PublishedContent {
+  padding: 2em;
+  max-width: 900px;
+  margin-left: @menuwidth;
+  z-index: 0;
+  .table-of-contents, .revealer, .shade {
+	transition: left 0.5s, opacity 0.7s;
+  }
+  .table-of-contents {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 100%;
+	width: @menuwidth;
+	z-index: 3;
+  }
+  .revealer {
+	display: none;
+	position: fixed;
+	left: -@menuwidth;
+	top: 0px;
+	margin-left: @menuwidth;
+	z-index: 3;
+  }
+  .shade {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	background-color: rgba(0,0,0,0.7);
+	z-index: 1;
+	opacity: 0;
+	pointer-events: none;
+  }
+}
+
+@media (max-width:900px) {
+  .PublishedContent {
+	margin: auto;
+	.table-of-contents {
+	  left: -@menuwidth;
+	  background-color: white;
+	}
+	&.revealed {
+	  .table-of-contents, .shade {
+		left: 0px;
+		opacity: 1;
+		pointer-events: auto;
+	  }
+	}
+	.revealer {
+	  display: block;
+	}
+  }
+}

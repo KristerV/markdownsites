@@ -12,7 +12,8 @@ export default class extends React.Component {
 			site: this.props.site,
 			source: this.props.source || 'published'
 		}
-		content = React.cloneElement(content, props);
+		if (content)
+			content = React.cloneElement(content, props);
 
 		return (<div className="wh100">
 			{content}

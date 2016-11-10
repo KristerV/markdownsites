@@ -4,7 +4,7 @@ import EditorLayout from "../ui/layouts/EditorLayout.jsx";
 import PublishedLayout from "../ui/layouts/PublishedLayout.jsx";
 import SiteContainer from "../ui/components/SiteContainer.jsx";
 import Writer from "../ui/components/Writer.jsx";
-import Marked from "../ui/components/Marked.jsx";
+import PublishedContent from "../ui/components/PublishedContent.jsx";
 import LogViewContainer from "../ui/components/LogViewContainer.jsx";
 import Alert from 'react-s-alert';
 
@@ -64,7 +64,7 @@ FlowRouter.route('/:siteId', {
 				break;
 			default:
 				layout = PublishedLayout;
-				content = <Marked/>;
+				content = <PublishedContent/>;
 
 		}
 		mount(layout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
@@ -81,7 +81,7 @@ FlowRouter.route('/:siteId/:pageName', {
 			content = <Writer/>;
 		} else {
 			layout = PublishedLayout;
-			content = <Marked/>;
+			content = <PublishedContent/>;
 		}
 		mount(layout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
 	}
