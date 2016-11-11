@@ -5,6 +5,7 @@
   max-width: 900px;
   margin-left: @menuwidth;
   z-index: 0;
+  padding-bottom: 300px;
   .table-of-contents, .revealer, .shade {
 	transition: left 0.5s, opacity 0.7s;
   }
@@ -17,6 +18,28 @@
 	height: 100%;
 	width: @menuwidth;
 	z-index: 3;
+	font-size: 1.15em;
+	line-height: 1.7em;
+	li {
+	  list-style: none;
+	}
+	ul {
+	  padding-left: 25px;
+	}
+
+	/* Collapsing */
+
+	& > ul ul {
+	  display: none;
+	}
+
+	ul.active {
+	  display: block;
+	}
+
+	a.active {
+	  font-weight: bold;
+	}
   }
   .revealer {
 	display: none;
