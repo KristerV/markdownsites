@@ -10,7 +10,7 @@ export default class extends React.Component {
 
 	render() {
 		return (<div className="wh100 EditorLayout">
-				<nav className="h100">
+				<nav className>
 					<NavBarContainer/>
 				</nav>
 				<main>
