@@ -5,7 +5,7 @@ export default class extends React.Component {
 	render() {
 		const siteId = FlowRouter.getParam('siteId');
 		const sites = this.props.sites || [];
-		const guest = Meteor.user() && Meteor.user().profile.guest;
+		const guest = G.ifDefined(Meteor.user(), 'profile.guest');
 		return (
 			<div className="relative h100">
 				<ol className="no-bullets">
