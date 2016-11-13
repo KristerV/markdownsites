@@ -40,7 +40,10 @@ export default class extends React.Component {
 						<td>Here's an <a href="http://google.com">inline link</a></td>
 					</tr>
 					<tr>
-						<td>Images are kind of like links:  ![title of image](http://i.imgur.com/BpUoKoF.png)</td>
+						<td>
+							<p>Images are kind of like links:  ![title of image](http://i.imgur.com/BpUoKoF.png)</p>
+							<p><b>It's easy to host your images on <a href="https://postimage.org/">postimage.org</a>.</b></p>
+						</td>
 						<td>Images are kind of like links:<br/><img src="http://i.imgur.com/BpUoKoF.png" alt="title of image"/></td>
 					</tr>
 					<tr>
