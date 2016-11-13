@@ -77,7 +77,7 @@ It's easy to do **bold**, *italic* and [links](http://google.com).
 						</div>
 					</div>
 					<div className="field relative">
-						<label>Markdown <span className="see-through text-normal">(hold alt for preview)</span></label>
+						<label>Website content <span className="text-normal">(hold alt for preview or <a target="_blank"	href={"/" + (siteId || "")}>see live website</a>)</span></label>
 						<Textarea
 							className={"w100 padding bbb" + (preview ? ' transparent' : '')}
 							name="content"
