@@ -5,6 +5,7 @@
 	nav {
 		width: @menuWidth;
 		float: left;
+	  	position: fixed;
 		.nav-title {
 			opacity: 0.3;
 			font-size: 1.3em;
@@ -15,6 +16,7 @@
 		width: calc(~"100% - @{menuWidth}");
 		max-width: @mainMaxWidth;
 		float: left;
+	  	margin-left: @menuWidth;
 	}
 }
 
@@ -22,10 +24,12 @@
 	.EditorLayout {
 		nav {
 			width: 100%;
+		  	position: relative;
 		}
 		main {
 			width: 100%;
 			padding: 2em;
+		  	margin: auto;
 		}
 	}
 }
