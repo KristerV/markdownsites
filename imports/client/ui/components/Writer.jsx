@@ -16,7 +16,13 @@ export default class extends React.Component {
 			showPreview: false,
 			domain: G.ifDefined(this, 'props.site.domain', ""),
 			email: G.ifDefined(this, 'props.site.email', ""),
-			content: G.ifDefined(this, 'props.site.content', "")
+			content: G.ifDefined(this, 'props.site.content', `# Example website
+
+Hold the "alt" key to see the preview.
+
+It's easy to do **bold**, *italic* and [links](http://google.com).
+
+<- For a full guide click on "Markdown Guide" on the left.`)
 		}
 
 		const user = Meteor.user();
@@ -83,7 +89,7 @@ export default class extends React.Component {
 						{preview ?
 							<div className="absolute w100 top0"><Marked content={this.state.content}/></div> : null}
 					</div>
-					{this.state.content.length < 30 ? <div className="field relative"><Introduction/></div> : null}
+					{this.state.content.length < 200 ? <div className="field relative"><Introduction/></div> : null}
 				</div>
 			</div>
 		)
