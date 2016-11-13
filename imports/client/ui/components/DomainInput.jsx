@@ -155,7 +155,7 @@ export default class extends React.Component {
 				</div>
 				<Payment domain={this.props.domain} price={price} siteId={this.props.siteId}
 						 onPaymentReceived={this.paymentReceived}/>
-				<p>{msg}</p>
+				<p style={{color: '#db2828'}}>{msg}</p>
 			</div>
 		)
 	}
