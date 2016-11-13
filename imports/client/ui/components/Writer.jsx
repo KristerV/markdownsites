@@ -51,6 +51,7 @@ It's easy to do **bold**, *italic* and [links](http://google.com).
 			if (err)
 				Alert.error(err.message);
 			else {
+				Alert.success("saved");
 				if (result.siteId) {
 					FlowRouter.go('writer', {siteId: result.siteId, pageName: "writer"});
 				}
