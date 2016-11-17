@@ -66,6 +66,9 @@ export default {
 				msg = "IP not whitelisted NC";
 				break;
 			default:
+				title = "Unknown error";
+				msg = G.ifDefined(data, 'response.message');
+				console.log(data.response.name);
 				log.error("Unable to parse error", {response: data})
 		}
 		return {success: false, msg, title};
