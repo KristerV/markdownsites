@@ -4,7 +4,7 @@
   "BRAINTREE_PUBLIC_KEY": "5wgbpnkhk65qxysn",
   "NAMECHEAP_APIKEY": "bb290d5f65954f12b2550c3c4895d1a0",
   "NAMECHEAP_CLIENTIP": "94.125.104.17",
-  "NAMECHEAP_PRODUCTION": "false",
+  "NAMECHEAP_PRODUCTION": false,
   "NAMECHEAP_USER": "kristerv",
   "ROOT_URL": "http://www.markdownsites.com",
   "SCALINGO_APIKEY": "BAV71Me9rmDlz_YXaU9MDkxRc_zixnCYfT4g0GcaWKI",
