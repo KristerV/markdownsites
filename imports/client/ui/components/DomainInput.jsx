@@ -33,7 +33,6 @@ export default class extends React.Component {
 	}
 
 	render() {
-		console.log(this.props);
 		let button = null;
 		let msg = "";
 		const price = G.ifDefined(this, "props.extensionAvailability.mdsPrice", "error");

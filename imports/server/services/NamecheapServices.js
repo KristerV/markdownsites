@@ -12,7 +12,7 @@ export default {
 	getAvailability(domainName, siteId) {
 		log.debug('NAMECHEAP get domain availability', {domainName, siteId});
 		DomainPurchaseService.setStep(domainName, siteId, 'checkAvailabilityStarted', true);
-		namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+		namecheap.apiCall('namecheap.domains.check', {DomainList: domainName}, !G.getEnv('NAMECHEAP_PRODUCTION'))
 			.then(Meteor.bindEnvironment(data => {
 				const availability = NamecheapServices.parseAvailabilityResponse(data);
 				log.info('NAMECHEAP get domain availability DONE', {domainName, siteId, availability});
@@ -66,7 +66,7 @@ export default {
 				msg = "IP not whitelisted NC";
 				break;
 			default:
-				log.error("Unable to parse error", {response: data.response})
+				log.error("Unable to parse error", {response: data})
 		}
 		return {success: false, msg, title};
 	},
@@ -75,7 +75,7 @@ export default {
 		namecheap.apiCall('namecheap.users.getPricing', {
 			ProductType: "DOMAIN",
 			ProductCategory: "REGISTER"
-		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+		}, !G.getEnv('NAMECHEAP_PRODUCTION'))
 			.then(Meteor.bindEnvironment((data) => {
 				const services = data.response[0].UserGetPricingResult[0].ProductType[0].ProductCategory;
 				let restructure = {};
@@ -156,7 +156,7 @@ export default {
 			AuxBillingCountry: 'Estonia',
 			AuxBillingPhone: '+372.5635555',
 			AuxBillingEmailAddress: 'domains@markdownsites.com'
-		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+		}, !G.getEnv('NAMECHEAP_PRODUCTION'))
 			.then(Meteor.bindEnvironment(data => {
 				let response = data.response[0].DomainCreateResult[0].$;
 				response.siteId = siteId;
@@ -182,7 +182,7 @@ export default {
 			RecordType2: 'CNAME',
 			Address2: 'markdownsites.scalingo.io',
 			TTL2: 100
-		}, G.getEnv('NAMECHEAP_SANDBOXMODE'))
+		}, !G.getEnv('NAMECHEAP_PRODUCTION'))
 		.then(Meteor.bindEnvironment(data => {
 			log.info('NAMECHEAP set hosts DONE', {domain, data});
 			DomainPurchaseService.setStep(domain, siteId, 'setHostsDone');
