@@ -4,10 +4,10 @@ import { createContainer } from 'meteor/react-meteor-data';
 import SiteWrapper from './SiteWrapper.jsx';
 import '/imports/api/sites/main.js';
 
-export default SiteContainer = createContainer(({ siteId, content }) => {
+export default SiteContainer = createContainer(({ siteId, content, domain }) => {
 
-	const sitesSub = Meteor.subscribe('sites.single', siteId);
-	const site = SitesCollection.findOne(siteId);
+	const sitesSub = Meteor.subscribe('sites.single', siteId, domain);
+	const site = SitesCollection.findOne({$or: [{_id: siteId}, {domain: domain}]});
 
 	return {
 		site,

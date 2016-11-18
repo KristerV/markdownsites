@@ -1,8 +1,8 @@
-Meteor.publish('sites.single', function(siteId) {
+Meteor.publish('sites.single', function(siteId, domain) {
 
-	log.debug("PUBLISH sites.single", {siteId});
+	log.debug("PUBLISH sites.single", {siteId, domain});
 
-	if (!siteId)
+	if (!siteId && !domain)
 		return SitesCollection.find({_id: "findnothing-hahaha"});
 	// why return this fake find? Because otherwise going from a /:siteId to / will not empty the fields
 
@@ -18,10 +18,12 @@ Meteor.publish('sites.single', function(siteId) {
 		fields.createdAt = 1;
 	}
 
-	return SitesCollection.find(
-		{$or: [{_id: siteId}, {'editing.domain.name': siteId}]},
-		{fields: fields}
-	);
+	if (!siteId && domain) {
+		const domainItem = DomainPurchasesCollection.findOne({"transactionResult.transaction.result": true, domain});
+		return SitesCollection.find(G.ifDefined(domainItem, 'siteId'));
+	} else {
+		return SitesCollection.find(siteId, {fields: fields});
+	}
 });
 
 Meteor.publish('sites.list', function() {

@@ -17,8 +17,11 @@ import PageLogin from "../ui/components/PageLogin.jsx";
 FlowRouter.route('/', {
 	name: 'home',
 	action: function (params, queryParams) {
-		console.log(params, queryParams);
-		mount(EditorLayout, {content: <SiteContainer content={<Writer/>}/>});
+		let currentDomain = window.location.hostname.replace(/^www./,'');
+		if (currentDomain === 'markdownsites.com' || currentDomain === 'localhost')
+			mount(EditorLayout, {content: <SiteContainer content={<Writer/>}/>});
+		else
+			mount(PublishedLayout, {content: <SiteContainer domain={currentDomain} content={<PublishedContent/>}/>});
 	}
 });
 
