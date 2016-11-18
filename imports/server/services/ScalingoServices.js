@@ -9,7 +9,7 @@ export default {
 			'https://api.scalingo.com/v1/apps/markdownsites/domains',
 			{
 				auth: G.getEnv('SCALINGO_USERNAME') + ":" + G.getEnv('SCALINGO_APIKEY'),
-				data: {domain: {name: domain}}
+				data: {domain: {name: 'www.'+domain}}
 			}, result => {
 				log.info('SCALINGO setup route DONE', result);
 				DomainPurchaseService.setStep(domain, siteId, 'setScalingoRouteDone');
