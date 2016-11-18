@@ -14,6 +14,14 @@ import PageMarkdown from "../ui/components/PageMarkdown.jsx";
 import PagePolicy from "../ui/components/PagePolicy.jsx";
 import PageLogin from "../ui/components/PageLogin.jsx";
 
+FlowRouter.triggers.enter(function () {
+	if (!window.Tawk_API) {
+		Meteor.setTimeout(logTawk, 1000)
+	} else {
+		window.Tawk_API.setAttributes({'current-route': G.getFullUrl()})
+	}
+});
+
 FlowRouter.route('/', {
 	name: 'home',
 	action: function (params, queryParams) {
