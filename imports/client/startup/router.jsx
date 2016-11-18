@@ -17,6 +17,7 @@ import PageLogin from "../ui/components/PageLogin.jsx";
 FlowRouter.route('/', {
 	name: 'home',
 	action: function (params, queryParams) {
+		console.log(params, queryParams);
 		mount(EditorLayout, {content: <SiteContainer content={<Writer/>}/>});
 	}
 });
