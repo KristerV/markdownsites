@@ -19,8 +19,8 @@ Meteor.publish('sites.single', function(siteId, domain) {
 	}
 
 	if (!siteId && domain) {
-		const domainItem = DomainPurchasesCollection.findOne({"transactionResult.transaction.result": true, domain});
-		return SitesCollection.find(G.ifDefined(domainItem, 'siteId'));
+		const domainItem = DomainPurchasesCollection.findOne({"transactionResult.success": true, domain});
+		return SitesCollection.find(G.ifDefined(domainItem, 'siteId'), {fields: fields});
 	} else {
 		return SitesCollection.find(siteId, {fields: fields});
 	}
