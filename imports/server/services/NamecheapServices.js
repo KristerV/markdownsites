@@ -98,7 +98,7 @@ export default {
 				for (const key in restructure) {
 					let r = restructure[key];
 					r.mdsPrice = Math.round(Math.max(r.register, r.renew || 0));
-					if (r.mdsPrice) r.mdsPrice += 5;
+					if (r.mdsPrice) r.mdsPrice += 10;
 					ExtensionsAvailableCollection.upsert({name: key}, r);
 				}
 
