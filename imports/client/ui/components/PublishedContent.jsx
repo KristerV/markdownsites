@@ -69,7 +69,7 @@ export default class extends React.Component {
 			if (firstVisible) {
 				topic = firstVisible.attr("id");
 			}
-			history.pushState(null, null, '#'+topic);
+			history.replaceState(null, null, '#'+topic);
 			this.refreshTOC();
 		},1000);
 
