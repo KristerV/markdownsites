@@ -18,8 +18,6 @@ export default class extends React.Component {
 			email: G.ifDefined(this, 'props.site.email', ""),
 			content: G.ifDefined(this, 'props.site.content', `# Example website
 
-Hold the "alt" key to see the preview.
-
 It's easy to do **bold**, *italic* and [links](http://google.com).
 
 <- For a full guide click on "Markdown Guide" on the left.`)
