@@ -11,7 +11,7 @@ export default class extends React.Component {
 - Buy a domain (automatic setup)
 - Login with email (no passwords here)
 
-[See example](http://www.krister.ee).
+### [See example result.](http://www.krister.ee)
 `
 		}/>)
 	}
