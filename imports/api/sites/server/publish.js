@@ -19,12 +19,10 @@ Meteor.publish('sites.single', function(siteId, domain) {
 	}
 
 	if (!siteId && domain) {
-		if (domain.indexOf('.ee') > -1) { // HACK to enable custom .ee domains
-			return SitesCollection.find({domain}, {fields: fields});
-		} else {
-			const domainItem = DomainPurchasesCollection.findOne({"transactionResult.success": true, domain});
-			return SitesCollection.find(G.ifDefined(domainItem, 'siteId'), {fields: fields});
-		}
+		return SitesCollection.find({domain}, {fields: fields});
+		// Let's just support custom domains for now
+		const domainItem = DomainPurchasesCollection.findOne({"transactionResult.success": true, domain});
+		return SitesCollection.find(G.ifDefined(domainItem, 'siteId'), {fields: fields});
 	} else {
 		return SitesCollection.find(siteId, {fields: fields});
 	}
