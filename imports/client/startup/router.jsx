@@ -98,3 +98,11 @@ FlowRouter.route('/:siteId/:pageName', {
 		mount(layout, {content: <SiteContainer siteId={params.siteId} content={content}/>});
 	}
 });
+
+function logTawk() {
+	if (!window.Tawk_API) {
+		Meteor.setTimeout(logTawk, 1000)
+	} else {
+		window.Tawk_API.setAttributes({'current-route': G.getFullUrl()})
+	}
+}
