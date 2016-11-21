@@ -10,6 +10,8 @@ export default class extends React.Component {
 - Write your content (in markdown)
 - Buy a domain (automatic setup)
 - Login with email (no passwords here)
+
+[See example](http://www.krister.ee).
 `
 		}/>)
 	}
