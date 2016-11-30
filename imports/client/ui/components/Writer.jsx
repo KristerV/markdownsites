@@ -6,6 +6,7 @@ import DomainInputContainer from './DomainInputContainer.jsx';
 import Textarea from 'react-autosize-textarea';
 import Alert from 'react-s-alert';
 import Introduction from './Introduction';
+import MediumEditor from './MediumEditor';
 
 export default class extends React.Component {
 
@@ -16,11 +17,7 @@ export default class extends React.Component {
 			showPreview: false,
 			domain: G.ifDefined(this, 'props.site.domain', ""),
 			email: G.ifDefined(this, 'props.site.email', ""),
-			content: G.ifDefined(this, 'props.site.content', `# Example website
-
-It's easy to do **bold**, *italic* and [links](http://google.com).
-
-<- For a full guide click on "Markdown Guide" on the left.`)
+			content: G.ifDefined(this, 'props.site.content', ``)
 		}
 
 		const user = Meteor.user();
@@ -28,14 +25,21 @@ It's easy to do **bold**, *italic* and [links](http://google.com).
 			state.email = user.getEmail();
 
 		this.state = state;
+		this.MediumEditor;
 
 		this.handleChange = this.handleChange.bind(this);
 		this.componentDidMount = this.componentDidMount.bind(this);
 		this.saveAndPublish = this.saveAndPublish.bind(this);
+		this.handleTextChange = this.handleTextChange.bind(this);
 	}
 
 	handleChange(e) {
 		this.setState({[e.target.name]: e.target.value});
+	}
+
+	handleTextChange(text) {
+		console.log(text);
+		this.setState({"content": text});
 	}
 
 	saveAndPublish() {
@@ -76,7 +80,9 @@ It's easy to do **bold**, *italic* and [links](http://google.com).
 						</div>
 					</div>
 					<div className="field relative">
-						<label>Website content <span className="text-normal">(hold alt for preview or <a target="_blank"	href={"/" + (siteId || "")}>see live website</a>)</span></label>
+						<label>Website content <span className="text-normal">(hold alt for preview or <a target="_blank"
+																										 href={"/" + (siteId || "")}>see live website</a>)</span></label>
+						<MediumEditor onChange={this.handleTextChange}/>
 						<Textarea
 							className={"w100 padding bbb" + (preview ? ' transparent' : '')}
 							name="content"
