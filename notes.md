@@ -1,11 +1,7 @@
-# Musthave
-
+- Move from markdown to medium.com style editing
 - SSL
 - Serve raw HTML
-- Move from markdown to medium.com style editing
-
-# Nice to have
-
+- Custom domain tutorial
 - <title>
 - Clarify pricing model
 - Clarify offer

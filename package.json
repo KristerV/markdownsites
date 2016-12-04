@@ -17,6 +17,7 @@
     "medium-editor": "^5.22.1",
     "medium-editor-insert-plugin": "^2.4.0",
     "medium-editor-markdown": "^2.6.0",
+    "medium-editor-vanilla-insert": "0.0.3",
     "meteor-node-stubs": "~0.2.0",
     "namecheap": "0.0.1",
     "namecheap-api": "^1.0.2",

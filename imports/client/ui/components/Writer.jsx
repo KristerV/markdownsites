@@ -38,7 +38,6 @@ export default class extends React.Component {
 	}
 
 	handleTextChange(text) {
-		console.log(text);
 		this.setState({"content": text});
 	}
 
@@ -82,15 +81,15 @@ export default class extends React.Component {
 					<div className="field relative">
 						<label>Website content <span className="text-normal">(hold alt for preview or <a target="_blank"
 																										 href={"/" + (siteId || "")}>see live website</a>)</span></label>
-						<MediumEditor onChange={this.handleTextChange}/>
-						<Textarea
-							className={"w100 padding bbb" + (preview ? ' transparent' : '')}
-							name="content"
-							value={this.state.content}
-							autoFocus={true}
-							rows={5}
-							onChange={this.handleChange}
-						/>
+						<MediumEditor onChange={this.handleTextChange} markdown={G.ifDefined(this, 'props.site.content', ``)}/>
+						{/*<Textarea
+						 className={"w100 padding bbb" + (preview ? ' transparent' : '')}
+						 name="content"
+						 value={this.state.content}
+						 autoFocus={true}
+						 rows={5}
+						 onChange={this.handleChange}
+						 />*/}
 						{preview ?
 							<div className="absolute w100 top0"><Marked content={this.state.content}/></div> : null}
 					</div>
