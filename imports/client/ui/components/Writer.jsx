@@ -19,10 +19,6 @@ export default class extends React.Component {
 			content: G.ifDefined(this, 'props.site.content', "")
 		}
 
-		const user = Meteor.user();
-		if (user && user.getEmail())
-			state.email = user.getEmail();
-
 		this.state = state;
 		this.MediumEditor;
 
