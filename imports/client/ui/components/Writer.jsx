@@ -14,7 +14,6 @@ export default class extends React.Component {
 		super(props);
 
 		let state = {
-			showPreview: false,
 			domain: G.ifDefined(this, 'props.site.domain', ""),
 			email: G.ifDefined(this, 'props.site.email', ""),
 			content: G.ifDefined(this, 'props.site.content', ``)
@@ -28,7 +27,6 @@ export default class extends React.Component {
 		this.MediumEditor;
 
 		this.handleChange = this.handleChange.bind(this);
-		this.componentDidMount = this.componentDidMount.bind(this);
 		this.saveAndPublish = this.saveAndPublish.bind(this);
 		this.handleTextChange = this.handleTextChange.bind(this);
 	}
@@ -61,7 +59,6 @@ export default class extends React.Component {
 	}
 
 	render() {
-		let preview = this.state.showPreview;
 		const siteId = G.ifDefined(this, 'props.site._id');
 		return (<div className="writer relative">
 				<div className="ui form">
@@ -79,39 +76,15 @@ export default class extends React.Component {
 						</div>
 					</div>
 					<div className="field relative">
-						<label>Website content <span className="text-normal">(hold alt for preview or <a target="_blank"
-																										 href={"/" + (siteId || "")}>see live website</a>)</span></label>
+						<label>Website content <span className="text-normal">(
+							<a target="_blank" href={"/" + (siteId || "")}>see live website</a>
+							)</span></label>
 						<MediumEditor onChange={this.handleTextChange} markdown={G.ifDefined(this, 'props.site.content', ``)}/>
-						{/*<Textarea
-						 className={"w100 padding bbb" + (preview ? ' transparent' : '')}
-						 name="content"
-						 value={this.state.content}
-						 autoFocus={true}
-						 rows={5}
-						 onChange={this.handleChange}
-						 />*/}
-						{preview ?
-							<div className="absolute w100 top0"><Marked content={this.state.content}/></div> : null}
 					</div>
 					{this.state.content.length < 200 ? <div className="field relative"><Introduction/></div> : null}
 				</div>
 			</div>
 		)
-	}
-
-	componentDidMount() {
-		_this = this;
-		// Alt preview
-		$(document).keydown((e) => {
-			if (e.which === 18) {
-				_this.setState({showPreview: true});
-			}
-		});
-		$(document).keyup((e) => {
-			if (e.which === 18) {
-				_this.setState({showPreview: false});
-			}
-		});
 	}
 
 }
