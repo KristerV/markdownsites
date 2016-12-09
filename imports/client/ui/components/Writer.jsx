@@ -79,7 +79,9 @@ export default class extends React.Component {
 						<label>Website content <span className="text-normal">(
 							<a target="_blank" href={"/" + (siteId || "")}>see live website</a>
 							)</span></label>
-						<MediumEditor onChange={this.handleTextChange} markdown={G.ifDefined(this, 'props.site.content', ``)}/>
+						<div className="overwrite-meduim-editor">
+							<MediumEditor onChange={this.handleTextChange} markdown={G.ifDefined(this, 'props.site.content', ``)}/>
+						</div>
 					</div>
 					{this.state.content.length < 200 ? <div className="field relative"><Introduction/></div> : null}
 				</div>

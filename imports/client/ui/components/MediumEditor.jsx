@@ -35,7 +35,7 @@ export default class extends React.Component {
 		options.imageDragging = false;
 		options.targetBlank = true;
 		options.toolbar = {
-			buttons: ['bold', 'italic', 'h1', 'h2', 'h3', 'anchor', 'image', 'orderedlist', 'quote']
+			buttons: ['bold', 'italic', 'h1', 'h2', 'h3', 'anchor', 'image', 'orderedlist', 'unorderedlist', 'quote']
 		};
 
 		options.extensions = {
