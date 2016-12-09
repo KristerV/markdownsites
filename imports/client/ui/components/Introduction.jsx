@@ -5,7 +5,7 @@ export default class extends React.Component {
 
 	render() {
 		return (<Marked content={`
-### [See example result.](http://www.krister.ee)
+### [See example website.](http://www.krister.ee)
 `
 		}/>)
 	}

@@ -16,7 +16,7 @@ export default class extends React.Component {
 		let state = {
 			domain: G.ifDefined(this, 'props.site.domain', ""),
 			email: G.ifDefined(this, 'props.site.email', ""),
-			content: G.ifDefined(this, 'props.site.content', ``)
+			content: G.ifDefined(this, 'props.site.content', "")
 		}
 
 		const user = Meteor.user();
@@ -60,6 +60,14 @@ export default class extends React.Component {
 
 	render() {
 		const siteId = G.ifDefined(this, 'props.site._id');
+		const contentText = G.ifDefined(this, 'props.site.content');
+		const defaultText = `# Publish your website in 5 minutes
+
+1. **Write your website in simple text.** Go ahead, change this text!
+1. **Buy a domain** and your website is online!
+1. Just make sure to enter your email so you can come back and edit later.
+
+What's this place for? Well we've all got a few good website ideas that we're left on the back shelf, because it takes time and effort to make anything worth while, right? Well I'm here to tell you you can get a lot done with just writing the first version in text. This service is the easiest way to get an informational website online. Get traction first and improve it later. Have you got a few minutes?`;
 		return (<div className="writer relative">
 				<div className="ui form">
 					<div className="fields">
@@ -80,10 +88,10 @@ export default class extends React.Component {
 							<a target="_blank" href={"/" + (siteId || "")}>see live website</a>
 							)</span></label>
 						<div className="overwrite-meduim-editor">
-							<MediumEditor onChange={this.handleTextChange} markdown={G.ifDefined(this, 'props.site.content', ``)}/>
+							<MediumEditor onChange={this.handleTextChange} markdown={contentText || defaultText}/>
 						</div>
 					</div>
-					{this.state.content.length < 200 ? <div className="field relative"><Introduction/></div> : null}
+					{!contentText ? <div className="field relative"><Introduction/></div> : null}
 				</div>
 			</div>
 		)
