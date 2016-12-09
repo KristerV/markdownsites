@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "autoprefixer": "^6.3.1",
+    "babel-runtime": "^6.20.0",
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
     "braintree": "^1.41.0",
