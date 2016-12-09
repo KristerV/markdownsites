@@ -12,6 +12,7 @@
     "braintree": "^1.41.0",
     "braintree-react": "^3.2.1",
     "braintree-web": "^2.27.0",
+    "canvas": "^1.6.2",
     "markdown-it": "^8.1.0",
     "markdown-it-anchor": "^2.5.0",
     "markdown-it-table-of-contents": "^0.2.3",
