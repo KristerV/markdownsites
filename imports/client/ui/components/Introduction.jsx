@@ -4,10 +4,9 @@ import Marked from './Marked';
 export default class extends React.Component {
 
 	render() {
-		return (<Marked content={`
-### [See example website.](http://www.krister.ee)
-`
-		}/>)
+		return (<div>
+			<a href="http://www.krister.ee" target="_blank">See example website</a>
+		</div>)
 	}
 
 };
