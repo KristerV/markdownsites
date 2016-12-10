@@ -3,15 +3,9 @@ import ReactDOM from 'react-dom';
 import MediumEditor from 'medium-editor';
 import MeMarkdown from 'medium-editor-markdown';
 import MarkdownIt from 'markdown-it';
-// import EditorInsert from 'medium-editor-insert-plugin';
-// import VanillaInsert from 'medium-editor-vanilla-insert';
-
-// load theme styles with webpack
+import Editor from 'react-medium-editor';
 require('medium-editor/dist/css/medium-editor.css');
 require('medium-editor/dist/css/themes/default.css');
-
-// ES module
-import Editor from 'react-medium-editor';
 
 export default class extends React.Component {
 
@@ -43,16 +37,7 @@ export default class extends React.Component {
 				this.props.onChange(md);
 			}),
 			imageDragging: {},
-			/* Would be nice, but no buttons
-			insert: new VanillaInsert({MediumEditor: MediumEditor})({
-				buttons: ['insert-image']
-			})*/
 		};
 		this.medium = new MediumEditor(dom, options);
-		/* This fucking thing is heavy on the markdown. Works, but it's heavy.
-		EditorInsert($);
-		$(dom).mediumInsert({
-			editor: this.medium
- 		});*/
 	}
 }

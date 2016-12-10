@@ -11,7 +11,6 @@ reactive-var@1.0.11            # Reactive variable for tracker
 jquery@1.11.10                  # Helpful client-side library
 tracker@1.1.1                 # Meteor's client-side reactive programming library
 
-standard-minifier-js@1.2.1    # JS minifier run for production mode
 es5-shim@4.6.15                # ECMAScript 5 compatibility for older browsers.
 
 kadira:flow-router
@@ -31,3 +30,4 @@ http@1.2.10
 meteorhacks:kadira
 manuel:isdev
 okgrow:analytics
+ecmascript
