@@ -8,7 +8,7 @@ User = {
 	},
 
 	getName: function() {
-		return this.profile.name
+		return G.ifDefined(this, 'profile.name', "");
 	},
 };
 
