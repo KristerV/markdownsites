@@ -16,7 +16,6 @@
     "markdown-it-anchor": "^2.5.0",
     "markdown-it-table-of-contents": "^0.2.3",
     "medium-editor": "^5.22.1",
-    "medium-editor-markdown": "^2.6.0",
     "meteor-node-stubs": "~0.2.0",
     "namecheap": "0.0.1",
     "namecheap-api": "^1.0.2",
@@ -32,6 +31,7 @@
     "react-s-alert": "^1.1.4",
     "remarkable": "^1.6.2",
     "textarea": "^0.3.0",
+    "upndown": "^2.0.2",
     "winston": "^2.3.0",
     "winston-mongodb": "^1.6.4"
   },

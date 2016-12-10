@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MediumEditor from 'medium-editor';
-import MeMarkdown from 'medium-editor-markdown';
 import MarkdownIt from 'markdown-it';
 import Editor from 'react-medium-editor';
+import upndown from 'upndown';
 require('medium-editor/dist/css/medium-editor.css');
 require('medium-editor/dist/css/themes/default.css');
 
@@ -15,6 +15,7 @@ export default class extends React.Component {
 			linkify: true,
 			breaks: true,
 		});
+		this.und = new upndown();
 	}
 
 	render() {
@@ -33,11 +34,16 @@ export default class extends React.Component {
 		};
 
 		options.extensions = {
-			markdown: new MeMarkdown(md => {
-				this.props.onChange(md);
-			}),
 			imageDragging: {},
 		};
 		this.medium = new MediumEditor(dom, options);
+		this.medium.subscribe('editableInput', (event, editable) => {
+		    this.und.convert(editable.innerHTML, (err, res) => {
+		    	if (err)
+		    		console.error(err);
+		    	if (res)
+		    		this.props.onChange(res);
+		    });
+		});
 	}
 }
