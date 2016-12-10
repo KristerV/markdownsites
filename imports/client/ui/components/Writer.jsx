@@ -80,9 +80,13 @@ What's this place for? Well we've all got a few good website ideas that we're le
 						</div>
 					</div>
 					<div className="field relative">
-						<label>Website content <span className="text-normal">(
-							<a target="_blank" href={"/" + (siteId || "")}>see live website</a>
-							)</span></label>
+						<label>Website content 
+						{contentText ? 
+							<span className="text-normal">
+								(<a target="_blank" href={"/" + (siteId || "")}>see live website</a>)
+							</span>
+						: null}
+						</label>
 						<div className="overwrite-meduim-editor">
 							<MediumEditor onChange={this.handleTextChange} markdown={contentText || defaultText}/>
 						</div>
