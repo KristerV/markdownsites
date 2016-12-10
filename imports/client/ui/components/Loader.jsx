@@ -4,7 +4,7 @@ export default class extends React.Component {
 
 	render() {
 		return (
-			<div>LOADING</div>
+			<div></div>
 		)
 	}
 
