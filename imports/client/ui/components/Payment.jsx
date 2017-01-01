@@ -57,6 +57,7 @@ export default class extends React.Component {
 										<i className="checkmark icon"></i>
 									</button>
 								</div>
+								<p className="see-through"><i>Payments by Braintree (a Paypal company)</i></p>
 							</div>
 							:
 							<div style={{padding: "2em"}}>
