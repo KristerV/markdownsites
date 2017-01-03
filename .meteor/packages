@@ -32,3 +32,5 @@ manuel:isdev
 okgrow:analytics
 ecmascript
 standard-minifier-js
+force-ssl
+3stack:hsts
