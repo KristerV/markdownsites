@@ -15,6 +15,12 @@ import PagePolicy from "../ui/components/PagePolicy.jsx";
 import PageLogin from "../ui/components/PageLogin.jsx";
 
 FlowRouter.triggers.enter(function () {
+	// Force SSL
+	if (location.protocol != 'https:' && location.hostname === "www.markdownsites.com") {
+		location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+	}
+
+	// Enable Tawk.to
 	if (!window.Tawk_API) {
 		Meteor.setTimeout(logTawk, 1000)
 	} else {
