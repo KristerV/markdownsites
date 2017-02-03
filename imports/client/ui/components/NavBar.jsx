@@ -20,6 +20,7 @@ export default class extends React.Component {
 					<li className="nav-title">Info</li>
 					{/*<li><a href="/markdown">Markdown Guide</a></li>*/}
 					<li><a href="/policy">Policy</a></li>
+					<li><a href="/custom-domain">Connect custom domain</a></li>
 					<li><a href="/about">About</a></li>
 				</ol>
 				{guest ?

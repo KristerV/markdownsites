@@ -12,6 +12,7 @@ import Alert from 'react-s-alert';
 import PageAbout from "../ui/components/PageAbout.jsx";
 import PageMarkdown from "../ui/components/PageMarkdown.jsx";
 import PagePolicy from "../ui/components/PagePolicy.jsx";
+import PageCustomDomain from "../ui/components/PageCustomDomain.jsx";
 import PageLogin from "../ui/components/PageLogin.jsx";
 
 FlowRouter.triggers.enter(function () {
@@ -68,7 +69,7 @@ FlowRouter.route('/:siteId', {
 			case 'markdown':
 				content = <PageMarkdown/>;
 				break;
-			case 'customdomain':
+			case 'custom-domain':
 				content = <PageCustomDomain/>;
 				break;
 			case 'policy':
